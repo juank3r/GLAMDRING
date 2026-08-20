@@ -1,0 +1,18 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Exports reales de SIEM: pueden llevar datos de produccion.
+samples/private/
+*.local.json
+*.local.ndjson
+
+# Perfil visual y modelos del despliegue: son configuracion de cada instalacion,
+# no del proyecto. El de fabrica sale de glamdring/appearance.py.
+config/appearance.json
+config/models/

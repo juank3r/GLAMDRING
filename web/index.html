@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GLAMDRING — Grafo de incidente</title>
+  <link rel="stylesheet" href="css/glamdring.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='6' fill='%232dd4bf'/><circle cx='6' cy='7' r='3' fill='%23ff2d55'/><circle cx='27' cy='9' r='3' fill='%234ade80'/><circle cx='8' cy='26' r='3' fill='%23fb923c'/></svg>">
+
+  <!-- El importmap resuelve los especificadores desnudos de los módulos ES.
+       'three' y 'three/addons/' apuntan a lo vendorizado en js/vendor/, de modo
+       que no hace falta npm ni ningún paso de compilación. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./js/vendor/three.module.js",
+      "three/addons/": "./js/vendor/jsm/"
+    }
+  }
+  </script>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark"></span>
+    <span class="brand-name">GLAMDRING</span>
+    <span class="brand-tag">grafo de incidente</span>
+  </div>
+
+  <nav class="views" id="view-switch">
+    <button class="view-btn is-active" data-view="explore"
+            title="Layout libre dirigido por fuerzas (1)">Explorar</button>
+    <button class="view-btn" data-view="killchain"
+            title="Capas por táctica MITRE, de izquierda a derecha (2)">Kill-chain</button>
+    <button class="view-btn" data-view="timeline3d"
+            title="Eje X = tiempo del primer avistamiento (3)">Cronología</button>
+  </nav>
+
+  <label class="color-mode-wrap" title="Qué dimensión se lleva el color (c)">
+    <select id="color-mode"></select>
+  </label>
+
+  <div class="search-box">
+    <input type="search" id="search" placeholder="Buscar usuario, host, IP, hash, T1059…  ( / )"
+           autocomplete="off">
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="btn-demo" title="Cargar los ficheros de samples/">Demo</button>
+    <button class="btn" id="btn-upload" title="Subir un export del SIEM">Subir</button>
+    <button class="btn" id="btn-siem" title="Consultar Splunk / Sentinel / QRadar en vivo">SIEM</button>
+    <button class="btn" id="btn-report" title="Generar informe del incidente (r)">Informe</button>
+    <button class="btn btn-icon" id="btn-admin" title="Panel de administrador (a)">⚙</button>
+    <button class="btn btn-icon" id="btn-help" title="Atajos de teclado (?)">?</button>
+    <input type="file" id="file-input" multiple hidden
+           accept=".json,.ndjson,.csv,.cef,.log,.txt,.xml">
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- ---------------------------------------------------------------- -->
+  <aside class="panel panel-left" id="filters">
+    <div class="panel-section">
+      <h2>Severidad mínima</h2>
+      <input type="range" id="severity" min="0" max="5" step="1" value="0" class="slider">
+      <div class="severity-scale" id="severity-scale"></div>
+    </div>
+
+    <div class="panel-section">
+      <h2>Papel en el incidente <button class="mini" data-toggle-all="roles">todos</button></h2>
+      <div class="chips" id="role-filters"></div>
+    </div>
+
+    <div class="panel-section">
+      <h2>Entidades <button class="mini" data-toggle-all="types">todas</button></h2>
+      <div class="chips" id="type-filters"></div>
+    </div>
+
+    <div class="panel-section">
+      <h2>Relaciones <button class="mini" data-toggle-all="relations">todas</button></h2>
+      <div class="chips chips-sm" id="relation-filters"></div>
+    </div>
+
+    <div class="panel-section">
+      <h2>Origen del dato</h2>
+      <div class="chips" id="source-filters"></div>
+    </div>
+
+    <div class="panel-section">
+      <h2>Tácticas MITRE</h2>
+      <div class="chips chips-sm" id="tactic-filters"></div>
+    </div>
+  </aside>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section class="stage">
+    <div id="graph"></div>
+
+    <div class="stage-overlay stage-stats" id="stats"></div>
+    <div class="stage-overlay stage-legend" id="legend"></div>
+
+    <div class="stage-overlay stage-loading" id="stage-loading" hidden>
+      <span class="spinner"></span> calculando el grafo…
+    </div>
+
+    <div class="stage-overlay stage-empty" id="empty-state">
+      <div class="empty-art">
+        <span class="empty-node n1"></span><span class="empty-node n2"></span>
+        <span class="empty-node n3"></span><span class="empty-node n4"></span>
+      </div>
+      <h3>Sin datos cargados</h3>
+      <p>Pulsa <strong>Demo</strong> para ver un incidente de ejemplo con logs de
+         Splunk, Sentinel, QRadar y CEF, o arrastra aquí un export de tu SIEM.</p>
+    </div>
+
+    <div class="stage-overlay stage-drop" id="drop-hint">
+      <div>Suelta los ficheros para ingerirlos</div>
+    </div>
+
+    <div class="stage-overlay stage-toast" id="toast" hidden></div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <aside class="panel panel-right" id="inspector">
+    <div class="inspector-empty" id="inspector-empty">
+      <h2>Inspector</h2>
+      <p>Pincha un nodo o una arista para ver sus propiedades y los
+         <strong>logs originales</strong> del SIEM que la generaron.</p>
+      <p class="hint">Clic derecho para el menú contextual · ctrl+clic para comparar
+         varias entidades · doble clic para traer sus vecinos.</p>
+    </div>
+    <div class="inspector-body" id="inspector-body" hidden></div>
+  </aside>
+</main>
+
+<!-- ------------------------------------------------------------------ -->
+<footer class="timeline-bar">
+  <div class="timeline-controls">
+    <button class="btn btn-icon" id="btn-play" title="Reproducir la cronología (espacio)">▶</button>
+    <button class="btn btn-icon" id="btn-rewind" title="Volver al inicio">⏮</button>
+    <span class="timeline-clock" id="clock">—</span>
+  </div>
+  <div class="timeline-track" id="timeline">
+    <canvas id="timeline-canvas"></canvas>
+    <div class="timeline-cursor" id="timeline-cursor" hidden></div>
+    <div class="timeline-brush" id="timeline-brush" hidden></div>
+  </div>
+  <div class="timeline-legend">
+    Arrastra sobre la barra para acotar la ventana temporal.<br>
+    Pulsa ▶ para reproducir el incidente en orden cronológico.
+  </div>
+</footer>
+
+<!-- ------------------------------------------------------------------ -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-card">
+    <header class="modal-head">
+      <h2 id="modal-title">Consultar SIEM</h2>
+      <button class="btn btn-icon" id="modal-close">✕</button>
+    </header>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- Panel de administrador ------------------------------------------- -->
+<aside class="admin" id="admin-panel" hidden>
+  <header class="admin-head">
+    <h2>Panel de administrador</h2>
+    <button class="btn btn-icon admin-close">✕</button>
+  </header>
+  <div class="admin-tabs"></div>
+  <div class="admin-body"></div>
+  <footer class="admin-foot">
+    <span class="admin-status"></span>
+    <span class="admin-note">Los cambios se guardan en el servidor y los ve todo el equipo.</span>
+  </footer>
+</aside>
+
+<!-- Diálogo de informe ----------------------------------------------- -->
+<div class="modal" id="report-dialog" hidden>
+  <div class="modal-card report-card-wide">
+    <header class="modal-head">
+      <h2>Informe del incidente</h2>
+      <button class="btn btn-icon report-close">✕</button>
+    </header>
+    <div class="modal-body report-grid">
+      <div class="report-form">
+        <label><span>Título</span>
+          <input type="text" id="report-title" placeholder="se genera solo"></label>
+        <label><span>Analista</span>
+          <input type="text" id="report-analyst" placeholder="opcional"></label>
+        <span class="report-label">Formato</span>
+        <div id="report-formats"></div>
+        <label class="check report-image-row">
+          <input type="checkbox" id="report-image" checked>
+          Incrustar captura del grafo
+        </label>
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="report-generate">Generar informe</button>
+        </div>
+      </div>
+      <div class="report-preview" id="report-preview"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Menú contextual y ayuda ------------------------------------------ -->
+<div class="ctx-menu" id="context-menu" hidden></div>
+
+<div class="help-overlay" id="help-overlay" hidden>
+  <div class="help-card">
+    <h2>Atajos de teclado</h2>
+    <div class="help-body"></div>
+    <p class="help-foot">Pulsa en cualquier sitio para cerrar</p>
+  </div>
+</div>
+
+<!-- 3d-force-graph se carga como script clásico: su bundle UMD es
+     autocontenido (empaqueta three r168, la MISMA revisión que la nuestra) y
+     expone el global ForceGraph3D. Vendorizar su versión ESM arrastraría a mano
+     todo su árbol de dependencias. -->
+<script src="js/vendor/3d-force-graph.min.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
