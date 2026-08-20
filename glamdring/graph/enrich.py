@@ -93,6 +93,58 @@ def guess_device_class(label: str) -> str:
     return "workstation"
 
 
+def annotate_tools(graph: GraphDoc) -> GraphDoc:
+    """Marca los nodos que son herramientas de intrusion conocidas.
+
+    Se resuelve mirando el nombre del ejecutable del propio nodo contra el
+    catalogo, en vez de correlar con los eventos: un nodo de proceso YA es la
+    identidad del binario, asi que la busqueda es directa y no hay que decidir
+    cual de los tres nodos que produjo un evento se lleva la etiqueta.
+
+    Que un nodo sea `rclone.exe` no lo convierte en malicioso: rclone es una
+    herramienta legitima. Lo que hace es ponerlo en la lista de cosas que mirar,
+    y por eso el papel sube a "sospechosa" pero nunca a "hostil".
+    """
+    try:
+        from ..threat.catalog import basename_of, catalog
+    except ImportError:  # pragma: no cover - el modulo es opcional
+        return graph
+
+    kb = catalog()
+    if not kb.available:
+        return graph
+
+    encontradas = 0
+    for node in graph.nodes:
+        if node.type not in ("process", "file"):
+            continue
+        # La clave de un proceso es '<host>|<ruta>'; la etiqueta es el nombre.
+        candidatos = [node.label]
+        ruta = node.props.get("path") or node.id.split("|", 1)[-1]
+        if ruta:
+            candidatos.append(str(ruta))
+
+        for candidato in candidatos:
+            nombre = kb.tool_for_binary(basename_of(candidato))
+            if not nombre:
+                continue
+            herramienta = kb.tools.get(nombre, {})
+            node.props["tool"] = {
+                "name": nombre,
+                "category": herramienta.get("category", ""),
+                "categoryLabel": herramienta.get("categoryLabel", ""),
+                "groups": herramienta.get("groups", []),
+            }
+            encontradas += 1
+            if node.props.get("role") in (None, ROLE_NEUTRAL, ROLE_ASSET):
+                node.props["role"] = ROLE_SUSPICIOUS
+            break
+
+    if encontradas:
+        graph.meta.counts["knownTools"] = encontradas
+    return graph
+
+
 def assign_roles(graph: GraphDoc) -> GraphDoc:
     """Escribe ``props.role`` y ``props.external`` en cada nodo.
 
@@ -327,8 +379,14 @@ def score(max_severity: int, tactics: int, degree: int, events: int,
 
 
 def enrich(graph: GraphDoc) -> GraphDoc:
-    """Pasada completa: roles y clusters. La llama ``query.build_filtered``."""
+    """Pasada completa: roles, herramientas conocidas y clusters.
+
+    El orden importa: las herramientas se anotan DESPUES de los roles porque
+    pueden elevar el papel de un nodo de contexto a sospechoso, y antes de los
+    clusters porque estos no dependen de nada de eso.
+    """
     assign_roles(graph)
+    annotate_tools(graph)
     assign_clusters(graph)
     return graph
 

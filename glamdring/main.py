@@ -23,6 +23,7 @@ from .api import (
     ingest_router,
     meta_router,
     report_router,
+    threat_router,
 )
 from .appearance import MODELS_DIR, load as load_appearance
 from .config import SETTINGS, WEB_DIR
@@ -71,6 +72,7 @@ app.include_router(ingest_router)
 app.include_router(graph_router)
 app.include_router(appearance_router)
 app.include_router(report_router)
+app.include_router(threat_router)
 
 
 @app.exception_handler(ConnectorError)

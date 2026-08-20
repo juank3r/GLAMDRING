@@ -14,6 +14,7 @@ from html import escape
 from typing import Any, Dict, List
 
 from ..graph import ontology
+from .threat_section import render_html as _threat_html
 
 # Colores adaptados a fondo blanco. Los de la interfaz estan pensados para
 # brillar sobre negro y sobre papel quedan lavados.
@@ -246,6 +247,8 @@ def render(report: Dict[str, Any]) -> str:
 
 <h2>Entidades implicadas</h2>
 {_entities(report)}
+
+{_threat_html(report)}
 
 <h2>Indicadores de compromiso</h2>
 {_iocs(report)}

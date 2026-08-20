@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 from ..graph import ontology
+from .threat_section import render_markdown as _threat_md
 
 
 def _fmt_time(iso: str) -> str:
@@ -90,6 +91,12 @@ def render(report: Dict[str, Any]) -> str:
           ", ".join(item["sources"])]
          for item in report["entities"][:40]],
     ))
+
+    # Va antes de los indicadores a proposito: primero se dice que esta pasando
+    # y en que fase, y despues los valores para bloquear.
+    threat = _threat_md(report)
+    if threat:
+        lines.append(threat)
 
     lines.append("\n## Indicadores de compromiso\n")
     any_ioc = False

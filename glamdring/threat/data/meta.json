@@ -1,0 +1,26 @@
+{
+ "caveat": "La atribucion por solape de herramientas es una HIPOTESIS, no un veredicto. Los grupos de ransomware comparten afiliados y casi todos usan las mismas utilidades. Sirve para orientar la busqueda, no para cerrar un caso.",
+ "counts": {
+  "groups": 17,
+  "groupsWithNotes": 12,
+  "ransomNotes": 299,
+  "tools": 305
+ },
+ "generated": "2026-08-20T15:47:10.107772+00:00",
+ "sources": [
+  {
+   "author": "BushidoUK",
+   "license": "CC BY 4.0",
+   "name": "Ransomware Tool Matrix",
+   "provides": "que herramientas usa cada grupo de ransomware, por categoria",
+   "url": "https://github.com/BushidoUK/Ransomware-Tool-Matrix"
+  },
+  {
+   "author": "Julien Mousqueton",
+   "license": "ver el sitio",
+   "name": "ransomware.live",
+   "provides": "indice de notas de rescate por grupo y metadatos de grupos",
+   "url": "https://www.ransomware.live/"
+  }
+ ]
+}

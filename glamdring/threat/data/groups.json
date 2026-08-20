@@ -1,0 +1,1348 @@
+{
+ "Akira": {
+  "aliases": [],
+  "description": "The Akira ransomware group is said to have emerged in March 2023, and there's much speculation about its ties to the former CONTI ransomware group.<br> <br> It's worth noting that with the end of CONTI's operation, several affiliates migrated to independent campaigns such as Royal, BlackBasta, and others.<br> <br> According to some reports, Akira affiliates also work with other ransomware operations, such as Snatch and BlackByte, as an open directory of tools used by an Akira operator was identified, which also had connections to the Snatch ransomware.<br> <br> The first version of the Akira r",
+  "name": "Akira",
+  "notes": [
+   "akira_readme.txt",
+   "akira_readme_2.txt",
+   "akira_readme_3.txt"
+  ],
+  "sources": [
+   {
+    "date": "18 April 2024",
+    "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-109a"
+   },
+   {
+    "date": "15 September 2023",
+    "url": "https://blog.bushidotoken.net/2023/09/tracking-adversaries-akira-another.html"
+   }
+  ],
+  "tools": [
+   "Advanced IP Scanner",
+   "AnyDesk",
+   "Cloudflared",
+   "DonPAPI",
+   "FileZilla",
+   "Impacket",
+   "LaZagne",
+   "MEGA",
+   "Masscan",
+   "Mimikatz",
+   "MobaXterm",
+   "Ngrok",
+   "OpenSSH",
+   "PowerTool",
+   "RClone",
+   "Radmin",
+   "ReconFTW",
+   "RustDesk",
+   "SharpHound",
+   "SoftPerfect NetScan",
+   "Temp.sh",
+   "WinSCP",
+   "Zemana Anti-Rootkit"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "DonPAPI",
+    "LaZagne",
+    "Mimikatz"
+   ],
+   "Defense Evasion": [
+    "PowerTool",
+    "Zemana Anti-Rootkit"
+   ],
+   "Discovery": [
+    "Advanced IP Scanner",
+    "Masscan",
+    "ReconFTW",
+    "SharpHound",
+    "SoftPerfect NetScan"
+   ],
+   "Exfiltration": [
+    "FileZilla",
+    "MEGA",
+    "RClone",
+    "Temp.sh",
+    "WinSCP"
+   ],
+   "Networking": [
+    "Cloudflared",
+    "OpenSSH",
+    "Ngrok"
+   ],
+   "OffSec": [
+    "Impacket"
+   ],
+   "RMM Tools": [
+    "AnyDesk",
+    "MobaXterm",
+    "Radmin",
+    "RustDesk"
+   ]
+  }
+ },
+ "Beast": {
+  "aliases": [
+   "GIGAKICK"
+  ],
+  "description": "Beast is a Ransomware-as-a-service (RaaS) product which provides functionality such as SMB scanning, file encryption, service and process starting and stopping, and geographic identification to avoid encryption in CIS countries.",
+  "name": "Beast",
+  "notes": [
+   "README.txt"
+  ],
+  "sources": [
+   {
+    "date": "18 March 2026",
+    "url": "https://www.team-cymru.com/post/beast-ransomware-server-toolkit-analysis"
+   }
+  ],
+  "tools": [
+   "Advanced IP Scanner",
+   "Advanced Port Scanner",
+   "AnyDesk",
+   "Automim",
+   "Everything.exe",
+   "Klink",
+   "LaZagne",
+   "MEGA",
+   "Mimikatz",
+   "OpenSSH",
+   "PsExec",
+   "SoftPerfect NetScan",
+   "WinSCP"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "Automim",
+    "LaZagne",
+    "Mimikatz"
+   ],
+   "Discovery": [
+    "Advanced IP Scanner",
+    "Advanced Port Scanner",
+    "Everything.exe",
+    "SoftPerfect NetScan"
+   ],
+   "Exfiltration": [
+    "MEGA",
+    "WinSCP"
+   ],
+   "LOLBAS": [
+    "PsExec"
+   ],
+   "Networking": [
+    "Klink",
+    "OpenSSH"
+   ],
+   "RMM Tools": [
+    "AnyDesk"
+   ]
+  }
+ },
+ "BianLian": {
+  "aliases": [],
+  "description": "BianLian ransomware operations began in late 2021. The group practices multi-pronged extortion, demanding payment for a decryptor, as well as the non-release of stolen data. The ransomware group hosts a public, TOR-based, blog to post victim identities and stolen data. Somewhat unique to BianLian at the time of their launch was their inclusion of an I2P mirror for their blog.",
+  "name": "BianLian",
+  "notes": [
+   "Look at this instruction.txt"
+  ],
+  "sources": [
+   {
+    "date": "26 March 2025",
+    "url": "https://www.welivesecurity.com/en/eset-research/shifting-sands-ransomhub-edrkillshifter/"
+   },
+   {
+    "date": "16 May 2023",
+    "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-136a"
+   }
+  ],
+  "tools": [
+   "Advanced IP Scanner",
+   "AmmyyAdmin",
+   "AnyDesk",
+   "Atera",
+   "Impacket",
+   "MEGA",
+   "PingCastle",
+   "PsExec",
+   "RClone",
+   "RDP Recognizer",
+   "ScreenConnect",
+   "SharpShares",
+   "SoftPerfect NetScan",
+   "Splashtop",
+   "TeamViewer",
+   "WKTools"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "RDP Recognizer"
+   ],
+   "Discovery": [
+    "Advanced IP Scanner",
+    "PingCastle",
+    "SharpShares",
+    "SoftPerfect NetScan",
+    "WKTools"
+   ],
+   "Exfiltration": [
+    "MEGA",
+    "RClone"
+   ],
+   "LOLBAS": [
+    "PsExec"
+   ],
+   "OffSec": [
+    "Impacket"
+   ],
+   "RMM Tools": [
+    "AmmyyAdmin",
+    "AnyDesk",
+    "Atera",
+    "ScreenConnect",
+    "Splashtop",
+    "TeamViewer"
+   ]
+  }
+ },
+ "BlackBasta": {
+  "aliases": [],
+  "description": "\"Black Basta\" is a new ransomware strain discovered during April 2022 - looks in dev since at least early February 2022 - and due to their ability to quickly amass new victims and the style of their negotiations, this is likely not a new operation but rather a rebrand of a previous top-tier ransomware gang that brought along their affiliates.",
+  "name": "BlackBasta",
+  "notes": [
+   "blackbasta1.txt",
+   "blackbasta2.txt",
+   "blackbasta3.txt",
+   "blackbasta4.txt",
+   "instructions_read_me.txt"
+  ],
+  "sources": [
+   {
+    "date": "29 July 2024",
+    "url": "https://cloud.google.com/blog/topics/threat-intelligence/unc4393-goes-gently-into-silentnight"
+   },
+   {
+    "date": "10 May 2024",
+    "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-131a"
+   },
+   {
+    "date": "12 October 2022",
+    "url": "https://www.trendmicro.com/en_ca/research/22/j/black-basta-infiltrates-networks-via-qakbot-brute-ratel-and-coba.html"
+   }
+  ],
+  "tools": [
+   "AdFind",
+   "AnyDesk",
+   "Atera",
+   "BITSAdmin",
+   "Backstab",
+   "Bloodhound",
+   "Brute Ratel (BRc4)",
+   "Cobalt Strike",
+   "Metasploit",
+   "Mimikatz",
+   "NetSupport",
+   "PSNmap",
+   "PowerSploit",
+   "PowerView",
+   "PsExec",
+   "Qaz.im",
+   "Rclone",
+   "ScreenConnect",
+   "SoftPerfect NetScan",
+   "Splashtop",
+   "Supremo"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "Mimikatz"
+   ],
+   "Defense Evasion": [
+    "Backstab"
+   ],
+   "Discovery": [
+    "AdFind",
+    "Bloodhound",
+    "PowerView",
+    "PSNmap",
+    "SoftPerfect NetScan"
+   ],
+   "Exfiltration": [
+    "Rclone",
+    "Qaz.im"
+   ],
+   "LOLBAS": [
+    "BITSAdmin",
+    "PsExec"
+   ],
+   "OffSec": [
+    "Brute Ratel (BRc4)",
+    "Cobalt Strike",
+    "Metasploit",
+    "PowerSploit"
+   ],
+   "RMM Tools": [
+    "AnyDesk",
+    "Atera",
+    "NetSupport",
+    "ScreenConnect",
+    "Splashtop",
+    "Supremo"
+   ]
+  }
+ },
+ "BlackSuit": {
+  "aliases": [],
+  "description": "According to Trend Micro, this ransomware has significant code overlap with Royal Ransomware.",
+  "name": "BlackSuit",
+  "notes": [
+   "README.BlackSuit.txt"
+  ],
+  "sources": [
+   {
+    "date": "10 February 2025",
+    "url": "https://connect.cybercx.com.au/dfir-threat-report-au-2025"
+   },
+   {
+    "date": "7 August 2024",
+    "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-061a"
+   }
+  ],
+  "tools": [
+   "AccountRestore",
+   "AdFind",
+   "Advanced IP Scanner",
+   "AnyDesk",
+   "Atera",
+   "Brute Ratel C4",
+   "Chisel",
+   "Cloudflared",
+   "Cobalt Strike",
+   "Eraser",
+   "GMER",
+   "LogMeIn",
+   "Mimikatz",
+   "MobaXterm",
+   "NirSoft Dialupass",
+   "NirSoft IEPassView (iepv)",
+   "NirSoft MailPassView",
+   "NirSoft Netpass",
+   "NirSoft RouterPassView",
+   "OpenSSH",
+   "PsExec",
+   "RClone",
+   "SharpShares",
+   "SoftPerfect NetScan"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "AccountRestore",
+    "Mimikatz",
+    "NirSoft Dialupass",
+    "NirSoft IEPassView (iepv)",
+    "NirSoft MailPassView",
+    "NirSoft Netpass",
+    "NirSoft RouterPassView"
+   ],
+   "Defense Evasion": [
+    "Eraser",
+    "GMER"
+   ],
+   "Discovery": [
+    "AdFind",
+    "Advanced IP Scanner",
+    "SharpShares",
+    "SoftPerfect NetScan"
+   ],
+   "Exfiltration": [
+    "RClone"
+   ],
+   "LOLBAS": [
+    "PsExec"
+   ],
+   "Networking": [
+    "Chisel",
+    "Cloudflared",
+    "OpenSSH"
+   ],
+   "OffSec": [
+    "Cobalt Strike",
+    "Brute Ratel C4"
+   ],
+   "RMM Tools": [
+    "AnyDesk",
+    "Atera",
+    "LogMeIn",
+    "MobaXterm"
+   ]
+  }
+ },
+ "DragonForce": {
+  "aliases": [],
+  "description": "DragonForce is a major ransomware-as-a-service operation first observed in August 2023 that launched a formal affiliate program offering 80% revenue share, then rebranded as a \"ransomware cartel\" in 2025, gaining notoriety for high-profile attacks on UK retailers Marks & Spencer, Co-op, and Harrods.",
+  "name": "DragonForce",
+  "notes": [
+   "[rand].README.txt"
+  ],
+  "sources": [
+   {
+    "date": "29 October 2025",
+    "url": "https://www.trendmicro.com/vinfo/us/security/news/ransomware-spotlight/ransomware-spotlight-dragonforce"
+   },
+   {
+    "date": "24 September 2024",
+    "url": "https://www.group-ib.com/blog/dragonforce-ransomware/"
+   }
+  ],
+  "tools": [
+   "ADVobfuscator",
+   "AdFind",
+   "Advanced IP Scanner",
+   "Cobalt Strike",
+   "Darkside/TrueSight driver (BYOVD)",
+   "Hangzhou Shunwang Technology driver (BYOVD)",
+   "LaZagne",
+   "MEGA",
+   "Mimikatz",
+   "PCHunter",
+   "PingCastle",
+   "ProcessHacker",
+   "PsExec",
+   "RClone",
+   "SoftPerfect NetScan"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "LaZagne",
+    "Mimikatz"
+   ],
+   "Defense Evasion": [
+    "ADVobfuscator",
+    "Darkside/TrueSight driver (BYOVD)",
+    "Hangzhou Shunwang Technology driver (BYOVD)",
+    "PCHunter",
+    "ProcessHacker"
+   ],
+   "Discovery": [
+    "AdFind",
+    "Advanced IP Scanner",
+    "PingCastle",
+    "SoftPerfect NetScan"
+   ],
+   "Exfiltration": [
+    "MEGA",
+    "RClone"
+   ],
+   "LOLBAS": [
+    "PsExec"
+   ],
+   "OffSec": [
+    "Cobalt Strike"
+   ]
+  }
+ },
+ "EvilCorp": {
+  "aliases": [],
+  "description": "",
+  "name": "EvilCorp",
+  "notes": [],
+  "sources": [
+   {
+    "date": "2 June 2022",
+    "url": "https://cloud.google.com/blog/topics/threat-intelligence/unc2165-shifts-to-evade-sanctions"
+   },
+   {
+    "date": "16 January 2025",
+    "url": "https://services.google.com/fh/files/misc/threat_horizons_report_h1_2025.pdf"
+   }
+  ],
+  "tools": [
+   "Advanced IP Scanner",
+   "Azure Blob Storage",
+   "Cobalt Strike",
+   "KeeThief",
+   "Lansweeper",
+   "MEGA",
+   "Mimikatz",
+   "Mythic",
+   "NetSupport",
+   "PsExec",
+   "RClone",
+   "SecretServerSecretStealer"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "KeeThief",
+    "Mimikatz",
+    "SecretServerSecretStealer"
+   ],
+   "Discovery": [
+    "Advanced IP Scanner",
+    "Lansweeper"
+   ],
+   "Exfiltration": [
+    "MEGA",
+    "RClone",
+    "Azure Blob Storage"
+   ],
+   "LOLBAS": [
+    "PsExec"
+   ],
+   "OffSec": [
+    "Cobalt Strike",
+    "Mythic"
+   ],
+   "RMM Tools": [
+    "NetSupport"
+   ]
+  }
+ },
+ "INC Ransom": {
+  "aliases": [],
+  "description": "",
+  "name": "INC Ransom",
+  "notes": [],
+  "sources": [
+   {
+    "date": "12 March 2026",
+    "url": "https://www.huntress.com/blog/data-exfiltration-threat-actor-infrastructure-exposed"
+   },
+   {
+    "date": "14 August 2024",
+    "url": "https://www.guidepointsecurity.com/blog/update-from-the-ransomware-trenches/"
+   },
+   {
+    "date": "1 May 2024",
+    "url": "https://www.huntress.com/blog/lolbin-to-inc-ransomware"
+   },
+   {
+    "date": "15 April 2024",
+    "url": "https://www.secureworks.com/blog/gold-ionic-deploys-inc-ransomware"
+   },
+   {
+    "date": "11 August 2023",
+    "url": "https://www.huntress.com/blog/investigating-new-inc-ransom-group-activity"
+   }
+  ],
+  "tools": [
+   "AdFind",
+   "Advanced IP Scanner",
+   "BackBlaze",
+   "Finger",
+   "MEGA",
+   "PsExec",
+   "RClone",
+   "Restic",
+   "s5cmd"
+  ],
+  "toolsByCategory": {
+   "Discovery": [
+    "AdFind",
+    "Advanced IP Scanner"
+   ],
+   "Exfiltration": [
+    "BackBlaze",
+    "MEGA",
+    "Restic",
+    "RClone",
+    "s5cmd"
+   ],
+   "LOLBAS": [
+    "Finger",
+    "PsExec"
+   ]
+  }
+ },
+ "Interlock": {
+  "aliases": [],
+  "description": "Interlock is a ransomware group first observed in September 2024 that targets critical infrastructure sectors including healthcare, government, education, and technology across North America and Europe using double-extortion, with 57+ claimed victims including a major US dialysis provider exposing over two million patient records.",
+  "name": "Interlock",
+  "notes": [
+   "!!!OPEN_ME!!!.txt",
+   "FIRST_READ_ME.txt",
+   "READ_THIS_ONE_FIRST.txt",
+   "README__.txt"
+  ],
+  "sources": [
+   {
+    "date": "22 July 2025",
+    "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa25-203a"
+   },
+   {
+    "date": "7 November 2024",
+    "url": "https://blog.talosintelligence.com/emerging-interlock-ransomware/"
+   }
+  ],
+  "tools": [
+   "AZCopy",
+   "Advanced Port Scanner",
+   "AnyDesk",
+   "Azure Storage Explorer",
+   "Cobalt Strike",
+   "ProcessHacker",
+   "PsExec",
+   "PuTTY",
+   "ScreenConnect",
+   "ThreatFire System Monitor driver",
+   "WinSCP"
+  ],
+  "toolsByCategory": {
+   "Defense Evasion": [
+    "ProcessHacker",
+    "ThreatFire System Monitor driver"
+   ],
+   "Discovery": [
+    "Advanced Port Scanner",
+    "Azure Storage Explorer"
+   ],
+   "Exfiltration": [
+    "AZCopy",
+    "WinSCP"
+   ],
+   "LOLBAS": [
+    "PsExec"
+   ],
+   "Networking": [
+    "PuTTY"
+   ],
+   "OffSec": [
+    "Cobalt Strike"
+   ],
+   "RMM Tools": [
+    "AnyDesk",
+    "ScreenConnect"
+   ]
+  }
+ },
+ "PLAY": {
+  "aliases": [],
+  "description": "Initially observed in June 2022, the Play ransomware (a.k.a PlayCrypt) operates through double extortion, targeting numerous organizations in Latin America. Its Initial Access method is quite similar to other ransomwares, involving attacks such as Phishing, Exposed Services to the Internet, and Valid Account compromises.<br> <br> On April 19, 2023, the security company Symantec published two new tools developed by the Play group. These tools allow the malicious actor to enumerate and exfiltrate data from the internal network. The post mentions the following: 'Play threat actors use the .NET in",
+  "name": "PLAY",
+  "notes": [
+   "README.txt",
+   "readme2.txt",
+   "play.txt"
+  ],
+  "sources": [
+   {
+    "date": "18 December 2023",
+    "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-352a"
+   }
+  ],
+  "tools": [
+   "AdFind",
+   "Cobalt Strike",
+   "GMER",
+   "IOBit",
+   "Mimikatz",
+   "Plink",
+   "PowerTool",
+   "PsExec",
+   "WinPEAS",
+   "WinSCP"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "Mimikatz"
+   ],
+   "Defense Evasion": [
+    "GMER",
+    "IOBit",
+    "PowerTool"
+   ],
+   "Discovery": [
+    "AdFind"
+   ],
+   "Exfiltration": [
+    "WinSCP"
+   ],
+   "LOLBAS": [
+    "PsExec"
+   ],
+   "Networking": [
+    "Plink"
+   ],
+   "OffSec": [
+    "Cobalt Strike",
+    "WinPEAS"
+   ]
+  }
+ },
+ "ProphetSpider": {
+  "aliases": [],
+  "description": "",
+  "name": "ProphetSpider",
+  "notes": [],
+  "sources": [
+   {
+    "date": "20 September 2023",
+    "url": "https://www.secureworks.com/research/gold-melody-profile-of-an-initial-access-broker"
+   },
+   {
+    "date": "23 March 2023",
+    "url": "https://cloud.google.com/blog/topics/threat-intelligence/unc961-multiverse-financially-motivated"
+   },
+   {
+    "date": "7 March 2022",
+    "url": "https://www.crowdstrike.com/blog/prophet-spider-exploits-citrix-sharefile"
+   },
+   {
+    "date": "4 August 2021",
+    "url": "https://www.crowdstrike.com/blog/prophet-spider-exploits-oracle-weblogic-to-facilitate-ransomware-activity"
+   }
+  ],
+  "tools": [
+   "BurpSuite",
+   "ConPtyShell",
+   "Godzilla Web Shell",
+   "Mimikatz",
+   "Minidump",
+   "PAExec",
+   "PSCP",
+   "PwnTools",
+   "Responder",
+   "TXPortMap",
+   "WinExe"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "Mimikatz"
+   ],
+   "Discovery": [
+    "TXPortMap"
+   ],
+   "Exfiltration": [
+    "PSCP"
+   ],
+   "LOLBAS": [
+    "PAExec",
+    "Minidump",
+    "WinExe"
+   ],
+   "OffSec": [
+    "BurpSuite",
+    "ConPtyShell",
+    "Godzilla Web Shell",
+    "PwnTools",
+    "Responder"
+   ]
+  }
+ },
+ "Qilin": {
+  "aliases": [],
+  "description": "Qilin ransomware was first observed in July of 2022. Qilin Ransomware is written in Golang and supports multiple encryption modes; all of which are controlled by the operator. Qilin actors practice double extortion – demanding payment for a decryptor, as well as for the non-release of stolen data.",
+  "name": "Qilin",
+  "notes": [
+   "DtMXQFOCos-RECOVER-README.txt",
+   "README-RECOVER-[rand].txt",
+   "README-RECOVER-[rand]_2.txt"
+  ],
+  "sources": [
+   {
+    "date": "25 April 2025",
+    "url": "https://redpiranha.net/news/qilin-ransomware-all-you-need-know"
+   },
+   {
+    "date": "1 April 2025",
+    "url": "https://news.sophos.com/en-us/2025/04/01/sophos-mdr-tracks-ongoing-campaign-by-qilin-affiliates-targeting-screenconnect/"
+   },
+   {
+    "date": "10 March 2025",
+    "url": "https://www.picussecurity.com/resource/blog/qilin-ransomware"
+   },
+   {
+    "date": "19 June 2024",
+    "url": "https://www.secureworks.com/research/threat-profiles/gold-feather"
+   },
+   {
+    "date": "26 March 2024",
+    "url": "https://www.trendmicro.com/en_us/research/24/c/agenda-ransomware-propagates-to-vcenters-and-esxi-via-custom-pow.html"
+   },
+   {
+    "date": "25 August 2022",
+    "url": "https://www.trendmicro.com/en_us/research/22/h/new-golang-ransomware-agenda-customizes-attacks.html"
+   }
+  ],
+  "tools": [
+   "Cobalt Strike",
+   "EDRSandBlast",
+   "EasyUpload",
+   "Evilginx",
+   "Mimikatz",
+   "NetExec",
+   "Nmap",
+   "Nping",
+   "PCHunter",
+   "PowerTool",
+   "Proxychains",
+   "PsExec",
+   "ScreenConnect",
+   "Toshiba power management driver (BYOVD)",
+   "WinRM",
+   "YDArk",
+   "Zemana Anti-Rootkit driver",
+   "fsutil"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "Mimikatz"
+   ],
+   "Defense Evasion": [
+    "EDRSandBlast",
+    "PCHunter",
+    "PowerTool",
+    "Toshiba power management driver (BYOVD)",
+    "YDArk",
+    "Zemana Anti-Rootkit driver"
+   ],
+   "Discovery": [
+    "Nmap",
+    "Nping"
+   ],
+   "Exfiltration": [
+    "EasyUpload"
+   ],
+   "LOLBAS": [
+    "fsutil",
+    "PsExec",
+    "WinRM"
+   ],
+   "Networking": [
+    "Proxychains"
+   ],
+   "OffSec": [
+    "Cobalt Strike",
+    "Evilginx",
+    "NetExec"
+   ],
+   "RMM Tools": [
+    "ScreenConnect"
+   ]
+  }
+ },
+ "SafePay": {
+  "aliases": [],
+  "description": "SafePay emerged in September 2024 as a rapidly growing ransomware operation that explicitly disavows the RaaS model and manages all operations internally, claiming over 300 victims worldwide by mid-2025 with a high-profile early attack against UK telematics firm Microlise stealing 1.2 TB of data.",
+  "name": "SafePay",
+  "notes": [
+   "readme_safepay.txt",
+   "readme_safepay_ascii.txt"
+  ],
+  "sources": [],
+  "tools": [
+   "7zip",
+   "CMSTPLUA",
+   "FileZilla",
+   "Invoke-ShareFinder",
+   "Microsoft RDP",
+   "Regsvr32.exe",
+   "WinRAR",
+   "dllhost.exe"
+  ],
+  "toolsByCategory": {
+   "Discovery": [
+    "Invoke-ShareFinder"
+   ],
+   "Exfiltration": [
+    "FileZilla",
+    "7zip",
+    "WinRAR"
+   ],
+   "LOLBAS": [
+    "Regsvr32.exe",
+    "CMSTPLUA",
+    "dllhost.exe"
+   ],
+   "RMM Tools": [
+    "Microsoft RDP"
+   ]
+  }
+ },
+ "ScatteredSpider": {
+  "aliases": [],
+  "description": "",
+  "name": "ScatteredSpider",
+  "notes": [],
+  "sources": [
+   {
+    "date": "2 July 2025",
+    "url": "https://www.crowdstrike.com/en-us/blog/crowdstrike-services-observes-scattered-spider-escalate-attacks/"
+   },
+   {
+    "date": "8 March 2024",
+    "url": "https://unit42.paloaltonetworks.com/muddled-libra"
+   },
+   {
+    "date": "22 February 2024",
+    "url": "https://blog.sekoia.io/scattered-spider-laying-new-eggs"
+   },
+   {
+    "date": "16 November 2023",
+    "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a"
+   },
+   {
+    "date": "20 September 2023",
+    "url": "https://permiso.io/blog/lucr-3-scattered-spider-getting-saas-y-in-the-cloud"
+   },
+   {
+    "date": "14 September 2023",
+    "url": "https://cloud.google.com/blog/topics/threat-intelligence/unc3944-sms-phishing-sim-swapping-ransomware"
+   },
+   {
+    "date": "2 December 2022",
+    "url": "https://www.crowdstrike.com/blog/analysis-of-intrusion-campaign-targeting-telecom-and-bpo-companies"
+   },
+   {
+    "date": "23 April 2024",
+    "url": "https://redcanary.com/threat-detection-report/trends/rmm-tools/"
+   }
+  ],
+  "tools": [
+   "ADExplorer",
+   "ADRecon",
+   "ASG Remote Desktop",
+   "AWS Systems Manager Inventory",
+   "BeAnywhere",
+   "Bedevil",
+   "CIMplant",
+   "Chisel",
+   "Chrome Remote Desktop",
+   "Cloudflared",
+   "Cyberduck",
+   "DWAgent",
+   "Domotz",
+   "Dropbox",
+   "FileZilla",
+   "Fleetdeck",
+   "Get-ADUser",
+   "GitGuardian",
+   "ITarian",
+   "Impacket",
+   "Jecretz",
+   "LAPS Toolkit",
+   "LINpeas",
+   "Level.io",
+   "MAGNET RAM Capture",
+   "MEGA",
+   "MIT Kerberos Ticket Manager",
+   "ManageEngine LANDESK",
+   "ManageEngineRMM",
+   "MicroBurst",
+   "Mimikatz",
+   "MobaXterm",
+   "NSOCKS",
+   "Ngrok",
+   "OpenSSH",
+   "PDQ Inventory",
+   "Pacu",
+   "Parsec",
+   "PingCastle",
+   "Pinggy",
+   "Plink",
+   "ProcDump",
+   "Proxifier",
+   "PsExec",
+   "Pulseway",
+   "RClone",
+   "RPort",
+   "RSAT",
+   "RVTools",
+   "RemotePC",
+   "Rsocx",
+   "RustDesk",
+   "RustScan",
+   "S3 Browser",
+   "ScreenConnect",
+   "SharpHound",
+   "Snaffler",
+   "Socat",
+   "Sorillus",
+   "Splashtop",
+   "Sshimpanzee",
+   "TacticalRMM",
+   "Tailscale",
+   "TeamViewer",
+   "Teleport",
+   "TightVNC",
+   "TrendMicro Basecamp",
+   "TrueSocks",
+   "Trufflehog",
+   "TryCloudflare",
+   "Twingate",
+   "VMware PowerCLI",
+   "Volatility",
+   "Wstunnel",
+   "Xeox",
+   "ZeroTier",
+   "ZohoAssist",
+   "aws_consoler"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "aws_consoler",
+    "GitGuardian",
+    "Jecretz",
+    "MAGNET RAM Capture",
+    "Mimikatz",
+    "MIT Kerberos Ticket Manager",
+    "ProcDump",
+    "Snaffler",
+    "Trufflehog",
+    "Volatility"
+   ],
+   "Defense Evasion": [
+    "Bedevil"
+   ],
+   "Discovery": [
+    "ADExplorer",
+    "ADRecon",
+    "AWS Systems Manager Inventory",
+    "ManageEngine LANDESK",
+    "PDQ Inventory",
+    "PingCastle",
+    "RustScan",
+    "RVTools",
+    "SharpHound",
+    "VMware PowerCLI",
+    "Get-ADUser"
+   ],
+   "Exfiltration": [
+    "Cyberduck",
+    "Dropbox",
+    "FileZilla",
+    "MEGA",
+    "RClone",
+    "S3 Browser"
+   ],
+   "LOLBAS": [
+    "PsExec"
+   ],
+   "Networking": [
+    "Cloudflared",
+    "OpenSSH",
+    "Ngrok",
+    "NSOCKS",
+    "Plink",
+    "Proxifier",
+    "Rsocx",
+    "Socat",
+    "Sshimpanzee",
+    "Tailscale",
+    "TrueSocks",
+    "Wstunnel",
+    "Pinggy",
+    "Teleport",
+    "Chisel",
+    "TryCloudflare",
+    "Twingate"
+   ],
+   "OffSec": [
+    "CIMplant",
+    "Impacket",
+    "LAPS Toolkit",
+    "LINpeas",
+    "MicroBurst",
+    "Pacu"
+   ],
+   "RMM Tools": [
+    "ASG Remote Desktop",
+    "BeAnywhere",
+    "Chrome Remote Desktop",
+    "Domotz",
+    "DWAgent",
+    "Fleetdeck",
+    "ITarian",
+    "Level.io",
+    "ManageEngineRMM",
+    "MobaXterm",
+    "Parsec",
+    "Pulseway",
+    "RemotePC",
+    "RPort",
+    "RSAT",
+    "RustDesk",
+    "ScreenConnect",
+    "Sorillus",
+    "Splashtop",
+    "TacticalRMM",
+    "TeamViewer",
+    "TightVNC",
+    "TrendMicro Basecamp",
+    "Xeox",
+    "ZeroTier",
+    "ZohoAssist"
+   ]
+  }
+ },
+ "TheGentlemen": {
+  "aliases": [
+   "Storm-2697"
+  ],
+  "description": "The Gentlemen is a RaaS group that emerged in July–August 2025, rapidly claiming over 320 victims across 17+ countries by offering affiliates a 90% revenue share, deploying a Go-based locker against Windows, Linux, NAS, and BSD systems; a compromised C2 server in 2026 revealed more than 1,570 linked victims.",
+  "name": "TheGentlemen",
+  "notes": [
+   "README-GENTLEMEN.txt",
+   "README-GENTLEMEN_2.txt",
+   "README-GENTLEMEN_3.txt"
+  ],
+  "sources": [
+   {
+    "date": "15 May 2026",
+    "url": "https://ransom-isac.com/blog/the-gentlemen-leak-analysis/"
+   },
+   {
+    "date": "14 May 2026",
+    "url": "https://www.kelacyber.com/blog/the-gentlemen-ransomware-internal-chat-leak-analysis-2026/"
+   },
+   {
+    "date": "13 May 2026",
+    "url": "https://research.checkpoint.com/2026/thus-spoke-the-gentlemen/"
+   },
+   {
+    "date": "9 September 2025",
+    "url": "https://www.trendmicro.com/en_us/research/25/i/unmasking-the-gentlemen-ransomware.html"
+   }
+  ],
+  "tools": [
+   "API-C99-NL",
+   "Advanced IP Scanner",
+   "Amnezia VPN",
+   "AnyDesk",
+   "Censys",
+   "CertiHound",
+   "Chisel",
+   "Cloudflared",
+   "DumpBrowserSecrets",
+   "EDRStartupHinder",
+   "FreeRDP",
+   "Gogo",
+   "Impacket",
+   "KslDump",
+   "KslKatz",
+   "MANSPIDER",
+   "MeshAgent",
+   "Mimikatz",
+   "NetExec",
+   "Nmap",
+   "OpenSSH",
+   "OpenVPN",
+   "PowerRun",
+   "PowerZure",
+   "PrivHound",
+   "Proxychains",
+   "PsExec",
+   "PuTTY",
+   "RedSun",
+   "RegPwn",
+   "RelayKing-Depth",
+   "Responder",
+   "Shodan",
+   "SoftPerfect NetScan",
+   "TaskHound",
+   "ThrottleStop driver (BYOVD)",
+   "Titanis",
+   "Velociraptor",
+   "WinSCP",
+   "Wireguard VPN",
+   "ZeroPulse"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "DumpBrowserSecrets",
+    "KslKatz",
+    "Mimikatz"
+   ],
+   "Defense Evasion": [
+    "EDRStartupHinder",
+    "KslDump",
+    "PowerRun",
+    "RedSun",
+    "ThrottleStop driver (BYOVD)"
+   ],
+   "Discovery": [
+    "Advanced IP Scanner",
+    "API-C99-NL",
+    "Censys",
+    "CertiHound",
+    "Gogo",
+    "MANSPIDER",
+    "Nmap",
+    "PrivHound",
+    "RelayKing-Depth",
+    "Shodan",
+    "SoftPerfect NetScan",
+    "TaskHound"
+   ],
+   "Exfiltration": [
+    "WinSCP"
+   ],
+   "LOLBAS": [
+    "PsExec"
+   ],
+   "Networking": [
+    "Amnezia VPN",
+    "Chisel",
+    "Cloudflared",
+    "OpenSSH",
+    "OpenVPN",
+    "Proxychains",
+    "PuTTY",
+    "Wireguard VPN"
+   ],
+   "OffSec": [
+    "Impacket",
+    "NetExec",
+    "PowerZure",
+    "RegPwn",
+    "Responder",
+    "Titanis",
+    "Velociraptor",
+    "ZeroPulse"
+   ],
+   "RMM Tools": [
+    "AnyDesk",
+    "FreeRDP",
+    "MeshAgent"
+   ]
+  }
+ },
+ "Warlock": {
+  "aliases": [],
+  "description": "The Warlock ransomware and operator(s) are believed to be attributed to Storm-2603, a China-based threat actor who is also known to have deployed LockBit ransomware. There's also a crossover between victims with Black Basta. Both are RaaS and have a long list of known and unknown affiliates. Having said that, this is possibly an affiliate (likely a cybergroup) of both of those groups. The Alliance & Association would technically be Encryptor Sharing, but this is realistically more of an \"Old Affiliate\" that created their own ransomware encryptor and operation.",
+  "name": "Warlock",
+  "notes": [
+   "How to decrypt my data.txt",
+   "How_to_decrypt_my_data.txt"
+  ],
+  "sources": [
+   {
+    "date": "16 March 2026",
+    "url": "https://www.trendmicro.com/en_us/research/26/c/dissecting-a-warlock-attack.html"
+   },
+   {
+    "date": "11 December 2025",
+    "url": "https://www.sophos.com/en-us/blog/gold-salem-tradecraft-for-deploying-warlock-ransomware"
+   },
+   {
+    "date": "9 October 2025",
+    "url": "https://blog.talosintelligence.com/velociraptor-leveraged-in-ransomware-attacks/"
+   }
+  ],
+  "tools": [
+   "Azure Blog Storage",
+   "Catbox.moe",
+   "Cloudflared",
+   "Cobalt Strike",
+   "Everything.exe",
+   "Impacket",
+   "Mimikatz",
+   "MinIO",
+   "Minidump",
+   "Msiexec",
+   "NsecSoft driver (BYOVD)",
+   "OpenSSH",
+   "PowerShell Remoting (PSRemoting)",
+   "PsExec",
+   "RClone",
+   "RDP Patcher",
+   "Radmin",
+   "Rising Antivirus driver (BYOVD)",
+   "SecurityCheck",
+   "Supabase",
+   "TightVNC",
+   "VMTools AV Killer (BYOVD)",
+   "VS Code Tunnel",
+   "Veeam-Get-Creds",
+   "Velociraptor",
+   "Yuze"
+  ],
+  "toolsByCategory": {
+   "Credential Theft": [
+    "Mimikatz",
+    "Veeam-Get-Creds"
+   ],
+   "Defense Evasion": [
+    "NsecSoft driver (BYOVD)",
+    "Rising Antivirus driver (BYOVD)",
+    "VMTools AV Killer (BYOVD)"
+   ],
+   "Discovery": [
+    "Everything.exe",
+    "SecurityCheck"
+   ],
+   "Exfiltration": [
+    "RClone"
+   ],
+   "LOLBAS": [
+    "Minidump",
+    "Msiexec",
+    "PsExec",
+    "PowerShell Remoting (PSRemoting)",
+    "RDP Patcher"
+   ],
+   "Networking": [
+    "Azure Blog Storage",
+    "Catbox.moe",
+    "Cloudflared",
+    "OpenSSH",
+    "MinIO",
+    "Supabase",
+    "VS Code Tunnel",
+    "Yuze"
+   ],
+   "OffSec": [
+    "Cobalt Strike",
+    "Velociraptor",
+    "Impacket"
+   ],
+   "RMM Tools": [
+    "Radmin",
+    "TightVNC"
+   ]
+  }
+ },
+ "Yurei": {
+  "aliases": [],
+  "description": "Yurei is a ransomware group first observed in September 2025 whose payload is a minimally modified fork of the open-source Prince-Ransomware, using ChaCha20 encryption and propagating across SMB shares, primarily targeting food manufacturing, transportation, and IT sectors in Sri Lanka and Nigeria.",
+  "name": "Yurei",
+  "notes": [],
+  "sources": [
+   {
+    "date": "1 April 2026",
+    "url": "https://www.team-cymru.com/post/yurei-double-extortion-ransomware-campaign-toolkit"
+   }
+  ],
+  "tools": [
+   "AnyDesk",
+   "Everything.exe",
+   "Invoke-TheHash",
+   "NetExec",
+   "PsExec",
+   "Rubeus",
+   "SDelete",
+   "SoftPerfect NetScan",
+   "winPEAS"
+  ],
+  "toolsByCategory": {
+   "Discovery": [
+    "Everything.exe",
+    "SoftPerfect NetScan"
+   ],
+   "LOLBAS": [
+    "PsExec",
+    "SDelete"
+   ],
+   "OffSec": [
+    "Invoke-TheHash",
+    "winPEAS",
+    "NetExec",
+    "Rubeus"
+   ],
+   "RMM Tools": [
+    "AnyDesk"
+   ]
+  }
+ }
+}

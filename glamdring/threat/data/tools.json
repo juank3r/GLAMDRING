@@ -1,0 +1,4401 @@
+{
+ "7zip": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "SafePay"
+  ],
+  "name": "7zip",
+  "patterns": [
+   "7z.exe",
+   "7za.exe",
+   "7zg.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "ADExplorer": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "ADExplorer",
+  "patterns": [
+   "adexplorer.exe",
+   "adexplorer64.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "ADRecon": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "ADRecon",
+  "patterns": [
+   "adrecon.ps1"
+  ],
+  "tactic": "discovery"
+ },
+ "ADVobfuscator": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "DragonForce"
+  ],
+  "name": "ADVobfuscator",
+  "patterns": [
+   "advobfuscator.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "API-C99-NL": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "API-C99-NL",
+  "patterns": [
+   "api-c99-nl.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "ASG Remote Desktop": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "ASG Remote Desktop",
+  "patterns": [
+   "asg-remote-desktop.exe",
+   "asg_remote_desktop.exe",
+   "asgremotedesktop.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "AWS Systems Manager Inventory": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "AWS Systems Manager Inventory",
+  "patterns": [
+   "aws-systems-manager-inventory.exe",
+   "aws_systems_manager_inventory.exe",
+   "awssystemsmanagerinventory.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "AZCopy": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Interlock"
+  ],
+  "name": "AZCopy",
+  "patterns": [
+   "azcopy.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "AccountRestore": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackSuit"
+  ],
+  "name": "AccountRestore",
+  "patterns": [
+   "accountrestore.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Action1": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Action1",
+  "patterns": [
+   "action1_agent.exe",
+   "action1.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "AdFind": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta",
+   "BlackSuit",
+   "DragonForce",
+   "INC Ransom",
+   "PLAY"
+  ],
+  "name": "AdFind",
+  "patterns": [
+   "adfind.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Advanced IP Scanner": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "Beast",
+   "BianLian",
+   "BlackSuit",
+   "DragonForce",
+   "EvilCorp",
+   "INC Ransom",
+   "TheGentlemen"
+  ],
+  "name": "Advanced IP Scanner",
+  "patterns": [
+   "advanced_ip_scanner.exe",
+   "advanced_ip_scanner_console.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Advanced Port Scanner": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Beast",
+   "Interlock"
+  ],
+  "name": "Advanced Port Scanner",
+  "patterns": [
+   "advanced_port_scanner.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "AmmyyAdmin": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BianLian"
+  ],
+  "name": "AmmyyAdmin",
+  "patterns": [
+   "ammyyadmin.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Amnezia VPN": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "Amnezia VPN",
+  "patterns": [
+   "amnezia-vpn.exe",
+   "amnezia_vpn.exe",
+   "amneziavpn.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Angry IP Scanner": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Angry IP Scanner",
+  "patterns": [
+   "ipscan.exe",
+   "angryip.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Anonfiles": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Anonfiles",
+  "patterns": [
+   "anonfiles.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "AnyDesk": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "Beast",
+   "BianLian",
+   "BlackBasta",
+   "BlackSuit",
+   "Interlock",
+   "TheGentlemen",
+   "Yurei"
+  ],
+  "name": "AnyDesk",
+  "patterns": [
+   "anydesk.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Atera": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BianLian",
+   "BlackBasta",
+   "BlackSuit"
+  ],
+  "name": "Atera",
+  "patterns": [
+   "ateraagent.exe",
+   "atera.exe",
+   "syncrosetup.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Automim": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Beast"
+  ],
+  "name": "Automim",
+  "patterns": [
+   "automim.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Avast Anti-Rootkit driver": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Avast Anti-Rootkit driver",
+  "patterns": [
+   "avast-anti-rootkit-driver.exe",
+   "avast_anti-rootkit_driver.exe",
+   "avastanti-rootkitdriver.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Azure Blob Storage": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "EvilCorp"
+  ],
+  "name": "Azure Blob Storage",
+  "patterns": [
+   "azure-blob-storage.exe",
+   "azure_blob_storage.exe",
+   "azureblobstorage.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Azure Blog Storage": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "Azure Blog Storage",
+  "patterns": [
+   "azure-blog-storage.exe",
+   "azure_blog_storage.exe",
+   "azureblogstorage.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Azure Storage Explorer": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Interlock"
+  ],
+  "name": "Azure Storage Explorer",
+  "patterns": [
+   "azure-storage-explorer.exe",
+   "azure_storage_explorer.exe",
+   "azurestorageexplorer.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "BCDEdit": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "BCDEdit",
+  "patterns": [
+   "bcdedit.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "BEST_uninstallTool": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "BEST_uninstallTool",
+  "patterns": [
+   "best_uninstalltool.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "BITSAdmin": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta"
+  ],
+  "name": "BITSAdmin",
+  "patterns": [
+   "bitsadmin.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "BackBlaze": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "INC Ransom"
+  ],
+  "name": "BackBlaze",
+  "patterns": [
+   "backblaze.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Backstab": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta"
+  ],
+  "name": "Backstab",
+  "patterns": [
+   "backstab.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Bashupload": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Bashupload",
+  "patterns": [
+   "bashupload.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "BeAnywhere": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "BeAnywhere",
+  "patterns": [
+   "beanywhere.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Bedevil": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Bedevil",
+  "patterns": [
+   "bdvl"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "BetterSafetyKatz": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "BetterSafetyKatz",
+  "patterns": [
+   "bettersafetykatz.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Bloodhound": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta"
+  ],
+  "name": "Bloodhound",
+  "patterns": [
+   "sharphound.exe",
+   "azurehound.exe",
+   "bloodhound.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Brute Ratel (BRc4)": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta"
+  ],
+  "name": "Brute Ratel (BRc4)",
+  "patterns": [
+   "brute-ratel-(brc4).exe",
+   "brute_ratel_(brc4).exe",
+   "bruteratelbrc4.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Brute Ratel C4": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BlackSuit"
+  ],
+  "name": "Brute Ratel C4",
+  "patterns": [
+   "bruteratel",
+   "badger.exe"
+  ],
+  "tactic": "execution"
+ },
+ "BurpSuite": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ProphetSpider"
+  ],
+  "name": "BurpSuite",
+  "patterns": [
+   "burpsuite.exe"
+  ],
+  "tactic": "execution"
+ },
+ "CIMplant": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "CIMplant",
+  "patterns": [
+   "cimplant.exe"
+  ],
+  "tactic": "execution"
+ },
+ "CMSTPLUA": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "SafePay"
+  ],
+  "name": "CMSTPLUA",
+  "patterns": [
+   "cmstplua.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Catbox.moe": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "Catbox.moe",
+  "patterns": [
+   "catbox.moe.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Censys": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "Censys",
+  "patterns": [
+   "censys.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Cent Browser": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Cent Browser",
+  "patterns": [
+   "cent-browser.exe",
+   "cent_browser.exe",
+   "centbrowser.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "CertiHound": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "CertiHound",
+  "patterns": [
+   "certihound.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Chashell": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Chashell",
+  "patterns": [
+   "chashell.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Chisel": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BlackSuit",
+   "ScatteredSpider",
+   "TheGentlemen"
+  ],
+  "name": "Chisel",
+  "patterns": [
+   "chisel.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Chrome Remote Desktop": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Chrome Remote Desktop",
+  "patterns": [
+   "chrome-remote-desktop.exe",
+   "chrome_remote_desktop.exe",
+   "chromeremotedesktop.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Cloudflared": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "BlackSuit",
+   "ScatteredSpider",
+   "TheGentlemen",
+   "Warlock"
+  ],
+  "name": "Cloudflared",
+  "patterns": [
+   "cloudflared.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Cobalt Strike": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta",
+   "BlackSuit",
+   "DragonForce",
+   "EvilCorp",
+   "Interlock",
+   "PLAY",
+   "Qilin",
+   "Warlock"
+  ],
+  "name": "Cobalt Strike",
+  "patterns": [
+   "beacon.exe",
+   "artifact.exe",
+   "cobaltstrike"
+  ],
+  "tactic": "execution"
+ },
+ "ConPtyShell": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ProphetSpider"
+  ],
+  "name": "ConPtyShell",
+  "patterns": [
+   "conptyshell.exe"
+  ],
+  "tactic": "execution"
+ },
+ "CrackMapExec": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "CrackMapExec",
+  "patterns": [
+   "crackmapexec.exe",
+   "cme.exe",
+   "nxc.exe",
+   "netexec.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Cyberduck": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Cyberduck",
+  "patterns": [
+   "cyberduck.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "DWAgent": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "DWAgent",
+  "patterns": [
+   "dwagent.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Darkside/TrueSight driver (BYOVD)": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "DragonForce"
+  ],
+  "name": "Darkside/TrueSight driver (BYOVD)",
+  "patterns": [
+   "darkside/truesight-driver-(byovd).exe",
+   "darkside/truesight_driver_(byovd).exe",
+   "darksidetruesightdriverbyovd.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Defender Control": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Defender Control",
+  "patterns": [
+   "dcontrol.exe",
+   "defendercontrol.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Dell Client driver": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Dell Client driver",
+  "patterns": [
+   "dell-client-driver.exe",
+   "dell_client_driver.exe",
+   "dellclientdriver.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Domotz": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Domotz",
+  "patterns": [
+   "domotz.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "DonPAPI": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Akira"
+  ],
+  "name": "DonPAPI",
+  "patterns": [
+   "donpapi.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Dropbox": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Dropbox",
+  "patterns": [
+   "dropbox.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Dropfiles": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Dropfiles",
+  "patterns": [
+   "dropfiles.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Dropmefiles": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Dropmefiles",
+  "patterns": [
+   "dropmefiles.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Dsquery": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Dsquery",
+  "patterns": [
+   "dsquery.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "DumpBrowserSecrets": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "DumpBrowserSecrets",
+  "patterns": [
+   "dumpbrowsersecrets.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "EDRSandBlast": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Qilin"
+  ],
+  "name": "EDRSandBlast",
+  "patterns": [
+   "edrsandblast.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "EDRStartupHinder": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "EDRStartupHinder",
+  "patterns": [
+   "edrstartuphinder.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "EMCO UnLock IT": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "EMCO UnLock IT",
+  "patterns": [
+   "emco-unlock-it.exe",
+   "emco_unlock_it.exe",
+   "emcounlockit.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "EasyUpload": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Qilin"
+  ],
+  "name": "EasyUpload",
+  "patterns": [
+   "easyupload.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Eraser": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BlackSuit"
+  ],
+  "name": "Eraser",
+  "patterns": [
+   "eraser.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Everything.exe": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Beast",
+   "Warlock",
+   "Yurei"
+  ],
+  "name": "Everything.exe",
+  "patterns": [
+   "everything.exe.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Evilginx": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Qilin"
+  ],
+  "name": "Evilginx",
+  "patterns": [
+   "evilginx.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Evilginx2": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Evilginx2",
+  "patterns": [
+   "evilginx.exe",
+   "evilginx"
+  ],
+  "tactic": "execution"
+ },
+ "File.io": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "File.io",
+  "patterns": [
+   "file.io.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "FileShredder": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "FileShredder",
+  "patterns": [
+   "fileshredder.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "FileZilla": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "SafePay",
+   "ScatteredSpider"
+  ],
+  "name": "FileZilla",
+  "patterns": [
+   "filezilla.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Finger": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "INC Ransom"
+  ],
+  "name": "Finger",
+  "patterns": [
+   "finger.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "FixMeIt": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "FixMeIt",
+  "patterns": [
+   "fixmeit.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Fleetdeck": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Fleetdeck",
+  "patterns": [
+   "fleetdeck.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "FreeFileSync": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "FreeFileSync",
+  "patterns": [
+   "freefilesync.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "FreeRDP": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "FreeRDP",
+  "patterns": [
+   "freerdp.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "GIGABYTE Motherboard driver": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "GIGABYTE Motherboard driver",
+  "patterns": [
+   "gigabyte-motherboard-driver.exe",
+   "gigabyte_motherboard_driver.exe",
+   "gigabytemotherboarddriver.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "GMER": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BlackSuit",
+   "PLAY"
+  ],
+  "name": "GMER",
+  "patterns": [
+   "gmer.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Get-ADUser": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Get-ADUser",
+  "patterns": [
+   "get-aduser.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "GitGuardian": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "GitGuardian",
+  "patterns": [
+   "gitguardian.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Godzilla Web Shell": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ProphetSpider"
+  ],
+  "name": "Godzilla Web Shell",
+  "patterns": [
+   "godzilla-web-shell.exe",
+   "godzilla_web_shell.exe",
+   "godzillawebshell.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Gofile[.io]": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Gofile[.io]",
+  "patterns": [
+   "gofile.io.exe",
+   "gofile[.io].exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Gogo": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "Gogo",
+  "patterns": [
+   "gogo.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Gosecretsdump": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Gosecretsdump",
+  "patterns": [
+   "gosecretsdump.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "GrabChrome": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "GrabChrome",
+  "patterns": [
+   "grabchrome.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "GrabFF": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "GrabFF",
+  "patterns": [
+   "grabff.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Hangzhou Shunwang Technology driver (BYOVD)": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "DragonForce"
+  ],
+  "name": "Hangzhou Shunwang Technology driver (BYOVD)",
+  "patterns": [
+   "hangzhou-shunwang-technology-driver-(byovd).exe",
+   "hangzhou_shunwang_technology_driver_(byovd).exe",
+   "hangzhoushunwangtechnologydriverbyovd.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "IOBit": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "PLAY"
+  ],
+  "name": "IOBit",
+  "patterns": [
+   "iobit.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "ITarian": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "ITarian",
+  "patterns": [
+   "itarian.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Impacket": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "BianLian",
+   "ScatteredSpider",
+   "TheGentlemen",
+   "Warlock"
+  ],
+  "name": "Impacket",
+  "patterns": [
+   "wmiexec.py",
+   "smbexec.py",
+   "psexec.py",
+   "secretsdump.py",
+   "atexec.py"
+  ],
+  "tactic": "execution"
+ },
+ "Invoke-ShareFinder": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "SafePay"
+  ],
+  "name": "Invoke-ShareFinder",
+  "patterns": [
+   "invoke-sharefinder.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Invoke-TheHash": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Yurei"
+  ],
+  "name": "Invoke-TheHash",
+  "patterns": [
+   "invoke-thehash.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Jecretz": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Jecretz",
+  "patterns": [
+   "jecretz.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "KAV Removal Tool": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "KAV Removal Tool",
+  "patterns": [
+   "kav-removal-tool.exe",
+   "kav_removal_tool.exe",
+   "kavremovaltool.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "KeeThief": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "EvilCorp"
+  ],
+  "name": "KeeThief",
+  "patterns": [
+   "keethief.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Kerbrute": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Kerbrute",
+  "patterns": [
+   "kerbrute.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Klink": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Beast"
+  ],
+  "name": "Klink",
+  "patterns": [
+   "klink.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Koadic": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Koadic",
+  "patterns": [
+   "koadic.exe"
+  ],
+  "tactic": "execution"
+ },
+ "KslDump": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "KslDump",
+  "patterns": [
+   "ksldump.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "KslKatz": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "KslKatz",
+  "patterns": [
+   "kslkatz.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "LAPS Toolkit": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "LAPS Toolkit",
+  "patterns": [
+   "laps-toolkit.exe",
+   "laps_toolkit.exe",
+   "lapstoolkit.exe"
+  ],
+  "tactic": "execution"
+ },
+ "LINpeas": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "LINpeas",
+  "patterns": [
+   "linpeas.exe"
+  ],
+  "tactic": "execution"
+ },
+ "LaZagne": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "Beast",
+   "DragonForce"
+  ],
+  "name": "LaZagne",
+  "patterns": [
+   "lazagne.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Lansweeper": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "EvilCorp"
+  ],
+  "name": "Lansweeper",
+  "patterns": [
+   "lansweeper.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Level.io": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Level.io",
+  "patterns": [
+   "level.io.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Ligolo": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Ligolo",
+  "patterns": [
+   "ligolo.exe",
+   "ligolo-ng.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "LogMeIn": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackSuit"
+  ],
+  "name": "LogMeIn",
+  "patterns": [
+   "logmein.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "LostMyPassword": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "LostMyPassword",
+  "patterns": [
+   "lostmypassword.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "MAGNET RAM Capture": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "MAGNET RAM Capture",
+  "patterns": [
+   "magnet-ram-capture.exe",
+   "magnet_ram_capture.exe",
+   "magnetramcapture.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "MANSPIDER": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "MANSPIDER",
+  "patterns": [
+   "manspider.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "MEGA": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "Beast",
+   "BianLian",
+   "DragonForce",
+   "EvilCorp",
+   "INC Ransom",
+   "ScatteredSpider"
+  ],
+  "name": "MEGA",
+  "patterns": [
+   "megasync.exe",
+   "megacmd.exe",
+   "megaclient.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "MIT Kerberos Ticket Manager": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "MIT Kerberos Ticket Manager",
+  "patterns": [
+   "mit-kerberos-ticket-manager.exe",
+   "mit_kerberos_ticket_manager.exe",
+   "mitkerberosticketmanager.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "MSI Afterburner driver": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "MSI Afterburner driver",
+  "patterns": [
+   "msi-afterburner-driver.exe",
+   "msi_afterburner_driver.exe",
+   "msiafterburnerdriver.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "ManageEngine LANDESK": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "ManageEngine LANDESK",
+  "patterns": [
+   "manageengine-landesk.exe",
+   "manageengine_landesk.exe",
+   "manageenginelandesk.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "ManageEngineRMM": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "ManageEngineRMM",
+  "patterns": [
+   "manageenginermm.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Masscan": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira"
+  ],
+  "name": "Masscan",
+  "patterns": [
+   "masscan.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "MeshAgent": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "MeshAgent",
+  "patterns": [
+   "meshagent.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Metasploit": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta"
+  ],
+  "name": "Metasploit",
+  "patterns": [
+   "msfconsole",
+   "meterpreter"
+  ],
+  "tactic": "execution"
+ },
+ "Meterpreter": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Meterpreter",
+  "patterns": [
+   "meterpreter.exe"
+  ],
+  "tactic": "execution"
+ },
+ "MicroBurst": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "MicroBurst",
+  "patterns": [
+   "microburst.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Microsoft RDP": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "SafePay"
+  ],
+  "name": "Microsoft RDP",
+  "patterns": [
+   "microsoft-rdp.exe",
+   "microsoft_rdp.exe",
+   "microsoftrdp.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Mimikatz": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "Beast",
+   "BlackBasta",
+   "BlackSuit",
+   "DragonForce",
+   "EvilCorp",
+   "PLAY",
+   "ProphetSpider",
+   "Qilin",
+   "ScatteredSpider",
+   "TheGentlemen",
+   "Warlock"
+  ],
+  "name": "Mimikatz",
+  "patterns": [
+   "mimikatz.exe",
+   "mimilib.dll",
+   "sekurlsa"
+  ],
+  "tactic": "credential-access"
+ },
+ "MinIO": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "MinIO",
+  "patterns": [
+   "minio.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Minidump": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ProphetSpider",
+   "Warlock"
+  ],
+  "name": "Minidump",
+  "patterns": [
+   "minidump.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "MobaXterm": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "BlackSuit",
+   "ScatteredSpider"
+  ],
+  "name": "MobaXterm",
+  "patterns": [
+   "mobaxterm.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Msiexec": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "Msiexec",
+  "patterns": [
+   "msiexec.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Mythic": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "EvilCorp"
+  ],
+  "name": "Mythic",
+  "patterns": [
+   "mythic.exe"
+  ],
+  "tactic": "execution"
+ },
+ "N-Able": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "N-Able",
+  "patterns": [
+   "n-able.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "NSOCKS": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "NSOCKS",
+  "patterns": [
+   "nsocks.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "NSudo": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "NSudo",
+  "patterns": [
+   "nsudo.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "NTDS Utility": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "NTDS Utility",
+  "patterns": [
+   "ntdsutil.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Nbtscan": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Nbtscan",
+  "patterns": [
+   "nbtscan.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "NetExec": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Qilin",
+   "TheGentlemen",
+   "Yurei"
+  ],
+  "name": "NetExec",
+  "patterns": [
+   "netexec.exe"
+  ],
+  "tactic": "execution"
+ },
+ "NetSupport": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta",
+   "EvilCorp"
+  ],
+  "name": "NetSupport",
+  "patterns": [
+   "netsupport.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Ngrok": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "ScatteredSpider"
+  ],
+  "name": "Ngrok",
+  "patterns": [
+   "ngrok.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "NirSoft BulletsPassView": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "NirSoft BulletsPassView",
+  "patterns": [
+   "nirsoft-bulletspassview.exe",
+   "nirsoft_bulletspassview.exe",
+   "nirsoftbulletspassview.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft ChromePass": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "NirSoft ChromePass",
+  "patterns": [
+   "nirsoft-chromepass.exe",
+   "nirsoft_chromepass.exe",
+   "nirsoftchromepass.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft Dialupass": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackSuit"
+  ],
+  "name": "NirSoft Dialupass",
+  "patterns": [
+   "nirsoft-dialupass.exe",
+   "nirsoft_dialupass.exe",
+   "nirsoftdialupass.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft ExtPassword": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "NirSoft ExtPassword",
+  "patterns": [
+   "nirsoft-extpassword.exe",
+   "nirsoft_extpassword.exe",
+   "nirsoftextpassword.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft IEPassView (iepv)": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackSuit"
+  ],
+  "name": "NirSoft IEPassView (iepv)",
+  "patterns": [
+   "nirsoft-iepassview-(iepv).exe",
+   "nirsoft_iepassview_(iepv).exe",
+   "nirsoftiepassviewiepv.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft MailPassView": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackSuit"
+  ],
+  "name": "NirSoft MailPassView",
+  "patterns": [
+   "nirsoft-mailpassview.exe",
+   "nirsoft_mailpassview.exe",
+   "nirsoftmailpassview.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft Netpass": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackSuit"
+  ],
+  "name": "NirSoft Netpass",
+  "patterns": [
+   "nirsoft-netpass.exe",
+   "nirsoft_netpass.exe",
+   "nirsoftnetpass.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft OperaPassView": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "NirSoft OperaPassView",
+  "patterns": [
+   "nirsoft-operapassview.exe",
+   "nirsoft_operapassview.exe",
+   "nirsoftoperapassview.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft RemoteDesktopPassView (rdpv)": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "NirSoft RemoteDesktopPassView (rdpv)",
+  "patterns": [
+   "nirsoft-remotedesktoppassview-(rdpv).exe",
+   "nirsoft_remotedesktoppassview_(rdpv).exe",
+   "nirsoftremotedesktoppassviewrdpv.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft RouterPassView": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackSuit"
+  ],
+  "name": "NirSoft RouterPassView",
+  "patterns": [
+   "nirsoft-routerpassview.exe",
+   "nirsoft_routerpassview.exe",
+   "nirsoftrouterpassview.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft SniffPass": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "NirSoft SniffPass",
+  "patterns": [
+   "nirsoft-sniffpass.exe",
+   "nirsoft_sniffpass.exe",
+   "nirsoftsniffpass.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft VNCPassView": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "NirSoft VNCPassView",
+  "patterns": [
+   "nirsoft-vncpassview.exe",
+   "nirsoft_vncpassview.exe",
+   "nirsoftvncpassview.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft WebBrowserPassView": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "NirSoft WebBrowserPassView",
+  "patterns": [
+   "nirsoft-webbrowserpassview.exe",
+   "nirsoft_webbrowserpassview.exe",
+   "nirsoftwebbrowserpassview.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "NirSoft WinLister": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "NirSoft WinLister",
+  "patterns": [
+   "nirsoft-winlister.exe",
+   "nirsoft_winlister.exe",
+   "nirsoftwinlister.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "NirSoft WirelessKeyView": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "NirSoft WirelessKeyView",
+  "patterns": [
+   "nirsoft-wirelesskeyview.exe",
+   "nirsoft_wirelesskeyview.exe",
+   "nirsoftwirelesskeyview.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Nmap": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Qilin",
+   "TheGentlemen"
+  ],
+  "name": "Nmap",
+  "patterns": [
+   "nmap.exe",
+   "ncat.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Nping": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Qilin"
+  ],
+  "name": "Nping",
+  "patterns": [
+   "nping.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "NsecSoft driver (BYOVD)": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "NsecSoft driver (BYOVD)",
+  "patterns": [
+   "nsecsoft-driver-(byovd).exe",
+   "nsecsoft_driver_(byovd).exe",
+   "nsecsoftdriverbyovd.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "OpenSSH": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "Beast",
+   "BlackSuit",
+   "ScatteredSpider",
+   "TheGentlemen",
+   "Warlock"
+  ],
+  "name": "OpenSSH",
+  "patterns": [
+   "ssh.exe",
+   "sshd.exe",
+   "scp.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "OpenVPN": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "OpenVPN",
+  "patterns": [
+   "openvpn.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "PAExec": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "ProphetSpider"
+  ],
+  "name": "PAExec",
+  "patterns": [
+   "paexec.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "PCHunter": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "DragonForce",
+   "Qilin"
+  ],
+  "name": "PCHunter",
+  "patterns": [
+   "pchunter.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "PDQ Deploy": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "PDQ Deploy",
+  "patterns": [
+   "pdqdeployconsole.exe",
+   "pdqinventory.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "PDQ Inventory": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "PDQ Inventory",
+  "patterns": [
+   "pdq-inventory.exe",
+   "pdq_inventory.exe",
+   "pdqinventory.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "PSCP": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ProphetSpider"
+  ],
+  "name": "PSCP",
+  "patterns": [
+   "pscp.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "PSNmap": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta"
+  ],
+  "name": "PSNmap",
+  "patterns": [
+   "psnmap.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Pacu": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Pacu",
+  "patterns": [
+   "pacu.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Parsec": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Parsec",
+  "patterns": [
+   "parsec.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "PasswordFox": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "PasswordFox",
+  "patterns": [
+   "passwordfox.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "PingCastle": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BianLian",
+   "DragonForce",
+   "ScatteredSpider"
+  ],
+  "name": "PingCastle",
+  "patterns": [
+   "pingcastle.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Pinggy": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Pinggy",
+  "patterns": [
+   "pinggy.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Plink": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "PLAY",
+   "ScatteredSpider"
+  ],
+  "name": "Plink",
+  "patterns": [
+   "plink.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "PowerRun": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "PowerRun",
+  "patterns": [
+   "powerrun.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "PowerShell Empire": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "PowerShell Empire",
+  "patterns": [
+   "powershell-empire.exe",
+   "powershell_empire.exe",
+   "powershellempire.exe"
+  ],
+  "tactic": "execution"
+ },
+ "PowerShell Remoting (PSRemoting)": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "PowerShell Remoting (PSRemoting)",
+  "patterns": [
+   "powershell-remoting-(psremoting).exe",
+   "powershell_remoting_(psremoting).exe",
+   "powershellremotingpsremoting.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "PowerSploit": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta"
+  ],
+  "name": "PowerSploit",
+  "patterns": [
+   "powersploit.exe"
+  ],
+  "tactic": "execution"
+ },
+ "PowerTool": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "PLAY",
+   "Qilin"
+  ],
+  "name": "PowerTool",
+  "patterns": [
+   "powertool.exe",
+   "powertool64.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "PowerView": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta"
+  ],
+  "name": "PowerView",
+  "patterns": [
+   "powerview.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "PowerZure": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "PowerZure",
+  "patterns": [
+   "powerzure.exe"
+  ],
+  "tactic": "execution"
+ },
+ "PrivHound": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "PrivHound",
+  "patterns": [
+   "privhound.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "PrivatLab": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "PrivatLab",
+  "patterns": [
+   "privatlab.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "ProcDump": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "ProcDump",
+  "patterns": [
+   "procdump.exe",
+   "procdump64.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Process Explorer": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Process Explorer",
+  "patterns": [
+   "procexp.exe",
+   "procexp64.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "ProcessHacker": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "DragonForce",
+   "Interlock"
+  ],
+  "name": "ProcessHacker",
+  "patterns": [
+   "processhacker.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "ProtonMail": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "ProtonMail",
+  "patterns": [
+   "protonmail.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Proxifier": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Proxifier",
+  "patterns": [
+   "proxifier.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Proxychains": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Qilin",
+   "TheGentlemen"
+  ],
+  "name": "Proxychains",
+  "patterns": [
+   "proxychains.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "PsExec": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Beast",
+   "BianLian",
+   "BlackBasta",
+   "BlackSuit",
+   "DragonForce",
+   "EvilCorp",
+   "INC Ransom",
+   "Interlock",
+   "PLAY",
+   "Qilin",
+   "ScatteredSpider",
+   "TheGentlemen",
+   "Warlock",
+   "Yurei"
+  ],
+  "name": "PsExec",
+  "patterns": [
+   "psexec.exe",
+   "psexesvc.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "PsInfo": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "PsInfo",
+  "patterns": [
+   "psinfo.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "PuTTY": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Interlock",
+   "TheGentlemen"
+  ],
+  "name": "PuTTY",
+  "patterns": [
+   "putty.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Pulseway": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Pulseway",
+  "patterns": [
+   "pulseway.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "PwnTools": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ProphetSpider"
+  ],
+  "name": "PwnTools",
+  "patterns": [
+   "pwntools.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Qaz.im": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta"
+  ],
+  "name": "Qaz.im",
+  "patterns": [
+   "qaz.im.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "RClone": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "BianLian",
+   "BlackSuit",
+   "DragonForce",
+   "EvilCorp",
+   "INC Ransom",
+   "ScatteredSpider",
+   "Warlock"
+  ],
+  "name": "RClone",
+  "patterns": [
+   "rclone.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "RDP Patcher": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "RDP Patcher",
+  "patterns": [
+   "rdp-patcher.exe",
+   "rdp_patcher.exe",
+   "rdppatcher.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "RDP Recognizer": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BianLian"
+  ],
+  "name": "RDP Recognizer",
+  "patterns": [
+   "rdp-recognizer.exe",
+   "rdp_recognizer.exe",
+   "rdprecognizer.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "RPort": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "RPort",
+  "patterns": [
+   "rport.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "RSAT": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "RSAT",
+  "patterns": [
+   "rsat.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "RVTools": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "RVTools",
+  "patterns": [
+   "rvtools.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Radmin": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "Warlock"
+  ],
+  "name": "Radmin",
+  "patterns": [
+   "radmin.exe",
+   "rserver3.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Rclone": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta"
+  ],
+  "name": "Rclone",
+  "patterns": [
+   "rclone.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "ReconFTW": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Akira"
+  ],
+  "name": "ReconFTW",
+  "patterns": [
+   "reconftw.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "RedSun": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "RedSun",
+  "patterns": [
+   "redsun.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "RegPwn": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "RegPwn",
+  "patterns": [
+   "regpwn.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Regsvr32.exe": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "SafePay"
+  ],
+  "name": "Regsvr32.exe",
+  "patterns": [
+   "regsvr32.exe.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "RelayKing-Depth": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "RelayKing-Depth",
+  "patterns": [
+   "relayking-depth.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Remote Manipulator System (RMS)": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Remote Manipulator System (RMS)",
+  "patterns": [
+   "remote-manipulator-system-(rms).exe",
+   "remote_manipulator_system_(rms).exe",
+   "remotemanipulatorsystemrms.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "RemotePC": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "RemotePC",
+  "patterns": [
+   "remotepc.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "RemoteUtilities": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "RemoteUtilities",
+  "patterns": [
+   "rutserv.exe",
+   "rfusclient.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Responder": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ProphetSpider",
+   "TheGentlemen"
+  ],
+  "name": "Responder",
+  "patterns": [
+   "responder.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Restic": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "INC Ransom"
+  ],
+  "name": "Restic",
+  "patterns": [
+   "restic.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Rising Antivirus driver (BYOVD)": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "Rising Antivirus driver (BYOVD)",
+  "patterns": [
+   "rising-antivirus-driver-(byovd).exe",
+   "rising_antivirus_driver_(byovd).exe",
+   "risingantivirusdriverbyovd.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Router Scan": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Router Scan",
+  "patterns": [
+   "router-scan.exe",
+   "router_scan.exe",
+   "routerscan.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Rsocks": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Rsocks",
+  "patterns": [
+   "rsocks.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Rsocx": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Rsocx",
+  "patterns": [
+   "rsocx.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Rubeus": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Yurei"
+  ],
+  "name": "Rubeus",
+  "patterns": [
+   "rubeus.exe"
+  ],
+  "tactic": "execution"
+ },
+ "RustDesk": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "ScatteredSpider"
+  ],
+  "name": "RustDesk",
+  "patterns": [
+   "rustdesk.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "RustScan": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "RustScan",
+  "patterns": [
+   "rustscan.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "S3 Browser": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "S3 Browser",
+  "patterns": [
+   "s3-browser.exe",
+   "s3_browser.exe",
+   "s3browser.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "SDelete": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Yurei"
+  ],
+  "name": "SDelete",
+  "patterns": [
+   "sdelete.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "ScreenConnect": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BianLian",
+   "BlackBasta",
+   "Interlock",
+   "Qilin",
+   "ScatteredSpider"
+  ],
+  "name": "ScreenConnect",
+  "patterns": [
+   "screenconnect.clientservice.exe",
+   "connectwisecontrol.client.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Seatbelt": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Seatbelt",
+  "patterns": [
+   "seatbelt.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "SecretServerSecretStealer": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "EvilCorp"
+  ],
+  "name": "SecretServerSecretStealer",
+  "patterns": [
+   "secretserversecretstealer.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "SecurityCheck": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "SecurityCheck",
+  "patterns": [
+   "securitycheck.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Sendspace": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Sendspace",
+  "patterns": [
+   "sendspace.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "ServiceControl (sc.exe)": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "ServiceControl (sc.exe)",
+  "patterns": [
+   "servicecontrol-(sc.exe).exe",
+   "servicecontrol_(sc.exe).exe",
+   "servicecontrolsc.exe.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "SessionGopher": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "SessionGopher",
+  "patterns": [
+   "sessiongopher.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "ShareFinder": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "ShareFinder",
+  "patterns": [
+   "sharefinder.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "SharpChrome": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "SharpChrome",
+  "patterns": [
+   "sharpchrome.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "SharpDump": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "SharpDump",
+  "patterns": [
+   "sharpdump.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "SharpHound": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "ScatteredSpider"
+  ],
+  "name": "SharpHound",
+  "patterns": [
+   "sharphound.exe",
+   "sharphound.ps1"
+  ],
+  "tactic": "discovery"
+ },
+ "SharpKatz": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "SharpKatz",
+  "patterns": [
+   "sharpkatz.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "SharpShares": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BianLian",
+   "BlackSuit"
+  ],
+  "name": "SharpShares",
+  "patterns": [
+   "sharpshares.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "SharpSploit": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "SharpSploit",
+  "patterns": [
+   "sharpsploit.exe"
+  ],
+  "tactic": "execution"
+ },
+ "SharpView": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "SharpView",
+  "patterns": [
+   "sharpview.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Shodan": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "Shodan",
+  "patterns": [
+   "shodan.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "SimpleHelp": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "SimpleHelp",
+  "patterns": [
+   "simplehelp.exe",
+   "remote access.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Sliver": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Sliver",
+  "patterns": [
+   "sliver.exe",
+   "sliver-client"
+  ],
+  "tactic": "execution"
+ },
+ "Snaffler": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Snaffler",
+  "patterns": [
+   "snaffler.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Socat": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Socat",
+  "patterns": [
+   "socat.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "SoftPerfect LanSearchPro": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "SoftPerfect LanSearchPro",
+  "patterns": [
+   "softperfect-lansearchpro.exe",
+   "softperfect_lansearchpro.exe",
+   "softperfectlansearchpro.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "SoftPerfect NetScan": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "Beast",
+   "BianLian",
+   "BlackBasta",
+   "BlackSuit",
+   "DragonForce",
+   "TheGentlemen",
+   "Yurei"
+  ],
+  "name": "SoftPerfect NetScan",
+  "patterns": [
+   "netscan.exe",
+   "netscan_x64.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "Sorillus": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Sorillus",
+  "patterns": [
+   "sorillus.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Splashtop": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BianLian",
+   "BlackBasta",
+   "ScatteredSpider"
+  ],
+  "name": "Splashtop",
+  "patterns": [
+   "splashtop.exe",
+   "srservice.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Sshimpanzee": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Sshimpanzee",
+  "patterns": [
+   "sshimpanzee.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Supabase": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "Supabase",
+  "patterns": [
+   "supabase.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "SuperOps": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "SuperOps",
+  "patterns": [
+   "superops.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Supremo": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BlackBasta"
+  ],
+  "name": "Supremo",
+  "patterns": [
+   "supremo.exe",
+   "supremosystem.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Syncro": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Syncro",
+  "patterns": [
+   "syncro.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "TDSSKiller": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "TDSSKiller",
+  "patterns": [
+   "tdsskiller.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "TXPortMap": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ProphetSpider"
+  ],
+  "name": "TXPortMap",
+  "patterns": [
+   "txportmap.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "TacticalRMM": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "TacticalRMM",
+  "patterns": [
+   "tacticalrmm.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Tailscale": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Tailscale",
+  "patterns": [
+   "tailscale.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "TaskHound": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "TaskHound",
+  "patterns": [
+   "taskhound.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "TeamViewer": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "BianLian",
+   "ScatteredSpider"
+  ],
+  "name": "TeamViewer",
+  "patterns": [
+   "teamviewer.exe",
+   "tv_w32.exe",
+   "tv_x64.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Teleport": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Teleport",
+  "patterns": [
+   "teleport.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Temp.sh": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Akira"
+  ],
+  "name": "Temp.sh",
+  "patterns": [
+   "temp.sh.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Tempsend": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Tempsend",
+  "patterns": [
+   "tempsend.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Termite": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Termite",
+  "patterns": [
+   "termite.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "ThreatFire System Monitor driver": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Interlock"
+  ],
+  "name": "ThreatFire System Monitor driver",
+  "patterns": [
+   "threatfire-system-monitor-driver.exe",
+   "threatfire_system_monitor_driver.exe",
+   "threatfiresystemmonitordriver.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "ThrottleStop driver (BYOVD)": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "ThrottleStop driver (BYOVD)",
+  "patterns": [
+   "throttlestop-driver-(byovd).exe",
+   "throttlestop_driver_(byovd).exe",
+   "throttlestopdriverbyovd.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "ThunderShell": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "ThunderShell",
+  "patterns": [
+   "thundershell.exe"
+  ],
+  "tactic": "execution"
+ },
+ "TightVNC": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider",
+   "Warlock"
+  ],
+  "name": "TightVNC",
+  "patterns": [
+   "tvnserver.exe",
+   "tvnviewer.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "TinyMet": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "TinyMet",
+  "patterns": [
+   "tinymet.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Titanis": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "Titanis",
+  "patterns": [
+   "titanis.exe"
+  ],
+  "tactic": "execution"
+ },
+ "Toshiba power management driver (BYOVD)": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Qilin"
+  ],
+  "name": "Toshiba power management driver (BYOVD)",
+  "patterns": [
+   "toshiba-power-management-driver-(byovd).exe",
+   "toshiba_power_management_driver_(byovd).exe",
+   "toshibapowermanagementdriverbyovd.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Transfer.sh": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Transfer.sh",
+  "patterns": [
+   "transfer.sh.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Transfert-my-files": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Transfert-my-files",
+  "patterns": [
+   "transfert-my-files.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "TrendMicro Basecamp": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "TrendMicro Basecamp",
+  "patterns": [
+   "trendmicro-basecamp.exe",
+   "trendmicro_basecamp.exe",
+   "trendmicrobasecamp.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "TrueSocks": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "TrueSocks",
+  "patterns": [
+   "truesocks.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Trufflehog": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Trufflehog",
+  "patterns": [
+   "trufflehog.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "TryCloudflare": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "TryCloudflare",
+  "patterns": [
+   "trycloudflare.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Twingate": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Twingate",
+  "patterns": [
+   "twingate.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "UFile": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "UFile",
+  "patterns": [
+   "ufile.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Universal Virus Sniffer": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Universal Virus Sniffer",
+  "patterns": [
+   "universal-virus-sniffer.exe",
+   "universal_virus_sniffer.exe",
+   "universalvirussniffer.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "VMTools AV Killer (BYOVD)": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "VMTools AV Killer (BYOVD)",
+  "patterns": [
+   "vmtools-av-killer-(byovd).exe",
+   "vmtools_av_killer_(byovd).exe",
+   "vmtoolsavkillerbyovd.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "VMware PowerCLI": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "VMware PowerCLI",
+  "patterns": [
+   "vmware-powercli.exe",
+   "vmware_powercli.exe",
+   "vmwarepowercli.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "VS Code Tunnel": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "VS Code Tunnel",
+  "patterns": [
+   "vs-code-tunnel.exe",
+   "vs_code_tunnel.exe",
+   "vscodetunnel.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Veeam-Get-Creds": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "Veeam-Get-Creds",
+  "patterns": [
+   "veeam-get-creds.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Velociraptor": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen",
+   "Warlock"
+  ],
+  "name": "Velociraptor",
+  "patterns": [
+   "velociraptor.exe"
+  ],
+  "tactic": "execution"
+ },
+ "VirtualBox": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "VirtualBox",
+  "patterns": [
+   "virtualbox.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Volatility": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Volatility",
+  "patterns": [
+   "volatility.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "WKTools": {
+  "category": "Discovery",
+  "categoryLabel": "Descubrimiento",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "BianLian"
+  ],
+  "name": "WKTools",
+  "patterns": [
+   "wktools.exe"
+  ],
+  "tactic": "discovery"
+ },
+ "WMIC": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [],
+  "name": "WMIC",
+  "patterns": [
+   "wmic.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "WinExe": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ProphetSpider"
+  ],
+  "name": "WinExe",
+  "patterns": [
+   "winexe.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "WinPEAS": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "PLAY"
+  ],
+  "name": "WinPEAS",
+  "patterns": [
+   "winpeas.exe"
+  ],
+  "tactic": "execution"
+ },
+ "WinRAR": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "SafePay"
+  ],
+  "name": "WinRAR",
+  "patterns": [
+   "winrar.exe",
+   "rar.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "WinRM": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Qilin"
+  ],
+  "name": "WinRM",
+  "patterns": [
+   "winrm.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "WinSCP": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "Akira",
+   "Beast",
+   "Interlock",
+   "PLAY",
+   "TheGentlemen"
+  ],
+  "name": "WinSCP",
+  "patterns": [
+   "winscp.exe",
+   "winscp.com"
+  ],
+  "tactic": "exfiltration"
+ },
+ "Windows Event Utility": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "Windows Event Utility",
+  "patterns": [
+   "windows-event-utility.exe",
+   "windows_event_utility.exe",
+   "windowseventutility.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Wireguard VPN": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "Wireguard VPN",
+  "patterns": [
+   "wireguard-vpn.exe",
+   "wireguard_vpn.exe",
+   "wireguardvpn.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Wstunnel": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Wstunnel",
+  "patterns": [
+   "wstunnel.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "XenArmor": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "XenArmor",
+  "patterns": [
+   "xenarmor.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "Xeox": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "Xeox",
+  "patterns": [
+   "xeox.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "YDArk": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Qilin"
+  ],
+  "name": "YDArk",
+  "patterns": [
+   "ydark.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Yuze": {
+  "category": "Networking",
+  "categoryLabel": "Tunelizacion y red",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Warlock"
+  ],
+  "name": "Yuze",
+  "patterns": [
+   "yuze.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "Zemana Anti-Rootkit": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Akira"
+  ],
+  "name": "Zemana Anti-Rootkit",
+  "patterns": [
+   "zemana-anti-rootkit.exe",
+   "zemana_anti-rootkit.exe",
+   "zemanaanti-rootkit.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "Zemana Anti-Rootkit driver": {
+  "category": "Defense Evasion",
+  "categoryLabel": "Evasion de defensas",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Qilin"
+  ],
+  "name": "Zemana Anti-Rootkit driver",
+  "patterns": [
+   "zemana-anti-rootkit-driver.exe",
+   "zemana_anti-rootkit_driver.exe",
+   "zemanaanti-rootkitdriver.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "ZeroPulse": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "TheGentlemen"
+  ],
+  "name": "ZeroPulse",
+  "patterns": [
+   "zeropulse.exe"
+  ],
+  "tactic": "execution"
+ },
+ "ZeroTier": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "ZeroTier",
+  "patterns": [
+   "zerotier-one_x64.exe",
+   "zerotier-cli.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "ZohoAssist": {
+  "category": "RMM Tools",
+  "categoryLabel": "Acceso remoto (RMM)",
+  "curated": true,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "ZohoAssist",
+  "patterns": [
+   "zohomeeting.exe",
+   "za_access.exe",
+   "zaservice.exe"
+  ],
+  "tactic": "command-and-control"
+ },
+ "aws_consoler": {
+  "category": "Credential Theft",
+  "categoryLabel": "Robo de credenciales",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "ScatteredSpider"
+  ],
+  "name": "aws_consoler",
+  "patterns": [
+   "aws_consoler.exe"
+  ],
+  "tactic": "credential-access"
+ },
+ "dllhost.exe": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "SafePay"
+  ],
+  "name": "dllhost.exe",
+  "patterns": [
+   "dllhost.exe.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "fsutil": {
+  "category": "LOLBAS",
+  "categoryLabel": "Binario del sistema (LOLBAS)",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Qilin"
+  ],
+  "name": "fsutil",
+  "patterns": [
+   "fsutil.exe"
+  ],
+  "tactic": "defense-evasion"
+ },
+ "pCloud": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "pCloud",
+  "patterns": [
+   "pcloud.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "s5cmd": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "INC Ransom"
+  ],
+  "name": "s5cmd",
+  "patterns": [
+   "s5cmd.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "share.riseup.net": {
+  "category": "Exfiltration",
+  "categoryLabel": "Exfiltracion",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [],
+  "name": "share.riseup.net",
+  "patterns": [
+   "share.riseup.net.exe"
+  ],
+  "tactic": "exfiltration"
+ },
+ "winPEAS": {
+  "category": "OffSec",
+  "categoryLabel": "Herramienta ofensiva",
+  "curated": false,
+  "exactOnly": false,
+  "groups": [
+   "Yurei"
+  ],
+  "name": "winPEAS",
+  "patterns": [
+   "winpeas.exe"
+  ],
+  "tactic": "execution"
+ }
+}

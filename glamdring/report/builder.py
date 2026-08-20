@@ -92,6 +92,35 @@ RECOMMENDATIONS: Dict[str, Dict[str, Any]] = {
 }
 
 
+# Que hacer cuando la deteccion apunta a un despliegue de ransomware en curso.
+# Van aparte de las recomendaciones por tactica porque la urgencia es otra: aqui
+# el reloj corre.
+RANSOMWARE_ACTIONS: Dict[str, Dict[str, Any]] = {
+    "inhibit": {
+        "priority": 0,
+        "text": "Se estan borrando instantaneas y copias de seguridad. El cifrado "
+                "suele ir MINUTOS despues. Aisla ya los equipos afectados de la red "
+                "y protege las copias fuera de linea antes de nada mas.",
+    },
+    "impact": {
+        "priority": 0,
+        "text": "Hay nota de rescate: el cifrado ya ha empezado. Deja de contener y "
+                "pasa a limitar el alcance; conserva una imagen forense de un equipo "
+                "cifrado antes de restaurar nada.",
+    },
+    "exfiltration": {
+        "priority": 0,
+        "text": "Los datos salieron antes de cifrar. Aunque se restaure sin pagar, "
+                "hay brecha de datos: activa el procedimiento de notificacion.",
+    },
+    "foothold": {
+        "priority": 1,
+        "text": "Se ha instalado una herramienta de acceso remoto. Busca esa misma "
+                "herramienta en el resto del parque: es como vuelven despues.",
+    },
+}
+
+
 def _iso(value: Optional[datetime]) -> Optional[str]:
     return value.isoformat() if value else None
 
@@ -184,8 +213,9 @@ def killchain(graph: GraphDoc, entries: Sequence[Dict[str, Any]]) -> List[Dict[s
     return sorted(seen.values(), key=lambda stage: (stage["rank"], stage["tactic"]))
 
 
-def recommendations(stages: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Acciones de contencion derivadas de las tacticas presentes."""
+def recommendations(stages: Sequence[Dict[str, Any]],
+                    threat: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    """Acciones de contencion derivadas de las tacticas y de lo detectado."""
     out = []
     for stage in stages:
         template = RECOMMENDATIONS.get(stage["tactic"])
@@ -197,6 +227,22 @@ def recommendations(stages: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
             "priority": template["priority"],
             "text": template["text"],
         })
+
+    # Las acciones de ransomware se anaden solo si hay evidencia de esa etapa,
+    # y se marcan como urgentes para que salgan las primeras.
+    for etapa in (threat or {}).get("detection", {}).get("stages", []):
+        if not etapa.get("reached"):
+            continue
+        accion = RANSOMWARE_ACTIONS.get(etapa["id"])
+        if accion is None:
+            continue
+        out.append({
+            "tactic": etapa["id"],
+            "label": f"URGENTE - {etapa['label']}",
+            "priority": accion["priority"],
+            "text": accion["text"],
+        })
+
     return sorted(out, key=lambda item: (item["priority"], item["label"]))
 
 
@@ -219,6 +265,7 @@ def build(
     entries = narrative.summarize_events(list(events))
     stages = killchain(graph, entries)
     iocs = collect_iocs(graph)
+    threat_block = _threat_section(events)
 
     entities = [
         {
@@ -262,8 +309,40 @@ def build(
         "killchain": stages,
         "entities": entities,
         "iocs": iocs,
-        "recommendations": recommendations(stages),
+        "recommendations": recommendations(stages, threat_block),
+        "threat": threat_block,
         "image": image,
+    }
+
+
+def _threat_section(events: Sequence[NormalizedEvent]) -> Dict[str, Any]:
+    """Deteccion de herramientas, comportamiento de ransomware y atribucion.
+
+    Si el catalogo no esta disponible se devuelve un bloque vacio en lugar de
+    fallar: el informe tiene que salir igual sin inteligencia de amenazas.
+    """
+    try:
+        from ..threat import assess, attribute, catalog, explain, scan, summarize
+    except ImportError:  # pragma: no cover
+        return {"available": False}
+
+    kb = catalog()
+    if not kb.available:
+        return {"available": False}
+
+    findings = scan(events, kb)
+    if not (findings.tools or findings.behaviours or findings.notes):
+        return {"available": True, "detected": False,
+                "sources": kb.meta.get("sources", [])}
+
+    candidatos = attribute(findings, kb)
+    return {
+        "available": True,
+        "detected": True,
+        "detection": summarize(findings),
+        "attribution": assess(findings, kb),
+        "explanation": explain(candidatos[0], kb) if candidatos else "",
+        "sources": kb.meta.get("sources", []),
     }
 
 

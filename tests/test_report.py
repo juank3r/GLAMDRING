@@ -164,9 +164,20 @@ def test_killchain_is_in_attack_order(report):
 
 
 def test_recommendations_follow_the_tactics(report):
+    """Cada recomendacion sale de algo observado, nunca de la nada.
+
+    Hay dos origenes: las tacticas MITRE de la cadena de ataque y las etapas de
+    despliegue de ransomware que se hayan alcanzado. Ambas cuentan, pero nada
+    mas: una recomendacion sin evidencia detras es ruido en el informe.
+    """
     tactics = {stage["tactic"] for stage in report["killchain"]}
+    stages = {
+        etapa["id"]
+        for etapa in (report.get("threat", {}).get("detection", {}).get("stages", []))
+        if etapa.get("reached")
+    }
     recommended = {item["tactic"] for item in report["recommendations"]}
-    assert recommended <= tactics
+    assert recommended <= (tactics | stages)
     # Con volcado de credenciales detectado, rotar contrasenas es prioritario.
     credential = [r for r in report["recommendations"] if r["tactic"] == "credential-access"]
     assert credential and credential[0]["priority"] == 0
