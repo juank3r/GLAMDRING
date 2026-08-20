@@ -14,6 +14,10 @@ como aristas dirigidas, y el tiempo como dimensión de primera clase.
 **El SIEM sigue siendo la fuente de verdad; GLAMDRING es el mapa.** Cualquier nodo
 o arista se abre y muestra el log literal que lo generó.
 
+> 📖 **La documentación completa está en la [wiki](https://github.com/juank3r/GLAMDRING/wiki).**
+> Empieza por [Getting Started](https://github.com/juank3r/GLAMDRING/wiki/Getting-Started)
+> o por el [recorrido guiado del incidente de ejemplo](https://github.com/juank3r/GLAMDRING/wiki/Demo-Incident).
+
 ---
 
 ## Arranque rápido
