@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 880" width="1360" height="880" font-family="Segoe UI, Inter, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/><stop offset="1" stop-color="#070a10"/>
+    </linearGradient>
+    <marker id="f5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2dd4bf"/>
+    </marker>
+    <filter id="glow5" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1360" height="880" fill="url(#bg5)"/>
+
+  <text x="48" y="52" fill="#dce4f0" font-size="26" font-weight="700" letter-spacing="1">Cuatro SIEM llaman de cuatro maneras a la misma persona</text>
+  <text x="48" y="78" fill="#8b98ad" font-size="14">Ese es el problema real de un SOC con varias herramientas: nadie ve al usuario entero. Aquí se arregla en la normalización.</text>
+
+  <!-- ============ las cuatro columnas ============ -->
+  <g transform="translate(48,110)">
+    <rect width="296" height="330" rx="12" fill="#0d121c" stroke="#65a637" stroke-opacity="0.35"/>
+    <circle cx="30" cy="34" r="11" fill="#65a637"/>
+    <text x="52" y="40" fill="#dce4f0" font-size="17" font-weight="700">Splunk</text>
+    <text x="20" y="70" fill="#5b6880" font-size="10.5" letter-spacing="1.5">QUÉ APORTA MEJOR</text>
+    <text x="20" y="92" fill="#94a3b8" font-size="12">Detalle de endpoint Windows:</text>
+    <text x="20" y="110" fill="#94a3b8" font-size="12">Sysmon, 4688, líneas de comando</text>
+    <text x="20" y="128" fill="#94a3b8" font-size="12">completas, árbol de procesos.</text>
+    <text x="20" y="160" fill="#5b6880" font-size="10.5" letter-spacing="1.5">CÓMO SE PREGUNTA</text>
+    <rect x="20" y="172" width="256" height="34" rx="5" fill="#121927" stroke="#2a3547"/>
+    <text x="32" y="194" fill="#94a3b8" font-size="11" font-family="Consolas, monospace">SPL · REST :8089</text>
+    <text x="20" y="234" fill="#5b6880" font-size="10.5" letter-spacing="1.5">CÓMO LLAMA AL USUARIO</text>
+    <rect x="20" y="246" width="256" height="34" rx="5" fill="#121927" stroke="#2a3547"/>
+    <text x="32" y="268" fill="#fbbf24" font-size="12.5" font-family="Consolas, monospace">CORP\jlopez</text>
+    <text x="20" y="306" fill="#5b6880" font-size="11">Punto flojo: poca visión de identidad cloud.</text>
+  </g>
+
+  <g transform="translate(372,110)">
+    <rect width="296" height="330" rx="12" fill="#0d121c" stroke="#0078d4" stroke-opacity="0.35"/>
+    <circle cx="30" cy="34" r="11" fill="#0078d4"/>
+    <text x="52" y="40" fill="#dce4f0" font-size="17" font-weight="700">Sentinel / Defender</text>
+    <text x="20" y="70" fill="#5b6880" font-size="10.5" letter-spacing="1.5">QUÉ APORTA MEJOR</text>
+    <text x="20" y="92" fill="#94a3b8" font-size="12">Identidad, correo y cloud: inicios</text>
+    <text x="20" y="110" fill="#94a3b8" font-size="12">de sesión, phishing entregado,</text>
+    <text x="20" y="128" fill="#94a3b8" font-size="12">alertas del EDR ya correlacionadas.</text>
+    <text x="20" y="160" fill="#5b6880" font-size="10.5" letter-spacing="1.5">CÓMO SE PREGUNTA</text>
+    <rect x="20" y="172" width="256" height="34" rx="5" fill="#121927" stroke="#2a3547"/>
+    <text x="32" y="194" fill="#94a3b8" font-size="11" font-family="Consolas, monospace">KQL · Log Analytics</text>
+    <text x="20" y="234" fill="#5b6880" font-size="10.5" letter-spacing="1.5">CÓMO LLAMA AL USUARIO</text>
+    <rect x="20" y="246" width="256" height="34" rx="5" fill="#121927" stroke="#2a3547"/>
+    <text x="32" y="268" fill="#fbbf24" font-size="12.5" font-family="Consolas, monospace">jlopez@corp.com</text>
+    <text x="20" y="306" fill="#5b6880" font-size="11">Punto flojo: lo que no es Microsoft.</text>
+  </g>
+
+  <g transform="translate(696,110)">
+    <rect width="296" height="330" rx="12" fill="#0d121c" stroke="#1f70c1" stroke-opacity="0.35"/>
+    <circle cx="30" cy="34" r="11" fill="#1f70c1"/>
+    <text x="52" y="40" fill="#dce4f0" font-size="17" font-weight="700">IBM QRadar</text>
+    <text x="20" y="70" fill="#5b6880" font-size="10.5" letter-spacing="1.5">QUÉ APORTA MEJOR</text>
+    <text x="20" y="92" fill="#94a3b8" font-size="12">Red y flujos: quién habló con quién,</text>
+    <text x="20" y="110" fill="#94a3b8" font-size="12">cuántos bytes, y ofensas ya</text>
+    <text x="20" y="128" fill="#94a3b8" font-size="12">agrupadas con magnitud.</text>
+    <text x="20" y="160" fill="#5b6880" font-size="10.5" letter-spacing="1.5">CÓMO SE PREGUNTA</text>
+    <rect x="20" y="172" width="256" height="34" rx="5" fill="#121927" stroke="#2a3547"/>
+    <text x="32" y="194" fill="#94a3b8" font-size="11" font-family="Consolas, monospace">AQL · Ariel</text>
+    <text x="20" y="234" fill="#5b6880" font-size="10.5" letter-spacing="1.5">CÓMO LLAMA AL EQUIPO</text>
+    <rect x="20" y="246" width="256" height="34" rx="5" fill="#121927" stroke="#2a3547"/>
+    <text x="32" y="268" fill="#fbbf24" font-size="12.5" font-family="Consolas, monospace">10.4.1.5</text>
+    <text x="20" y="306" fill="#5b6880" font-size="11">Punto flojo: por IP, casi nunca por nombre.</text>
+  </g>
+
+  <g transform="translate(1020,110)">
+    <rect width="292" height="330" rx="12" fill="#0d121c" stroke="#2a3547"/>
+    <circle cx="30" cy="34" r="11" fill="#94a3b8"/>
+    <text x="52" y="40" fill="#dce4f0" font-size="17" font-weight="700">CEF / LEEF / syslog</text>
+    <text x="20" y="70" fill="#5b6880" font-size="10.5" letter-spacing="1.5">QUÉ APORTA MEJOR</text>
+    <text x="20" y="92" fill="#94a3b8" font-size="12">Todo lo demás: cortafuegos, proxy,</text>
+    <text x="20" y="110" fill="#94a3b8" font-size="12">antivirus, VPN, cabinas. El comodín</text>
+    <text x="20" y="128" fill="#94a3b8" font-size="12">para lo que no tiene conector.</text>
+    <text x="20" y="160" fill="#5b6880" font-size="10.5" letter-spacing="1.5">CÓMO SE PREGUNTA</text>
+    <rect x="20" y="172" width="252" height="34" rx="5" fill="#121927" stroke="#2a3547"/>
+    <text x="32" y="194" fill="#94a3b8" font-size="11" font-family="Consolas, monospace">fichero o syslog crudo</text>
+    <text x="20" y="234" fill="#5b6880" font-size="10.5" letter-spacing="1.5">CÓMO LLAMA AL USUARIO</text>
+    <rect x="20" y="246" width="252" height="34" rx="5" fill="#121927" stroke="#2a3547"/>
+    <text x="32" y="268" fill="#fbbf24" font-size="12.5" font-family="Consolas, monospace">jlopez</text>
+    <text x="20" y="306" fill="#5b6880" font-size="11">Punto flojo: cada fabricante lo estira a su gusto.</text>
+  </g>
+
+  <!-- flechas convergentes -->
+  <g stroke="#2dd4bf" stroke-width="2" fill="none" marker-end="url(#f5)" opacity="0.85">
+    <path d="M196,448 C196,492 500,486 528,520"/>
+    <path d="M520,448 C520,486 596,490 616,520"/>
+    <path d="M844,448 C844,486 764,490 744,520"/>
+    <path d="M1166,448 C1166,492 862,486 832,520"/>
+  </g>
+
+  <!-- ============ el punto de unión ============ -->
+  <g transform="translate(430,528)">
+    <rect width="504" height="120" rx="12" fill="#0f1a1a" stroke="#2dd4bf" stroke-opacity="0.6"/>
+    <circle cx="36" cy="42" r="9" fill="#2dd4bf" filter="url(#glow5)"/>
+    <text x="60" y="48" fill="#2dd4bf" font-size="17" font-weight="700">Canonización</text>
+    <text x="24" y="78" fill="#8b98ad" font-size="12">Se recorta el dominio, se baja a minúsculas, se resuelve el alias.</text>
+    <text x="24" y="100" fill="#dce4f0" font-size="13">Y las cuatro formas caen en <tspan fill="#2dd4bf" font-weight="600" font-family="Consolas, monospace">user:jlopez</tspan> — un nodo, no cuatro.</text>
+  </g>
+
+  <!-- ============ resultado ============ -->
+  <g transform="translate(48,684)">
+    <rect width="620" height="164" rx="12" fill="#0d121c" stroke="#1d2635"/>
+    <text x="22" y="30" fill="#5b6880" font-size="11" letter-spacing="2">LO QUE VE EL ANALISTA</text>
+
+    <!-- nodo usuario central -->
+    <g transform="translate(120,86)">
+      <line x1="0" y1="0" x2="-70" y2="-30" stroke="#65a637" stroke-width="1.6"/>
+      <line x1="0" y1="0" x2="-70" y2="34" stroke="#0078d4" stroke-width="1.6"/>
+      <line x1="0" y1="0" x2="76" y2="-30" stroke="#1f70c1" stroke-width="1.6"/>
+      <line x1="0" y1="0" x2="76" y2="34" stroke="#94a3b8" stroke-width="1.6"/>
+      <circle cx="-70" cy="-30" r="7" fill="#65a637"/>
+      <circle cx="-70" cy="34" r="7" fill="#0078d4"/>
+      <circle cx="76" cy="-30" r="7" fill="#1f70c1"/>
+      <circle cx="76" cy="34" r="7" fill="#94a3b8"/>
+      <g transform="translate(-13,-24)">
+        <ellipse cx="13" cy="-4" rx="13" ry="3.5" fill="none" stroke="#4ea8ff" stroke-width="2"/>
+        <circle cx="13" cy="9" r="8" fill="#4ea8ff"/>
+        <path d="M2,36 C2,22 24,22 24,36 Z" fill="#4ea8ff"/>
+      </g>
+      <text x="0" y="46" fill="#dce4f0" font-size="12" font-weight="600" text-anchor="middle">jlopez</text>
+    </g>
+
+    <text x="256" y="70" fill="#dce4f0" font-size="13" font-weight="600">Una sola persona</text>
+    <text x="256" y="94" fill="#8b98ad" font-size="12">con las cuatro fuentes colgando de ella.</text>
+    <text x="256" y="118" fill="#8b98ad" font-size="12">Cada arista conserva de qué SIEM salió,</text>
+    <text x="256" y="136" fill="#8b98ad" font-size="12">así que siempre se puede volver al log.</text>
+  </g>
+
+  <g transform="translate(692,684)">
+    <rect width="620" height="164" rx="12" fill="#0d121c" stroke="#1d2635"/>
+    <text x="22" y="30" fill="#5b6880" font-size="11" letter-spacing="2">LAS TRES FUSIONES, Y SU LÍMITE</text>
+    <g font-size="12" fill="#8b98ad">
+      <text x="22" y="58"><tspan fill="#2dd4bf">▸</tspan> <tspan fill="#dce4f0" font-family="Consolas, monospace">10.4.1.5</tspan> se funde en <tspan fill="#dce4f0" font-family="Consolas, monospace">srv-dc01</tspan> si algún evento declara esa IP.</text>
+      <text x="22" y="82"><tspan fill="#2dd4bf">▸</tspan> Dos ficheros con el mismo hash son el mismo fichero, aunque cambie la ruta.</text>
+      <text x="22" y="106"><tspan fill="#2dd4bf">▸</tspan> Dos procesos con el mismo nombre en el mismo equipo y ventana, se unen.</text>
+    </g>
+    <rect x="22" y="120" width="576" height="30" rx="5" fill="#160d12" stroke="#7f1d1d" stroke-opacity="0.5"/>
+    <text x="34" y="140" fill="#ff8fa3" font-size="11.5">Ante la duda, NO se funde. Dos nodos de más molestan; uno de menos esconde el ataque.</text>
+  </g>
+</svg>

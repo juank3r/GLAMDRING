@@ -1,0 +1,207 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 760" width="1280" height="760" font-family="Segoe UI, Inter, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#070a10"/>
+    </linearGradient>
+    <marker id="flecha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2dd4bf"/>
+    </marker>
+    <marker id="flechaGris" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5b6880"/>
+    </marker>
+    <marker id="flechaRoja" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#ff2d55"/>
+    </marker>
+    <filter id="brillo" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="760" fill="url(#fondo)"/>
+
+  <!-- ================= cabecera ================= -->
+  <text x="48" y="52" fill="#dce4f0" font-size="26" font-weight="700" letter-spacing="1">Dónde encaja GLAMDRING en la red</text>
+  <text x="48" y="78" fill="#8b98ad" font-size="14">No toca los equipos. Solo lee lo que el SIEM ya tiene, y lo hace de una en una: es un visor, no un agente.</text>
+
+  <!-- ================= zona 1: el parque ================= -->
+  <rect x="40" y="112" width="290" height="470" rx="12" fill="#0d121c" stroke="#1d2635"/>
+  <text x="60" y="140" fill="#5b6880" font-size="11" letter-spacing="2">1 · DONDE PASAN LAS COSAS</text>
+
+  <!-- puesto -->
+  <g transform="translate(70,166)">
+    <rect width="230" height="66" rx="8" fill="#121927" stroke="#2a3547"/>
+    <rect x="16" y="18" width="34" height="24" rx="2" fill="#4ade80" opacity="0.85"/>
+    <rect x="27" y="42" width="12" height="5" fill="#4ade80" opacity="0.5"/>
+    <text x="64" y="32" fill="#dce4f0" font-size="14" font-weight="600">Puestos de trabajo</text>
+    <text x="64" y="50" fill="#8b98ad" font-size="11">Sysmon · Windows Security</text>
+  </g>
+
+  <!-- servidores -->
+  <g transform="translate(70,248)">
+    <rect width="230" height="66" rx="8" fill="#121927" stroke="#2a3547"/>
+    <rect x="20" y="14" width="26" height="38" rx="3" fill="#4ade80" opacity="0.85"/>
+    <rect x="24" y="20" width="18" height="3" fill="#0d121c"/>
+    <rect x="24" y="27" width="18" height="3" fill="#0d121c"/>
+    <rect x="24" y="34" width="18" height="3" fill="#0d121c"/>
+    <circle cx="42" cy="46" r="2.5" fill="#ff2d55"/>
+    <text x="64" y="32" fill="#dce4f0" font-size="14" font-weight="600">Servidores y DC</text>
+    <text x="64" y="50" fill="#8b98ad" font-size="11">4624 · 4688 · NTDS</text>
+  </g>
+
+  <!-- perimetro -->
+  <g transform="translate(70,330)">
+    <rect width="230" height="66" rx="8" fill="#121927" stroke="#2a3547"/>
+    <g fill="#fb923c" opacity="0.85">
+      <rect x="16" y="18" width="14" height="7"/><rect x="32" y="18" width="14" height="7"/>
+      <rect x="22" y="27" width="14" height="7"/><rect x="38" y="27" width="10" height="7"/>
+      <rect x="16" y="36" width="14" height="7"/><rect x="32" y="36" width="14" height="7"/>
+    </g>
+    <text x="64" y="32" fill="#dce4f0" font-size="14" font-weight="600">Cortafuegos y proxy</text>
+    <text x="64" y="50" fill="#8b98ad" font-size="11">CEF · LEEF · syslog</text>
+  </g>
+
+  <!-- cloud -->
+  <g transform="translate(70,412)">
+    <rect width="230" height="66" rx="8" fill="#121927" stroke="#2a3547"/>
+    <g fill="#22d3ee" opacity="0.85">
+      <circle cx="26" cy="36" r="10"/><circle cx="40" cy="36" r="10"/><circle cx="33" cy="27" r="11"/>
+    </g>
+    <text x="64" y="32" fill="#dce4f0" font-size="14" font-weight="600">Identidad y cloud</text>
+    <text x="64" y="50" fill="#8b98ad" font-size="11">SigninLogs · Defender</text>
+  </g>
+
+  <!-- correo -->
+  <g transform="translate(70,494)">
+    <rect width="230" height="66" rx="8" fill="#121927" stroke="#2a3547"/>
+    <rect x="16" y="20" width="36" height="24" rx="3" fill="#f472b6" opacity="0.85"/>
+    <path d="M16,20 L34,34 L52,20" fill="none" stroke="#0d121c" stroke-width="2.5"/>
+    <text x="64" y="32" fill="#dce4f0" font-size="14" font-weight="600">Correo</text>
+    <text x="64" y="50" fill="#8b98ad" font-size="11">EmailEvents · phishing</text>
+  </g>
+
+  <!-- ================= zona 2: SIEM ================= -->
+  <rect x="400" y="112" width="290" height="470" rx="12" fill="#0d121c" stroke="#1d2635"/>
+  <text x="420" y="140" fill="#5b6880" font-size="11" letter-spacing="2">2 · DONDE SE GUARDAN</text>
+
+  <g transform="translate(430,180)">
+    <rect width="230" height="72" rx="8" fill="#121927" stroke="#65a637" stroke-opacity="0.5"/>
+    <circle cx="30" cy="36" r="12" fill="#65a637"/>
+    <text x="56" y="32" fill="#dce4f0" font-size="15" font-weight="600">Splunk</text>
+    <text x="56" y="52" fill="#8b98ad" font-size="11">SPL · REST :8089</text>
+  </g>
+
+  <g transform="translate(430,272)">
+    <rect width="230" height="72" rx="8" fill="#121927" stroke="#0078d4" stroke-opacity="0.5"/>
+    <circle cx="30" cy="36" r="12" fill="#0078d4"/>
+    <text x="56" y="32" fill="#dce4f0" font-size="15" font-weight="600">Microsoft Sentinel</text>
+    <text x="56" y="52" fill="#8b98ad" font-size="11">KQL · Log Analytics</text>
+  </g>
+
+  <g transform="translate(430,364)">
+    <rect width="230" height="72" rx="8" fill="#121927" stroke="#1f70c1" stroke-opacity="0.5"/>
+    <circle cx="30" cy="36" r="12" fill="#1f70c1"/>
+    <text x="56" y="32" fill="#dce4f0" font-size="15" font-weight="600">IBM QRadar</text>
+    <text x="56" y="52" fill="#8b98ad" font-size="11">AQL · Ariel</text>
+  </g>
+
+  <g transform="translate(430,456)">
+    <rect width="230" height="72" rx="8" fill="#121927" stroke="#2a3547" stroke-dasharray="4 3"/>
+    <circle cx="30" cy="36" r="12" fill="#94a3b8"/>
+    <text x="56" y="32" fill="#dce4f0" font-size="15" font-weight="600">Un fichero exportado</text>
+    <text x="56" y="52" fill="#8b98ad" font-size="11">el caso más habitual</text>
+  </g>
+
+  <!-- flechas parque -> siem -->
+  <g stroke="#5b6880" stroke-width="1.6" fill="none" marker-end="url(#flechaGris)" opacity="0.75">
+    <path d="M300,199 C355,199 355,216 425,216"/>
+    <path d="M300,281 C355,281 355,308 425,308"/>
+    <path d="M300,363 C355,363 355,400 425,400"/>
+    <path d="M300,445 C355,445 355,420 425,410"/>
+    <path d="M300,527 C355,527 355,492 425,492"/>
+  </g>
+  <text x="365" y="576" fill="#5b6880" font-size="11" text-anchor="middle">reenvío</text>
+
+  <!-- ================= zona 3: GLAMDRING ================= -->
+  <rect x="760" y="112" width="300" height="470" rx="12" fill="#0d121c" stroke="#2dd4bf" stroke-opacity="0.45"/>
+  <text x="780" y="140" fill="#2dd4bf" font-size="11" letter-spacing="2">3 · DONDE SE ENTIENDEN</text>
+
+  <g transform="translate(786,168)" filter="url(#brillo)">
+    <circle cx="12" cy="12" r="7" fill="#2dd4bf"/>
+  </g>
+  <text x="812" y="186" fill="#dce4f0" font-size="20" font-weight="700" letter-spacing="1">GLAMDRING</text>
+
+  <g transform="translate(786,208)">
+    <rect width="250" height="58" rx="8" fill="#121927" stroke="#2a3547"/>
+    <text x="16" y="24" fill="#dce4f0" font-size="13" font-weight="600">Conectores</text>
+    <text x="16" y="42" fill="#8b98ad" font-size="11">consulta acotada · solo lectura</text>
+  </g>
+  <g transform="translate(786,276)">
+    <rect width="250" height="58" rx="8" fill="#121927" stroke="#2a3547"/>
+    <text x="16" y="24" fill="#dce4f0" font-size="13" font-weight="600">Normalización a OCSF-lite</text>
+    <text x="16" y="42" fill="#8b98ad" font-size="11">un modelo, cuatro fabricantes</text>
+  </g>
+  <g transform="translate(786,344)">
+    <rect width="250" height="58" rx="8" fill="#121927" stroke="#2a3547"/>
+    <text x="16" y="24" fill="#dce4f0" font-size="13" font-weight="600">Grafo + inteligencia</text>
+    <text x="16" y="42" fill="#8b98ad" font-size="11">papeles · herramientas · atribución</text>
+  </g>
+  <g transform="translate(786,412)">
+    <rect width="250" height="58" rx="8" fill="#121927" stroke="#2a3547"/>
+    <text x="16" y="24" fill="#dce4f0" font-size="13" font-weight="600">API + frontend WebGL</text>
+    <text x="16" y="42" fill="#8b98ad" font-size="11">un solo proceso, sin base de datos</text>
+  </g>
+
+  <g transform="translate(786,492)">
+    <rect width="250" height="66" rx="8" fill="#0f1a1a" stroke="#0f766e"/>
+    <text x="16" y="26" fill="#2dd4bf" font-size="12" font-weight="600">Estado en memoria</text>
+    <text x="16" y="45" fill="#8b98ad" font-size="11">Un analista, una investigación.</text>
+    <text x="16" y="59" fill="#8b98ad" font-size="11">Se apaga y no queda nada.</text>
+  </g>
+
+  <!-- flechas siem -> glamdring -->
+  <g stroke="#2dd4bf" stroke-width="2" fill="none" marker-end="url(#flecha)">
+    <path d="M665,216 C720,216 730,237 781,237"/>
+    <path d="M665,308 C720,308 730,237 781,237"/>
+    <path d="M665,400 C720,400 730,237 781,237"/>
+    <path d="M665,492 C720,492 730,237 781,237"/>
+  </g>
+  <text x="676" y="160" fill="#2dd4bf" font-size="11">SPL · KQL · AQL</text>
+
+  <!-- ================= zona 4: analista ================= -->
+  <g transform="translate(1096,280)">
+    <rect width="146" height="150" rx="12" fill="#0d121c" stroke="#1d2635"/>
+    <g transform="translate(56,26)">
+      <circle cx="16" cy="16" r="13" fill="#4ea8ff"/>
+      <path d="M0,58 C0,36 32,36 32,58 Z" fill="#4ea8ff"/>
+      <ellipse cx="16" cy="-2" rx="17" ry="4" fill="none" stroke="#4ea8ff" stroke-width="2.5"/>
+    </g>
+    <text x="73" y="116" fill="#dce4f0" font-size="14" font-weight="600" text-anchor="middle">Analista</text>
+    <text x="73" y="134" fill="#8b98ad" font-size="11" text-anchor="middle">navegador</text>
+  </g>
+  <g stroke="#2dd4bf" stroke-width="2" fill="none" marker-end="url(#flecha)">
+    <path d="M1041,355 L1091,355"/>
+  </g>
+
+  <!-- ================= lo que NO hace ================= -->
+  <rect x="40" y="608" width="1200" height="112" rx="12" fill="#160d12" stroke="#7f1d1d" stroke-opacity="0.55"/>
+  <text x="64" y="638" fill="#ff2d55" font-size="12" font-weight="700" letter-spacing="1.5">LO QUE NO HACE — Y ES DELIBERADO</text>
+
+  <g font-size="12.5" fill="#8b98ad">
+    <text x="64" y="666"><tspan fill="#dce4f0" font-weight="600">No instala agentes.</tspan> No hay nada que desplegar en los equipos: se lee lo que el SIEM ya recogió.</text>
+    <text x="64" y="690"><tspan fill="#dce4f0" font-weight="600">No responde ni contiene.</tspan> No aísla equipos, no mata procesos, no bloquea IP. Eso lo hace tu EDR o tu firewall.</text>
+    <text x="64" y="714"><tspan fill="#dce4f0" font-weight="600">No sustituye al SIEM.</tspan> El SIEM sigue siendo la fuente de verdad y la retención; esto es la capa de lectura.</text>
+    <text x="700" y="666"><tspan fill="#dce4f0" font-weight="600">No abre puertos hacia fuera.</tspan> Todo el tráfico sale de GLAMDRING hacia el SIEM, nunca al revés.</text>
+    <text x="700" y="690"><tspan fill="#dce4f0" font-weight="600">No persiste los logs.</tspan> Viven en memoria mientras dura la investigación.</text>
+    <text x="700" y="714"><tspan fill="#dce4f0" font-weight="600">No autentica usuarios.</tspan> Se despliega en local o detrás de un proxy que lo haga.</text>
+  </g>
+
+  <!-- flecha roja de "nunca": vive en el pasillo entre los paneles y el aviso,
+       partida en dos para que la etiqueta no se solape con la linea -->
+  <g stroke="#ff2d55" stroke-width="1.8" fill="none" stroke-dasharray="6 4" opacity="0.55">
+    <path d="M1040,595 L790,595"/>
+    <path d="M600,595 L336,595" marker-end="url(#flechaRoja)"/>
+  </g>
+  <text x="695" y="599" fill="#ff2d55" font-size="11.5" opacity="0.85" text-anchor="middle">nunca escribe hacia el parque</text>
+</svg>

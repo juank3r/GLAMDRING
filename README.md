@@ -14,9 +14,60 @@ como aristas dirigidas, y el tiempo como dimensión de primera clase.
 **El SIEM sigue siendo la fuente de verdad; GLAMDRING es el mapa.** Cualquier nodo
 o arista se abre y muestra el log literal que lo generó.
 
-> 📖 **La documentación completa está en la [wiki](https://github.com/juank3r/GLAMDRING/wiki).**
+> **La documentación completa está en la [wiki](https://github.com/juank3r/GLAMDRING/wiki).**
 > Empieza por [Getting Started](https://github.com/juank3r/GLAMDRING/wiki/Getting-Started)
 > o por el [recorrido guiado del incidente de ejemplo](https://github.com/juank3r/GLAMDRING/wiki/Demo-Incident).
+
+---
+
+## De un vistazo
+
+Seis esquemas que explican el sistema entero sin leer una línea de código.
+
+### Dónde encaja en la red
+
+No instala agentes, no responde a incidentes y no sustituye al SIEM: lee lo que el
+SIEM ya recogió y lo pinta.
+
+![Arquitectura de red](docs/diagrams/01-arquitectura-red.svg)
+
+### Qué le pasa a un log desde que entra
+
+Seis etapas, cada una con su contrato de entrada y salida. Abajo, el mismo registro
+de Splunk atravesándolas todas.
+
+![Arquitectura de datos](docs/diagrams/02-arquitectura-datos.svg)
+
+### Cómo se dibuja el grafo
+
+Sin npm y sin compilación: módulos ES con `importmap` y three.js r168, con la
+revisión fijada a propósito para que coincida con la que trae `3d-force-graph`.
+
+![Arquitectura visual](docs/diagrams/03-arquitectura-visual.svg)
+
+### Lo que aporta el perímetro
+
+Un log de cortafuegos no dice qué proceso abrió la conexión, pero dice cuándo,
+cuánto y hacia dónde. Cruzado con el endpoint, cierra el caso.
+
+![Perímetro y cortafuegos](docs/diagrams/04-perimetro-firewall.svg)
+
+### Por qué hacen falta los cuatro SIEM
+
+Cada uno ve bien una parte y mal las demás, y cada uno llama de una manera distinta
+a la misma persona. La canonización es lo que los une.
+
+![Los cuatro SIEM y la unificación](docs/diagrams/05-siems-unificacion.svg)
+
+### Cómo se detecta un despliegue de ransomware
+
+Ocho etapas. Cuando se ve la octava ya es tarde, así que lo que se busca es el
+rastro de las siete anteriores.
+
+![Cadena de ransomware](docs/diagrams/06-cadena-ransomware.svg)
+
+Los seis son SVG a mano en [docs/diagrams/](docs/diagrams/): se leen en cualquier
+navegador, se editan con un editor de texto y no dependen de ninguna herramienta.
 
 ---
 
@@ -161,6 +212,39 @@ con la propia red dentro es, en el mejor de los casos, inútil.
 Pincha un nodo o una arista y el inspector te da sus métricas, su papel, sus tácticas
 MITRE, sus vecinos… y los **logs originales del SIEM**, tal cual llegaron. Un grafo
 bonito del que no se puede volver al log crudo no sirve para un informe.
+
+### Detección de ransomware y atribución
+
+GLAMDRING lleva incorporado un catálogo de **305 herramientas** de intrusión
+clasificadas por categoría y por grupo, **17 perfiles de grupo** y **299 notas de
+rescate** reales. Con eso mira cada línea de comandos por tres vías distintas:
+
+| Vía | Qué busca | Ejemplo |
+|---|---|---|
+| Herramienta | binarios del repertorio conocido, con su categoría | `rclone.exe` → exfiltración |
+| Comportamiento | 13 firmas sobre la línea de comandos, independientes del nombre del fichero | `vssadmin delete shadows` |
+| Nota de rescate | el nombre de fichero característico de cada familia | `akira_readme.txt` |
+
+Sobre los hallazgos calcula qué **etapas del despliegue** se han alcanzado (de
+«acceso inicial» a «cifrado») y propone una **atribución** ponderada: cada
+herramienta pesa según a cuántos grupos señala, se normaliza por el tamaño del
+repertorio de cada grupo, y una nota genérica como `README.txt` pesa casi nada
+mientras que una específica casi identifica sola.
+
+```powershell
+# Un incidente de ejemplo por cada grupo, con su repertorio real
+python tools/make_apt_samples.py
+curl http://localhost:8000/api/threat
+```
+
+**La atribución es una hipótesis de trabajo, nunca un veredicto.** Estas herramientas
+las usan muchos grupos, y también los administradores legítimos: sirve para saber qué
+buscar a continuación, no para cerrar el caso. El aviso va impreso en todos los
+informes.
+
+Los datos se vendorizan con `python tools/fetch_threat_intel.py` desde
+[Ransomware Tool Matrix](https://github.com/BushidoUK/Ransomware-Tool-Matrix)
+(BushidoUK, CC BY 4.0) y [ransomware.live](https://ransomware.live) (Julien Mousqueton).
 
 ---
 

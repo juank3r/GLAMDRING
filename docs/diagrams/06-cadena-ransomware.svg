@@ -1,0 +1,230 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 900" width="1360" height="900" font-family="Segoe UI, Inter, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg6" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/><stop offset="1" stop-color="#070a10"/>
+    </linearGradient>
+    <linearGradient id="riesgo" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1e3a5f"/><stop offset="0.35" stop-color="#1d4ed8"/>
+      <stop offset="0.62" stop-color="#fb923c"/><stop offset="1" stop-color="#ff2d55"/>
+    </linearGradient>
+    <marker id="f6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2dd4bf"/>
+    </marker>
+    <filter id="glow6" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1360" height="900" fill="url(#bg6)"/>
+
+  <text x="48" y="52" fill="#dce4f0" font-size="26" font-weight="700" letter-spacing="1">Las ocho etapas de un despliegue de ransomware</text>
+  <text x="48" y="78" fill="#8b98ad" font-size="14">Cuando se ve la octava ya es tarde. Las siete anteriores dejan rastro en los logs, y ese rastro es lo que se busca.</text>
+
+  <!-- barra de riesgo -->
+  <rect x="48" y="104" width="1264" height="6" rx="3" fill="url(#riesgo)"/>
+  <text x="48" y="128" fill="#5b6880" font-size="11">horas o días de margen</text>
+  <text x="1312" y="128" fill="#ff2d55" font-size="11" text-anchor="end">minutos</text>
+
+  <!-- ================= las 8 etapas ================= -->
+  <g id="etapas6">
+    <!-- 1 -->
+    <g transform="translate(48,148)">
+      <rect width="148" height="182" rx="10" fill="#0d121c" stroke="#1d2635"/>
+      <rect x="0" y="0" width="148" height="3" rx="1.5" fill="#1e3a5f"/>
+      <text x="14" y="28" fill="#64748b" font-size="10" font-weight="700">01</text>
+      <text x="14" y="52" fill="#dce4f0" font-size="13" font-weight="600">Acceso</text>
+      <text x="14" y="70" fill="#dce4f0" font-size="13" font-weight="600">inicial</text>
+      <text x="14" y="96" fill="#8b98ad" font-size="10.5">Phishing, credencial</text>
+      <text x="14" y="111" fill="#8b98ad" font-size="10.5">válida o servicio</text>
+      <text x="14" y="126" fill="#8b98ad" font-size="10.5">expuesto.</text>
+      <line x1="14" y1="140" x2="134" y2="140" stroke="#1d2635"/>
+      <text x="14" y="158" fill="#5b6880" font-size="9.5">SE DETECTA POR</text>
+      <text x="14" y="172" fill="#94a3b8" font-size="10">alertas de correo, VPN</text>
+    </g>
+    <!-- 2 -->
+    <g transform="translate(208,148)">
+      <rect width="148" height="182" rx="10" fill="#0d121c" stroke="#1d2635"/>
+      <rect x="0" y="0" width="148" height="3" rx="1.5" fill="#1d4ed8"/>
+      <text x="14" y="28" fill="#64748b" font-size="10" font-weight="700">02</text>
+      <text x="14" y="52" fill="#dce4f0" font-size="13" font-weight="600">Punto de</text>
+      <text x="14" y="70" fill="#dce4f0" font-size="13" font-weight="600">apoyo</text>
+      <text x="14" y="96" fill="#8b98ad" font-size="10.5">Un RMM o un implante</text>
+      <text x="14" y="111" fill="#8b98ad" font-size="10.5">para no depender del</text>
+      <text x="14" y="126" fill="#8b98ad" font-size="10.5">acceso original.</text>
+      <line x1="14" y1="140" x2="134" y2="140" stroke="#1d2635"/>
+      <text x="14" y="158" fill="#5b6880" font-size="9.5">SE DETECTA POR</text>
+      <text x="14" y="172" fill="#94a3b8" font-size="10">AnyDesk, Atera, Splashtop</text>
+    </g>
+    <!-- 3 -->
+    <g transform="translate(368,148)">
+      <rect width="148" height="182" rx="10" fill="#0d121c" stroke="#1d2635"/>
+      <rect x="0" y="0" width="148" height="3" rx="1.5" fill="#1d4ed8"/>
+      <text x="14" y="28" fill="#64748b" font-size="10" font-weight="700">03</text>
+      <text x="14" y="52" fill="#dce4f0" font-size="13" font-weight="600">Reconoci-</text>
+      <text x="14" y="70" fill="#dce4f0" font-size="13" font-weight="600">miento</text>
+      <text x="14" y="96" fill="#8b98ad" font-size="10.5">Se enumera dominio,</text>
+      <text x="14" y="111" fill="#8b98ad" font-size="10.5">red y recursos</text>
+      <text x="14" y="126" fill="#8b98ad" font-size="10.5">compartidos.</text>
+      <line x1="14" y1="140" x2="134" y2="140" stroke="#1d2635"/>
+      <text x="14" y="158" fill="#5b6880" font-size="9.5">SE DETECTA POR</text>
+      <text x="14" y="172" fill="#94a3b8" font-size="10">ADRecon, netscan, net view</text>
+    </g>
+    <!-- 4 -->
+    <g transform="translate(528,148)">
+      <rect width="148" height="182" rx="10" fill="#0d121c" stroke="#1d2635"/>
+      <rect x="0" y="0" width="148" height="3" rx="1.5" fill="#fb923c"/>
+      <text x="14" y="28" fill="#64748b" font-size="10" font-weight="700">04</text>
+      <text x="14" y="52" fill="#dce4f0" font-size="13" font-weight="600">Robo de</text>
+      <text x="14" y="70" fill="#dce4f0" font-size="13" font-weight="600">credenciales</text>
+      <text x="14" y="96" fill="#8b98ad" font-size="10.5">Volcado de LSASS,</text>
+      <text x="14" y="111" fill="#8b98ad" font-size="10.5">NTDS o gestores de</text>
+      <text x="14" y="126" fill="#8b98ad" font-size="10.5">contraseñas.</text>
+      <line x1="14" y1="140" x2="134" y2="140" stroke="#1d2635"/>
+      <text x="14" y="158" fill="#5b6880" font-size="9.5">SE DETECTA POR</text>
+      <text x="14" y="172" fill="#94a3b8" font-size="10">mimikatz, comsvcs, ntdsutil</text>
+    </g>
+    <!-- 5 -->
+    <g transform="translate(688,148)">
+      <rect width="148" height="182" rx="10" fill="#0d121c" stroke="#1d2635"/>
+      <rect x="0" y="0" width="148" height="3" rx="1.5" fill="#fb923c"/>
+      <text x="14" y="28" fill="#64748b" font-size="10" font-weight="700">05</text>
+      <text x="14" y="52" fill="#dce4f0" font-size="13" font-weight="600">Movimiento</text>
+      <text x="14" y="70" fill="#dce4f0" font-size="13" font-weight="600">lateral</text>
+      <text x="14" y="96" fill="#8b98ad" font-size="10.5">Se salta a otros</text>
+      <text x="14" y="111" fill="#8b98ad" font-size="10.5">equipos, sobre todo</text>
+      <text x="14" y="126" fill="#8b98ad" font-size="10.5">hacia servidores.</text>
+      <line x1="14" y1="140" x2="134" y2="140" stroke="#1d2635"/>
+      <text x="14" y="158" fill="#5b6880" font-size="9.5">SE DETECTA POR</text>
+      <text x="14" y="172" fill="#94a3b8" font-size="10">PsExec, Cobalt Strike, WMI</text>
+    </g>
+    <!-- 6 -->
+    <g transform="translate(848,148)">
+      <rect width="148" height="182" rx="10" fill="#0d121c" stroke="#7f1d1d" stroke-opacity="0.5"/>
+      <rect x="0" y="0" width="148" height="3" rx="1.5" fill="#ff2d55"/>
+      <text x="14" y="28" fill="#64748b" font-size="10" font-weight="700">06</text>
+      <text x="14" y="52" fill="#dce4f0" font-size="13" font-weight="600">Exfiltración</text>
+      <text x="14" y="96" fill="#8b98ad" font-size="10.5">Los datos salen</text>
+      <text x="14" y="111" fill="#ff8fa3" font-size="10.5">ANTES de cifrar: es la</text>
+      <text x="14" y="126" fill="#ff8fa3" font-size="10.5">doble extorsión.</text>
+      <line x1="14" y1="140" x2="134" y2="140" stroke="#1d2635"/>
+      <text x="14" y="158" fill="#5b6880" font-size="9.5">SE DETECTA POR</text>
+      <text x="14" y="172" fill="#94a3b8" font-size="10">rclone, MEGAsync, WinSCP</text>
+    </g>
+    <!-- 7 -->
+    <g transform="translate(1008,148)">
+      <rect width="148" height="182" rx="10" fill="#160d12" stroke="#7f1d1d" stroke-opacity="0.7"/>
+      <rect x="0" y="0" width="148" height="3" rx="1.5" fill="#ff2d55"/>
+      <text x="14" y="28" fill="#64748b" font-size="10" font-weight="700">07</text>
+      <text x="14" y="52" fill="#dce4f0" font-size="13" font-weight="600">Inhibir la</text>
+      <text x="14" y="70" fill="#dce4f0" font-size="13" font-weight="600">recuperación</text>
+      <text x="14" y="96" fill="#ff8fa3" font-size="10.5">Se borran instantáneas</text>
+      <text x="14" y="111" fill="#ff8fa3" font-size="10.5">y copias. Restaurar</text>
+      <text x="14" y="126" fill="#ff8fa3" font-size="10.5">deja de ser opción.</text>
+      <line x1="14" y1="140" x2="134" y2="140" stroke="#7f1d1d" stroke-opacity="0.5"/>
+      <text x="14" y="158" fill="#5b6880" font-size="9.5">SE DETECTA POR</text>
+      <text x="14" y="172" fill="#94a3b8" font-size="10">vssadmin, bcdedit, wbadmin</text>
+    </g>
+    <!-- 8 -->
+    <g transform="translate(1168,148)">
+      <rect width="144" height="182" rx="10" fill="#1a0f14" stroke="#ff2d55" stroke-opacity="0.65"/>
+      <rect x="0" y="0" width="144" height="3" rx="1.5" fill="#ff2d55"/>
+      <text x="14" y="28" fill="#ff2d55" font-size="10" font-weight="700">08</text>
+      <text x="14" y="52" fill="#ff2d55" font-size="13" font-weight="700">Cifrado y</text>
+      <text x="14" y="70" fill="#ff2d55" font-size="13" font-weight="700">nota</text>
+      <text x="14" y="96" fill="#ff8fa3" font-size="10.5">Ya está en marcha.</text>
+      <text x="14" y="118" fill="#8b98ad" font-size="10.5">Aquí no se investiga:</text>
+      <text x="14" y="133" fill="#8b98ad" font-size="10.5">se responde.</text>
+      <line x1="14" y1="146" x2="130" y2="146" stroke="#7f1d1d" stroke-opacity="0.5"/>
+      <text x="14" y="163" fill="#5b6880" font-size="9.5">SE DETECTA POR</text>
+      <text x="14" y="176" fill="#94a3b8" font-size="10">la nota de rescate</text>
+    </g>
+  </g>
+
+  <!-- ================= punto de no retorno ================= -->
+  <g transform="translate(990,340)">
+    <line x1="12" y1="0" x2="12" y2="-198" stroke="#ff2d55" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.5"/>
+    <circle cx="12" cy="12" r="7" fill="#ff2d55" filter="url(#glow6)"/>
+    <text x="30" y="17" fill="#ff2d55" font-size="12.5" font-weight="600">Punto de no retorno</text>
+    <text x="30" y="35" fill="#8b98ad" font-size="11.5">Pasada la etapa 6, los datos ya están fuera: pagar o no pagar</text>
+    <text x="30" y="52" fill="#8b98ad" font-size="11.5">deja de decidirse solo por las copias de seguridad.</text>
+  </g>
+
+  <!-- ================= cómo se detecta: tres vías ================= -->
+  <rect x="48" y="424" width="1264" height="228" rx="12" fill="#0d121c" stroke="#1d2635"/>
+  <text x="70" y="452" fill="#5b6880" font-size="11" letter-spacing="2">TRES VÍAS QUE APUNTAN A LO MISMO</text>
+
+  <g transform="translate(70,470)">
+    <rect width="396" height="162" rx="8" fill="#121927" stroke="#2a3547"/>
+    <text x="18" y="28" fill="#4ea8ff" font-size="13" font-weight="600">1 · La herramienta</text>
+    <text x="18" y="52" fill="#8b98ad" font-size="11.5">305 binarios del Ransomware Tool Matrix,</text>
+    <text x="18" y="69" fill="#8b98ad" font-size="11.5">clasificados por categoría y por grupo.</text>
+    <text x="18" y="94" fill="#94a3b8" font-size="10.5" font-family="Consolas, monospace">rclone.exe → Exfiltration</text>
+    <text x="18" y="111" fill="#94a3b8" font-size="10.5" font-family="Consolas, monospace">mimikatz.exe → Credential Theft</text>
+    <text x="18" y="140" fill="#5b6880" font-size="11">Una herramienta legítima usada por 40 grupos</text>
+    <text x="18" y="155" fill="#5b6880" font-size="11">pesa mucho menos que una que usa uno solo.</text>
+  </g>
+
+  <g transform="translate(482,470)">
+    <rect width="396" height="162" rx="8" fill="#121927" stroke="#2a3547"/>
+    <text x="18" y="28" fill="#fb923c" font-size="13" font-weight="600">2 · El comportamiento</text>
+    <text x="18" y="52" fill="#8b98ad" font-size="11.5">13 firmas sobre la línea de comandos, que</text>
+    <text x="18" y="69" fill="#8b98ad" font-size="11.5">no dependen del nombre del ejecutable.</text>
+    <text x="18" y="94" fill="#94a3b8" font-size="10.5" font-family="Consolas, monospace">vssadmin delete shadows</text>
+    <text x="18" y="111" fill="#94a3b8" font-size="10.5" font-family="Consolas, monospace">bcdedit /set recoveryenabled no</text>
+    <text x="18" y="140" fill="#5b6880" font-size="11">Renombrar el binario no sirve de nada: lo que</text>
+    <text x="18" y="155" fill="#5b6880" font-size="11">se mira es lo que hace, no cómo se llama.</text>
+  </g>
+
+  <g transform="translate(894,470)">
+    <rect width="396" height="162" rx="8" fill="#121927" stroke="#2a3547"/>
+    <text x="18" y="28" fill="#ff2d55" font-size="13" font-weight="600">3 · La nota de rescate</text>
+    <text x="18" y="52" fill="#8b98ad" font-size="11.5">299 notas reales de ransomware.live, con</text>
+    <text x="18" y="69" fill="#8b98ad" font-size="11.5">su nombre de fichero característico.</text>
+    <text x="18" y="94" fill="#94a3b8" font-size="10.5" font-family="Consolas, monospace">akira_readme.txt → 1 familia</text>
+    <text x="18" y="111" fill="#94a3b8" font-size="10.5" font-family="Consolas, monospace">README.txt → decenas</text>
+    <text x="18" y="140" fill="#5b6880" font-size="11">La primera casi identifica sola. La segunda no</text>
+    <text x="18" y="155" fill="#5b6880" font-size="11">dice nada, y se pondera para que no engañe.</text>
+  </g>
+
+  <!-- ================= atribución ================= -->
+  <rect x="48" y="676" width="800" height="200" rx="12" fill="#0d121c" stroke="#1d2635"/>
+  <text x="70" y="704" fill="#5b6880" font-size="11" letter-spacing="2">CÓMO SE PONDERA LA ATRIBUCIÓN</text>
+
+  <g transform="translate(70,720)">
+    <rect width="360" height="52" rx="6" fill="#121927" stroke="#2a3547"/>
+    <text x="16" y="22" fill="#dce4f0" font-size="12" font-weight="600">Se premia lo que distingue</text>
+    <text x="16" y="41" fill="#8b98ad" font-size="11">Cada herramienta pesa según a cuántos grupos señala.</text>
+  </g>
+  <g transform="translate(70,782)">
+    <rect width="360" height="52" rx="6" fill="#121927" stroke="#2a3547"/>
+    <text x="16" y="22" fill="#dce4f0" font-size="12" font-weight="600">Se normaliza por tamaño</text>
+    <text x="16" y="41" fill="#8b98ad" font-size="11">Un grupo con 80 herramientas no gana por acumulación.</text>
+  </g>
+  <g transform="translate(450,720)">
+    <rect width="376" height="114" rx="6" fill="#121927" stroke="#2a3547"/>
+    <text x="16" y="24" fill="#dce4f0" font-size="12" font-weight="600">Y siempre se dice el grado de confianza</text>
+    <g transform="translate(16,38)">
+      <rect x="0" y="0" width="90" height="20" rx="4" fill="#0f766e"/>
+      <text x="45" y="14" fill="#dce4f0" font-size="11" text-anchor="middle">alta</text>
+      <text x="102" y="14" fill="#8b98ad" font-size="10.5">nota específica + herramientas</text>
+      <rect x="0" y="26" width="90" height="20" rx="4" fill="#a16207"/>
+      <text x="45" y="40" fill="#dce4f0" font-size="11" text-anchor="middle">media</text>
+      <text x="102" y="40" fill="#8b98ad" font-size="10.5">varias herramientas que distinguen</text>
+      <rect x="0" y="52" width="90" height="20" rx="4" fill="#3f3f46"/>
+      <text x="45" y="66" fill="#dce4f0" font-size="11" text-anchor="middle">baja</text>
+      <text x="102" y="66" fill="#8b98ad" font-size="10.5">coincidencias que comparte medio mundo</text>
+    </g>
+  </g>
+
+  <!-- ================= el aviso ================= -->
+  <rect x="872" y="676" width="440" height="200" rx="12" fill="#160d12" stroke="#7f1d1d" stroke-opacity="0.6"/>
+  <text x="894" y="704" fill="#ff2d55" font-size="11" font-weight="700" letter-spacing="1.5">EL AVISO QUE VA EN TODOS LOS INFORMES</text>
+  <text x="894" y="734" fill="#dce4f0" font-size="12.5">Estas herramientas las usan muchos grupos, y</text>
+  <text x="894" y="754" fill="#dce4f0" font-size="12.5">también los administradores legítimos.</text>
+  <text x="894" y="782" fill="#8b98ad" font-size="12">La atribución es una <tspan fill="#ff8fa3">hipótesis de trabajo</tspan>, nunca</text>
+  <text x="894" y="800" fill="#8b98ad" font-size="12">un veredicto. Sirve para saber qué buscar a</text>
+  <text x="894" y="818" fill="#8b98ad" font-size="12">continuación, no para cerrar el caso.</text>
+  <line x1="894" y1="834" x2="1290" y2="834" stroke="#7f1d1d" stroke-opacity="0.4"/>
+  <text x="894" y="854" fill="#5b6880" font-size="10.5">Datos: Ransomware Tool Matrix (BushidoUK, CC BY 4.0)</text>
+  <text x="894" y="868" fill="#5b6880" font-size="10.5">y ransomware.live (Julien Mousqueton).</text>
+</svg>

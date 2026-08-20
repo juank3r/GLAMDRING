@@ -1,0 +1,209 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 840" width="1360" height="840" font-family="Segoe UI, Inter, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/><stop offset="1" stop-color="#070a10"/>
+    </linearGradient>
+    <marker id="f4r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#ff2d55"/>
+    </marker>
+    <marker id="f4t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2dd4bf"/>
+    </marker>
+    <marker id="f4o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#fb923c"/>
+    </marker>
+    <filter id="glow4" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1360" height="840" fill="url(#bg4)"/>
+
+  <text x="48" y="52" fill="#dce4f0" font-size="26" font-weight="700" letter-spacing="1">El cortafuegos ve lo que el endpoint no</text>
+  <text x="48" y="78" fill="#8b98ad" font-size="14">Un log de firewall no dice qué proceso fue. Pero dice cuándo, cuánto y hacia dónde — y eso es media investigación.</text>
+
+  <!-- ================= muro central ================= -->
+  <g transform="translate(560,110)">
+    <rect x="0" y="0" width="76" height="460" rx="6" fill="#1a1410" stroke="#fb923c" stroke-opacity="0.5"/>
+    <g fill="#fb923c" opacity="0.35">
+      <rect x="6" y="10" width="30" height="14"/><rect x="40" y="10" width="30" height="14"/>
+      <rect x="6" y="28" width="14" height="14"/><rect x="24" y="28" width="30" height="14"/><rect x="58" y="28" width="12" height="14"/>
+      <rect x="6" y="46" width="30" height="14"/><rect x="40" y="46" width="30" height="14"/>
+      <rect x="6" y="64" width="14" height="14"/><rect x="24" y="64" width="30" height="14"/><rect x="58" y="64" width="12" height="14"/>
+      <rect x="6" y="82" width="30" height="14"/><rect x="40" y="82" width="30" height="14"/>
+      <rect x="6" y="100" width="14" height="14"/><rect x="24" y="100" width="30" height="14"/><rect x="58" y="100" width="12" height="14"/>
+      <rect x="6" y="118" width="30" height="14"/><rect x="40" y="118" width="30" height="14"/>
+      <rect x="6" y="136" width="14" height="14"/><rect x="24" y="136" width="30" height="14"/><rect x="58" y="136" width="12" height="14"/>
+      <rect x="6" y="154" width="30" height="14"/><rect x="40" y="154" width="30" height="14"/>
+      <rect x="6" y="172" width="14" height="14"/><rect x="24" y="172" width="30" height="14"/><rect x="58" y="172" width="12" height="14"/>
+      <rect x="6" y="190" width="30" height="14"/><rect x="40" y="190" width="30" height="14"/>
+      <rect x="6" y="208" width="14" height="14"/><rect x="24" y="208" width="30" height="14"/><rect x="58" y="208" width="12" height="14"/>
+      <rect x="6" y="226" width="30" height="14"/><rect x="40" y="226" width="30" height="14"/>
+      <rect x="6" y="244" width="14" height="14"/><rect x="24" y="244" width="30" height="14"/><rect x="58" y="244" width="12" height="14"/>
+      <rect x="6" y="262" width="30" height="14"/><rect x="40" y="262" width="30" height="14"/>
+      <rect x="6" y="280" width="14" height="14"/><rect x="24" y="280" width="30" height="14"/><rect x="58" y="280" width="12" height="14"/>
+      <rect x="6" y="298" width="30" height="14"/><rect x="40" y="298" width="30" height="14"/>
+      <rect x="6" y="316" width="14" height="14"/><rect x="24" y="316" width="30" height="14"/><rect x="58" y="316" width="12" height="14"/>
+      <rect x="6" y="334" width="30" height="14"/><rect x="40" y="334" width="30" height="14"/>
+      <rect x="6" y="352" width="14" height="14"/><rect x="24" y="352" width="30" height="14"/><rect x="58" y="352" width="12" height="14"/>
+      <rect x="6" y="370" width="30" height="14"/><rect x="40" y="370" width="30" height="14"/>
+      <rect x="6" y="388" width="14" height="14"/><rect x="24" y="388" width="30" height="14"/><rect x="58" y="388" width="12" height="14"/>
+      <rect x="6" y="406" width="30" height="14"/><rect x="40" y="406" width="30" height="14"/>
+      <rect x="6" y="424" width="14" height="14"/><rect x="24" y="424" width="30" height="14"/><rect x="58" y="424" width="12" height="14"/>
+      <rect x="6" y="442" width="30" height="14"/><rect x="40" y="442" width="30" height="14"/>
+    </g>
+    <text x="38" y="-14" fill="#fb923c" font-size="12" font-weight="700" text-anchor="middle" letter-spacing="1.5">PERÍMETRO</text>
+  </g>
+
+  <text x="248" y="106" fill="#5b6880" font-size="11" letter-spacing="2" text-anchor="middle">RED INTERNA</text>
+  <text x="900" y="106" fill="#5b6880" font-size="11" letter-spacing="2" text-anchor="middle">INTERNET</text>
+
+  <!-- ================= interior ================= -->
+  <g transform="translate(126,140)">
+    <rect width="180" height="72" rx="8" fill="#0d121c" stroke="#2a3547"/>
+    <rect x="18" y="20" width="30" height="20" rx="2" fill="#ff2d55" filter="url(#glow4)"/>
+    <rect x="28" y="40" width="10" height="5" fill="#7f1d1d"/>
+    <text x="62" y="32" fill="#dce4f0" font-size="13" font-weight="600">WKS-0421</text>
+    <text x="62" y="50" fill="#ff8fa3" font-size="11">comprometido</text>
+  </g>
+  <g transform="translate(126,244)">
+    <rect width="180" height="72" rx="8" fill="#0d121c" stroke="#2a3547"/>
+    <rect x="22" y="16" width="22" height="34" rx="3" fill="#fb923c"/>
+    <circle cx="40" cy="44" r="2.5" fill="#ff2d55"/>
+    <text x="62" y="32" fill="#dce4f0" font-size="13" font-weight="600">SRV-FILE01</text>
+    <text x="62" y="50" fill="#8b98ad" font-size="11">recurso compartido</text>
+  </g>
+  <g transform="translate(126,348)">
+    <rect width="180" height="72" rx="8" fill="#0d121c" stroke="#2a3547"/>
+    <rect x="22" y="16" width="22" height="34" rx="3" fill="#4ade80"/>
+    <text x="62" y="32" fill="#dce4f0" font-size="13" font-weight="600">SRV-DC01</text>
+    <text x="62" y="50" fill="#8b98ad" font-size="11">controlador de dominio</text>
+  </g>
+  <g transform="translate(126,452)">
+    <rect width="180" height="72" rx="8" fill="#0d121c" stroke="#2a3547"/>
+    <g fill="#4ea8ff"><rect x="20" y="24" width="12" height="6"/><rect x="34" y="24" width="12" height="6"/><rect x="27" y="34" width="12" height="6"/></g>
+    <text x="62" y="32" fill="#dce4f0" font-size="13" font-weight="600">proxy</text>
+    <text x="62" y="50" fill="#8b98ad" font-size="11">salida web con registro</text>
+  </g>
+
+  <!-- ================= exterior ================= -->
+  <g transform="translate(700,140)">
+    <rect width="230" height="72" rx="8" fill="#160d12" stroke="#7f1d1d" stroke-opacity="0.6"/>
+    <g transform="translate(20,14)">
+      <path d="M1,44 C1,30 23,30 23,44 Z" fill="#ff2d55"/>
+      <path d="M12,6 C19,6 23,12 23,19 C23,26 19,30 12,30 C5,30 1,26 1,19 C1,12 5,6 12,6 Z" fill="#ff2d55"/>
+      <ellipse cx="12" cy="19" rx="6.5" ry="7.5" fill="#2b0a12"/>
+    </g>
+    <text x="62" y="32" fill="#dce4f0" font-size="13" font-weight="600">45.132.88.17</text>
+    <text x="62" y="50" fill="#ff8fa3" font-size="11">mando y control</text>
+  </g>
+  <g transform="translate(700,244)">
+    <rect width="230" height="72" rx="8" fill="#160d12" stroke="#7f1d1d" stroke-opacity="0.6"/>
+    <g transform="translate(24,20)">
+      <circle cx="14" cy="16" r="15" fill="none" stroke="#ff2d55" stroke-width="2"/>
+      <ellipse cx="14" cy="16" rx="6" ry="15" fill="none" stroke="#ff2d55" stroke-width="1.5"/>
+      <line x1="-1" y1="16" x2="29" y2="16" stroke="#ff2d55" stroke-width="1.5"/>
+    </g>
+    <text x="70" y="32" fill="#dce4f0" font-size="13" font-weight="600">cdn-update-svc.com</text>
+    <text x="70" y="50" fill="#ff8fa3" font-size="11">descarga de la carga útil</text>
+  </g>
+  <g transform="translate(700,348)">
+    <rect width="230" height="72" rx="8" fill="#160d12" stroke="#7f1d1d" stroke-opacity="0.6"/>
+    <g transform="translate(24,22)" fill="#ff2d55">
+      <circle cx="10" cy="16" r="9"/><circle cx="22" cy="16" r="9"/><circle cx="16" cy="9" r="10"/>
+    </g>
+    <text x="70" y="32" fill="#dce4f0" font-size="13" font-weight="600">mega / rclone</text>
+    <text x="70" y="50" fill="#ff8fa3" font-size="11">destino de exfiltración</text>
+  </g>
+  <g transform="translate(700,452)">
+    <rect width="230" height="72" rx="8" fill="#0d121c" stroke="#2a3547" stroke-dasharray="4 3"/>
+    <circle cx="38" cy="36" r="14" fill="#4ade80" opacity="0.7"/>
+    <text x="70" y="32" fill="#dce4f0" font-size="13" font-weight="600">tráfico legítimo</text>
+    <text x="70" y="50" fill="#8b98ad" font-size="11">el 99,9% — hay que atravesarlo</text>
+  </g>
+
+  <!-- flujos -->
+  <g fill="none" stroke-width="2">
+    <path d="M310,176 C420,176 460,176 555,176" stroke="#ff2d55" marker-end="url(#f4r)"/>
+    <path d="M641,176 C670,176 675,176 695,176" stroke="#ff2d55" marker-end="url(#f4r)"/>
+    <path d="M310,280 C420,280 460,280 555,280" stroke="#fb923c" marker-end="url(#f4o)"/>
+    <path d="M641,280 C670,280 675,280 695,280" stroke="#fb923c" marker-end="url(#f4o)"/>
+    <path d="M310,384 C400,384 470,384 555,384" stroke="#ff2d55" stroke-width="3.5" marker-end="url(#f4r)"/>
+    <path d="M641,384 C670,384 675,384 695,384" stroke="#ff2d55" stroke-width="3.5" marker-end="url(#f4r)"/>
+    <path d="M310,488 C420,488 460,488 555,488" stroke="#4ade80" opacity="0.4" marker-end="url(#f4t)"/>
+    <path d="M641,488 C670,488 675,488 695,488" stroke="#4ade80" opacity="0.4" marker-end="url(#f4t)"/>
+  </g>
+
+  <!-- etiquetas de flujo -->
+  <text x="432" y="166" fill="#ff8fa3" font-size="11" text-anchor="middle">latido cada 60 s · 2 KB</text>
+  <text x="432" y="270" fill="#fbbf24" font-size="11" text-anchor="middle">HTTPS a dominio de 3 días</text>
+  <text x="432" y="372" fill="#ff8fa3" font-size="11" text-anchor="middle">4,2 GB de salida en 40 min</text>
+
+  <!-- ================= panel de señales ================= -->
+  <rect x="972" y="128" width="340" height="446" rx="12" fill="#0d121c" stroke="#2dd4bf" stroke-opacity="0.35"/>
+  <text x="994" y="156" fill="#2dd4bf" font-size="11" letter-spacing="2">LO QUE GLAMDRING SACA DE AHÍ</text>
+
+  <g transform="translate(994,172)">
+    <rect width="296" height="88" rx="8" fill="#121927" stroke="#2a3547"/>
+    <text x="16" y="26" fill="#dce4f0" font-size="13" font-weight="600">Latido de C2</text>
+    <text x="16" y="46" fill="#8b98ad" font-size="11.5">Conexiones al mismo destino con</text>
+    <text x="16" y="63" fill="#8b98ad" font-size="11.5">intervalo casi constante y poco byte.</text>
+    <text x="16" y="80" fill="#5b6880" font-size="11">→ arista con partículas rítmicas</text>
+  </g>
+  <g transform="translate(994,272)">
+    <rect width="296" height="88" rx="8" fill="#121927" stroke="#2a3547"/>
+    <text x="16" y="26" fill="#dce4f0" font-size="13" font-weight="600">Salida desproporcionada</text>
+    <text x="16" y="46" fill="#8b98ad" font-size="11.5">Bytes hacia fuera muy por encima de</text>
+    <text x="16" y="63" fill="#8b98ad" font-size="11.5">lo normal para ese equipo.</text>
+    <text x="16" y="80" fill="#5b6880" font-size="11">→ etapa «exfiltración» alcanzada</text>
+  </g>
+  <g transform="translate(994,372)">
+    <rect width="296" height="88" rx="8" fill="#121927" stroke="#2a3547"/>
+    <text x="16" y="26" fill="#dce4f0" font-size="13" font-weight="600">Destino que nadie más usa</text>
+    <text x="16" y="46" fill="#8b98ad" font-size="11.5">Un solo equipo interno hablando con</text>
+    <text x="16" y="63" fill="#8b98ad" font-size="11.5">una IP pública que no toca nadie más.</text>
+    <text x="16" y="80" fill="#5b6880" font-size="11">→ papel «hostil», figura encapuchada</text>
+  </g>
+  <g transform="translate(994,472)">
+    <rect width="296" height="88" rx="8" fill="#0f1a1a" stroke="#0f766e"/>
+    <text x="16" y="26" fill="#2dd4bf" font-size="13" font-weight="600">Y lo que el firewall no puede dar</text>
+    <text x="16" y="46" fill="#8b98ad" font-size="11.5">Qué proceso abrió la conexión. Eso lo</text>
+    <text x="16" y="63" fill="#8b98ad" font-size="11.5">pone el endpoint, y el grafo lo une por</text>
+    <text x="16" y="80" fill="#8b98ad" font-size="11.5">equipo y por ventana temporal.</text>
+  </g>
+
+  <!-- ================= franja inferior: el cruce ================= -->
+  <rect x="48" y="606" width="1264" height="204" rx="12" fill="#0d121c" stroke="#1d2635"/>
+  <text x="70" y="634" fill="#5b6880" font-size="11" letter-spacing="2">EL CRUCE QUE CIERRA EL CASO</text>
+
+  <g transform="translate(70,650)">
+    <rect width="278" height="142" rx="8" fill="#121927" stroke="#2a3547"/>
+    <text x="16" y="26" fill="#fb923c" font-size="12" font-weight="600">Solo el firewall</text>
+    <text x="16" y="50" fill="#8b98ad" font-size="11.5">«10.4.1.22 habló con 45.132.88.17</text>
+    <text x="16" y="67" fill="#8b98ad" font-size="11.5">durante 6 horas.»</text>
+    <text x="16" y="98" fill="#5b6880" font-size="11.5">Sabes que pasó algo.</text>
+    <text x="16" y="118" fill="#5b6880" font-size="11.5">No sabes qué ni quién.</text>
+  </g>
+
+  <text x="368" y="726" fill="#5b6880" font-size="20">+</text>
+
+  <g transform="translate(392,650)">
+    <rect width="278" height="142" rx="8" fill="#121927" stroke="#2a3547"/>
+    <text x="16" y="26" fill="#4ea8ff" font-size="12" font-weight="600">Solo el endpoint</text>
+    <text x="16" y="50" fill="#8b98ad" font-size="11.5">«jlopez ejecutó powershell.exe con</text>
+    <text x="16" y="67" fill="#8b98ad" font-size="11.5">la línea ofuscada.»</text>
+    <text x="16" y="98" fill="#5b6880" font-size="11.5">Sabes qué se ejecutó.</text>
+    <text x="16" y="118" fill="#5b6880" font-size="11.5">No sabes si llegó a salir.</text>
+  </g>
+
+  <text x="690" y="726" fill="#5b6880" font-size="20">=</text>
+
+  <g transform="translate(714,650)">
+    <rect width="598" height="142" rx="8" fill="#0f1a1a" stroke="#0f766e"/>
+    <text x="16" y="26" fill="#2dd4bf" font-size="12" font-weight="600">Los dos, unidos por equipo y por hora</text>
+    <text x="16" y="52" fill="#dce4f0" font-size="12.5">«jlopez ejecutó powershell.exe en WKS-0421 a las 09:15. Doce minutos después</text>
+    <text x="16" y="72" fill="#dce4f0" font-size="12.5">ese mismo equipo abrió un canal con 45.132.88.17 y sacó 4,2 GB. Las herramientas</text>
+    <text x="16" y="92" fill="#dce4f0" font-size="12.5">vistas en medio coinciden con el repertorio de un grupo conocido.»</text>
+    <text x="16" y="122" fill="#5b6880" font-size="11.5">Ni el SIEM ni el EDR lo cuentan así por separado. El grafo es lo que lo hace evidente.</text>
+  </g>
+</svg>
