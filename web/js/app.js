@@ -317,12 +317,15 @@ function wireTopbar() {
 
   el('color-mode').addEventListener('change', (event) => setColorMode(event.target.value));
 
-  el('btn-demo').addEventListener('click', async () => {
-    const button = el('btn-demo');
+  // Dos conjuntos de ejemplo con el mismo manejador. El minimo existe para
+  // poder ver la forma del grafo sin nada encima, y para distinguir "va lento
+  // por el volumen" de "va lento por otra cosa".
+  const cargarDemo = async (id, set) => {
+    const button = el(id);
     button.disabled = true;
     toast('Cargando incidente de ejemplo…', null, 15000);
     try {
-      const result = await api.demo();
+      const result = await api.demo(set);
       toast(`Demo cargada: ${result.events} eventos de ${result.files.length} ficheros`, 'ok');
       state.window = { from: null, to: null };
       state.hidden.clear();
@@ -332,7 +335,9 @@ function wireTopbar() {
     } finally {
       button.disabled = false;
     }
-  });
+  };
+  el('btn-demo').addEventListener('click', () => cargarDemo('btn-demo', 'completo'));
+  el('btn-demo-min').addEventListener('click', () => cargarDemo('btn-demo-min', 'minimo'));
 
   el('btn-upload').addEventListener('click', () => el('file-input').click());
   el('file-input').addEventListener('change', (event) => {

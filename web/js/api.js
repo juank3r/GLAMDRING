@@ -69,7 +69,8 @@ async function download(url, options, fallbackName) {
 export const health = () => request('api/health');
 export const ontology = () => request('api/ontology');
 export const connectors = () => request('api/connectors');
-export const demo = () => request('api/demo', { method: 'POST' });
+export const demo = (set = 'completo') =>
+  request(`api/demo?set=${encodeURIComponent(set)}`, { method: 'POST' });
 export const reset = () => request('api/reset', { method: 'POST' });
 
 export function ingestFile(file) {

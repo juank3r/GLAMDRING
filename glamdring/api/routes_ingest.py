@@ -85,23 +85,42 @@ async def ingest(
     return result
 
 
+# Conjuntos de ejemplo. La clave es lo que se pide por la URL; el valor, el
+# subdirectorio de samples/ (vacio = la raiz).
+DEMO_SETS = {
+    "completo": "",
+    "minimo": "minimo",
+}
+
+
 @router.post("/demo")
-def load_demo(reset: bool = True) -> Dict[str, Any]:
-    """Carga todos los ficheros de ``samples/``.
+def load_demo(reset: bool = True, set: str = "completo") -> Dict[str, Any]:
+    """Carga los ficheros de ejemplo.
 
     Es la puerta de entrada de la herramienta: sin esto habria que tener un SIEM
     delante para ver si funciona.
+
+    ``set=minimo`` carga un incidente de seis eventos en vez de los cincuenta y
+    dos del completo. Sirve para ver la forma del grafo sin nada encima, para
+    entender la herramienta por primera vez, y para saber si algo va lento por
+    el volumen o por otra cosa.
     """
+    if set not in DEMO_SETS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Conjunto '{set}' desconocido. Hay: {', '.join(sorted(DEMO_SETS))}.")
+
+    directory = SAMPLES_DIR / DEMO_SETS[set] if DEMO_SETS[set] else SAMPLES_DIR
     if reset:
         STORE.clear()
-    if not SAMPLES_DIR.exists():
-        raise HTTPException(status_code=404, detail="No hay directorio samples/.")
+    if not directory.exists():
+        raise HTTPException(status_code=404, detail=f"No hay directorio {directory.name}/.")
 
     connector = FileConnector()
     totals = {"read": 0, "normalized": 0, "unmatched": 0, "added": 0, "duplicates": 0}
     files: List[Dict[str, Any]] = []
 
-    for item in sorted(SAMPLES_DIR.iterdir()):
+    for item in sorted(directory.iterdir()):
         if not item.is_file() or item.suffix.lower() not in (".json", ".ndjson", ".csv", ".cef", ".log", ".txt"):
             continue
         try:
@@ -114,7 +133,7 @@ def load_demo(reset: bool = True) -> Dict[str, Any]:
         for key in totals:
             totals[key] += stats.get(key, 0)
 
-    return {"files": files, "totals": totals, "events": len(STORE)}
+    return {"files": files, "totals": totals, "events": len(STORE), "set": set}
 
 
 @router.post("/query")
