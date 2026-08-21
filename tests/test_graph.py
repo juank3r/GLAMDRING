@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 
+from glamdring.graph import ontology
 from glamdring.graph.build import build_graph
 from glamdring.graph.extract import extract
 from glamdring.graph.query import (
@@ -386,3 +387,37 @@ def test_samples_merge_dc_ip_into_hostname(all_events):
     assert "ip:10.4.2.11" not in ids
     # La IP del C2 sigue siendo un nodo propio: nadie la reclama como suya.
     assert "ip:45.132.88.17" in ids
+
+
+# --------------------------------------------------- figuras con frente
+
+
+def test_facing_models_all_exist():
+    """No se puede pedir girar una figura que no existe.
+
+    La lista viaja al navegador y decide que se gira; un nombre mal escrito seria
+    una figura que se queda quieta sin que nadie se entere.
+    """
+    known = set(ontology.ROLE_MODELS.values()) | set(ontology.DEVICE_MODELS.values())
+    known |= {str(e.get("model")) for e in ontology.ENTITIES.values()}
+    known.add(str(ontology.UNKNOWN_ENTITY["model"]))
+    for model in ontology.FACING_MODELS:
+        assert model in known, f"'{model}' no lo produce ninguna entidad ni rol"
+
+
+def test_symmetric_models_do_not_turn():
+    """Girar una esfera cuesta trabajo y no cambia un solo pixel."""
+    for model in ("globe", "cloud", "hashcube", "gear", "endpoint"):
+        assert model not in ontology.FACING_MODELS
+
+
+def test_the_figures_that_carry_meaning_do_turn():
+    """Las que tienen cara, pantalla o frontal son las que hay que poder ver."""
+    for model in ("person", "attacker", "workstation", "server"):
+        assert model in ontology.FACING_MODELS
+
+
+def test_ontology_payload_ships_the_facing_list():
+    """El navegador no puede adivinarla: tiene que venir del servidor."""
+    payload = ontology.as_dict()
+    assert payload["facingModels"] == list(ontology.FACING_MODELS)

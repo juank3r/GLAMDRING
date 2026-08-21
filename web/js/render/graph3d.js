@@ -30,6 +30,7 @@ import { accentColor, hexToRgba, isAlarmed, nodeColor } from './colors.js';
 import { forceCollide } from './forces.js';
 import * as links from './links.js';
 import { buildModel, disposeCaches } from './models.js';
+import * as orient from './orient.js';
 
 const TIME_SPAN = 900;
 
@@ -55,6 +56,11 @@ let orbitTimer = null;
 let orbitAngle = 0;
 const glbCache = new Map();
 const loader = new GLTFLoader();
+
+/* Figuras con frente, segun la ontologia del servidor. Se refresca en cada
+   decorate() porque la ontologia llega por HTTP despues de construir el grafo:
+   leerla una sola vez al cargar el modulo daria siempre el juego de reserva. */
+let facing = new Set();
 
 /* ------------------------------------------------------------------ ayudas */
 
@@ -171,6 +177,7 @@ function buildNodeObject(node) {
   const group = new THREE.Group();
   const radius = radiusOf(node);
   const url = modelUrlFor(node);
+  const model = (node.props && node.props.model) || ont.entity(node.type).model;
 
   let figure = null;
   if (url) {
@@ -182,7 +189,7 @@ function buildNodeObject(node) {
   }
   if (!figure) {
     figure = buildModel({
-      model: (node.props && node.props.model) || ont.entity(node.type).model,
+      model,
       shape: ont.entity(node.type).shape,
       glyph: ont.entity(node.type).glyph,
       radius,
@@ -210,6 +217,13 @@ function buildNodeObject(node) {
     group.add(buildLabel(node, radius));
   }
   group.userData.nodeId = node.id;
+  // orient.js gira SOLO la figura, nunca el grupo: la etiqueta cuelga del grupo
+  // y en modo billboard saldria orbitando alrededor del nodo.
+  group.userData.gdFigure = figure;
+  // Un .glb subido por el sysadmin puede venir orientado de cualquier manera, y
+  // girarlo hacia la camara empeoraria las cosas en vez de arreglarlas. Solo se
+  // giran las figuras procedurales, que sabemos como estan construidas.
+  group.userData.gdFaces = !url && facing.has(model);
   return group;
 }
 
@@ -562,6 +576,7 @@ function setHighlightFromNode(node) {
 /* ------------------------------------------------------------ preparación */
 
 function decorate(doc) {
+  facing = ont.facingModels();
   const nodes = doc.nodes || [];
   const linkList = doc.links || [];
 
@@ -640,6 +655,14 @@ function construct() {
   headlight.position.set(1, 1, 1);
   graph.scene().add(headlight);
 
+  // La cámara se recrea con la instancia, así que el bucle pregunta por ella
+  // cada fotograma en vez de quedarse con una referencia que caducaría.
+  orient.start({
+    getCamera: () => (graph ? graph.camera() : null),
+    getNodes: () => data.nodes || [],
+    getMode: () => opt('camera', 'figureFacing', 'yaw'),
+  });
+
   resize();
 }
 
@@ -647,6 +670,7 @@ function destroy() {
   if (!graph) return;
   clearExtras();
   stopOrbit();
+  orient.stop();
   graph._destructor?.();
   container.innerHTML = '';
   graph = null;
@@ -732,6 +756,9 @@ export function applyProfile(next) {
     applyRenderSettings();
     applyLayout();
   }
+  // Al apagar el giro hay que deshacerlo: si no, cada figura se queda clavada
+  // con el ultimo rumbo que le toco y el desorden parece deliberado.
+  if (opt('camera', 'figureFacing', 'yaw') === 'fixed') orient.reset(data.nodes);
   startOrbit();
   refresh();
 }

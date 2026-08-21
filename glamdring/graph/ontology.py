@@ -87,6 +87,18 @@ DEVICE_MODELS: Dict[str, str] = {
     "firewall": "firewall",
 }
 
+# Figuras que tienen frente, y que por tanto merece la pena girar hacia la
+# camara. Una persona vista por la espalda o un monitor visto por detras no
+# comunican nada: son una silueta y una caja.
+#
+# Las que faltan (globe, cloud, hashcube, gear, endpoint) son practicamente
+# simetricas y se ven igual desde cualquier angulo. Girarlas no aportaria nada y
+# gastaria trabajo por fotograma, asi que se quedan quietas.
+FACING_MODELS = (
+    "workstation", "server", "router", "firewall",
+    "person", "attacker", "envelope", "alert", "document", "key",
+)
+
 
 def model_for(entity_type: str, role: str = "", device_class: str = "") -> str:
     """Figura 3D que corresponde a una entidad concreta.
@@ -243,6 +255,7 @@ def as_dict() -> Dict[str, Any]:
         "roles": ROLES,
         "roleModels": ROLE_MODELS,
         "deviceModels": DEVICE_MODELS,
+        "facingModels": list(FACING_MODELS),
         "severity": SEVERITY,
         "tactics": TACTICS,
         "tacticLabels": TACTIC_LABELS,

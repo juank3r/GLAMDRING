@@ -126,11 +126,24 @@ def _default_links() -> Dict[str, Any]:
 
 def _default_camera() -> Dict[str, Any]:
     return {
-        "controlType": "trackball",  # trackball | orbit | fly
+        # 'orbit' y no 'trackball' a proposito. TrackballControls no fija el eje
+        # vertical: al arrastrar se puede rodar la camara sin limite, el mundo
+        # entero se inclina y las figuras acaban boca abajo. Una persona del
+        # reves deja de parecer una persona, que es justo lo que hacia el grafo
+        # legible de un vistazo. OrbitControls mantiene camera.up en +Y y no
+        # permite alabeo, asi que la vertical se respeta siempre.
+        # Quien prefiera el giro libre lo tiene en el panel; esto es solo el
+        # punto de partida.
+        "controlType": "orbit",     # trackball | orbit | fly
         "autoOrbit": False,
         "orbitSpeed": 1.0,
         "focusDistance": 130,
         "transitionMs": 900,
+        # Como se orientan las figuras que tienen frente.
+        #   fixed     -> no giran nunca
+        #   yaw       -> giran sobre su eje vertical para darte la cara
+        #   billboard -> encaran la camara por completo
+        "figureFacing": "yaw",
     }
 
 
@@ -243,6 +256,7 @@ SPEC: Dict[str, Dict[str, Tuple]] = {
         "orbitSpeed": ("number", 0.1, 6.0),
         "focusDistance": ("number", 20, 800),
         "transitionMs": ("int", 0, 6000),
+        "figureFacing": ("enum", ["fixed", "yaw", "billboard"]),
     },
     "interaction": {
         "dimOnSelect": ("bool",),

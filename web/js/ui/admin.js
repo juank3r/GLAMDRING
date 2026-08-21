@@ -51,6 +51,7 @@ const FIELD_LABELS = {
   controlType: 'Tipo de control', autoOrbit: 'Órbita automática',
   orbitSpeed: 'Velocidad de órbita', focusDistance: 'Distancia de enfoque',
   transitionMs: 'Duración de transiciones',
+  figureFacing: 'Orientación de las figuras',
   dimOnSelect: 'Atenuar el resto al seleccionar', dimOpacity: 'Opacidad al atenuar',
   hoverHighlight: 'Resaltar al pasar por encima', fixOnDrag: 'Fijar al arrastrar',
   expandOnDoubleClick: 'Expandir con doble clic',
@@ -66,7 +67,8 @@ const ENUM_LABELS = {
   never: 'nunca', hover: 'al señalar', selection: 'en la selección',
   smart: 'inteligente', always: 'siempre', busy: 'solo las concurridas',
   sprite: 'sprite 3D', css2d: 'HTML (CSS2D)',
-  trackball: 'trackball', orbit: 'órbita', fly: 'vuelo libre',
+  trackball: 'trackball (gira libre)', orbit: 'órbita (vertical fija)', fly: 'vuelo libre',
+  fixed: 'fijas', yaw: 'giran de frente', billboard: 'siempre de cara',
 };
 
 /* Preajustes de tema. El sysadmin elige uno y luego afina lo que quiera. */
@@ -565,7 +567,9 @@ export async function init(handlers) {
   panel = document.getElementById('admin-panel');
   onApply = handlers.onApply || (() => {});
 
-  const payload = await api.getAppearance();
+  // El arranque ya se lo descarga para poder construir el grafo con el
+  // controlType correcto a la primera; si lo trae, no se vuelve a pedir.
+  const payload = handlers.payload || await api.getAppearance();
   profile = payload.appearance;
   defaults = payload.defaults;
   spec = payload.spec;

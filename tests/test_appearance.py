@@ -233,3 +233,48 @@ def test_delete_model_restores_the_procedural_one(client):
     assert response.status_code == 200
     assert "server" not in response.json()["appearance"].get("models", {})
     assert not appearance.model_path("server.glb").exists()
+
+
+# ------------------------------------------------------- orientacion de figuras
+
+
+def test_camera_starts_with_a_fixed_vertical():
+    """El arranque tiene que ser 'orbit', y esto no es una preferencia estetica.
+
+    TrackballControls no fija el eje vertical: arrastrando se rueda la camara sin
+    limite, el mundo se inclina y las figuras acaban boca abajo. Una persona del
+    reves deja de parecer una persona, que era justo lo que hacia el grafo
+    legible de un vistazo. OrbitControls mantiene camera.up en +Y.
+
+    Sigue siendo configurable; lo que se fija aqui es por donde se empieza.
+    """
+    assert appearance.defaults()["camera"]["controlType"] == "orbit"
+
+
+def test_trackball_is_still_available(client):
+    """Quien quiera el giro libre lo tiene: se cambia el defecto, no la opcion."""
+    client.put("/api/appearance", json={"camera": {"controlType": "trackball"}})
+    stored = client.get("/api/appearance").json()["appearance"]["camera"]
+    assert stored["controlType"] == "trackball"
+
+
+def test_figure_facing_defaults_to_yaw():
+    """Girar solo sobre el eje vertical conserva la sensacion de gravedad.
+
+    'billboard' se lee mejor de lejos pero despega las figuras del suelo y el
+    grafo parece un collage, asi que no es el punto de partida.
+    """
+    assert appearance.defaults()["camera"]["figureFacing"] == "yaw"
+
+
+@pytest.mark.parametrize("mode", ["fixed", "yaw", "billboard"])
+def test_every_facing_mode_is_accepted(client, mode):
+    client.put("/api/appearance", json={"camera": {"figureFacing": mode}})
+    stored = client.get("/api/appearance").json()["appearance"]["camera"]
+    assert stored["figureFacing"] == mode
+
+
+def test_a_bogus_facing_mode_is_rejected(client):
+    response = client.put("/api/appearance", json={"camera": {"figureFacing": "loop-de-loop"}})
+    assert "camera.figureFacing" in response.json()["rejected"]
+    assert appearance.load()["camera"]["figureFacing"] == "yaw"

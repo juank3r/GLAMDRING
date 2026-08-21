@@ -466,6 +466,8 @@ function contextActions() {
 /* ----------------------------------------------------------------- arranque */
 
 let lastClick = { id: null, at: 0 };
+/* Perfil visual descargado en el arranque, compartido entre el grafo y el panel. */
+let adminPayload = null;
 
 async function boot() {
   // La ontología del servidor manda sobre la copia local.
@@ -473,6 +475,26 @@ async function boot() {
     ont.adopt(await api.ontology());
   } catch (error) {
     /* sin backend, la copia local evita una página en blanco */
+  }
+
+  // El perfil visual se pide ANTES de construir el grafo, no después.
+  //
+  // `controlType`, `extraRenderers` y `rendererConfig` son opciones de
+  // construcción: si el perfil llega más tarde y no coincide con lo que se usó,
+  // hay que destruir la instancia y levantar otra. Eso pasaba en cada carga de
+  // página, y además destapaba un fallo del bundle: al destruirse deja vivo un
+  // fotograma de `_animationCycle` que `pauseAnimation()` no cancela, y suelta
+  // un «Cannot read properties of undefined (reading 'tick')» en la consola.
+  //
+  // Construyendo ya con el perfil bueno no hay reconstrucción, no hay error, y
+  // el arranque se ahorra montar el lienzo dos veces.
+  let bootProfile = null;
+  try {
+    adminPayload = await api.getAppearance();
+    bootProfile = adminPayload.appearance;
+    ont.applyProfile(bootProfile);
+  } catch (error) {
+    /* sin perfil, los valores de fábrica del propio JS */
   }
 
   graph3d.init(el('graph'), {
@@ -503,7 +525,7 @@ async function boot() {
       graph3d.clearSelection();
       inspector.clear();
     },
-  }, null);
+  }, bootProfile);
 
   filters.init(() => reload({ fit: false }));
 
@@ -544,7 +566,9 @@ async function boot() {
   });
 
   try {
-    const panel = await admin.init({ onApply: applyProfile });
+    // Se le pasa lo ya descargado: pedirlo otra vez sería una llamada de más y,
+    // peor, podría traer un perfil distinto del que construyó el grafo.
+    const panel = await admin.init({ onApply: applyProfile, payload: adminPayload });
     applyProfile(panel.profile);
   } catch (error) {
     toast(`No se pudo cargar el perfil visual: ${error.message}`, 'error');

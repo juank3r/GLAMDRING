@@ -84,6 +84,8 @@ const FALLBACK = {
     generic:  { label: 'Genérico',           color: '#94a3b8' },
   },
   colorModes: [{ id: 'type', label: 'Tipo de entidad' }],
+  facingModels: ['workstation', 'server', 'router', 'firewall', 'person',
+                 'attacker', 'envelope', 'alert', 'document', 'key'],
   riskRamp: ['#4ade80', '#a3e635', '#fbbf24', '#f97316', '#ff2d55'],
   clusterPalette: ['#4ea8ff', '#fb923c', '#4ade80', '#f472b6', '#a78bfa',
                    '#2dd4bf', '#eab308', '#f43f5e', '#818cf8', '#a3e635'],
@@ -142,5 +144,9 @@ export const colorModes = () => live.colorModes || [];
 /* Un tipo o una relación que el sysadmin ha ocultado desde el panel. Se
    comprueba aquí y no en cada consumidor para que "oculto" signifique lo mismo
    en el grafo, en la leyenda y en los filtros. */
+/* Figuras con frente: las unicas que merece la pena girar hacia la camara.
+   Se devuelve un Set porque se consulta una vez por nodo al construirlo. */
+export const facingModels = () => new Set(live.facingModels || []);
+
 export const entityVisible = (type) => entity(type).visible !== false;
 export const relationVisible = (type) => relation(type).visible !== false;
