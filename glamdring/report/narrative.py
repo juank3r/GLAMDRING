@@ -48,6 +48,31 @@ def _host(event: NormalizedEvent) -> str:
     return "un equipo sin identificar"
 
 
+def _connector(event: NormalizedEvent) -> str:
+    """Quién abrió la conexión, que casi nunca es quién la registró.
+
+    En un log de cortafuegos o de proxy, ``device`` es el aparato que VIO pasar
+    el tráfico y ``src`` es la máquina que lo generó. ``_host()`` mira primero
+    ``device``, que para un proceso o una autenticación es lo correcto, pero
+    para una conexión hace decir «fgt-perim-01 se conectó a 45.132.88.17» — o
+    sea, que el cortafuegos atacó a alguien.
+
+    No es solo feo: manda la investigación al sitio equivocado, y esa frase
+    acaba impresa en el informe que lee otra persona.
+
+    Devuelve "" cuando no hay forma de saberlo, para que la frase se construya
+    sin sujeto en vez de inventarse uno.
+    """
+    for ref in (event.src, event.device):
+        if ref is None:
+            continue
+        if ref.hostname:
+            return ref.hostname
+        if ref.ip:
+            return ref.ip
+    return ""
+
+
 def _origin(event: NormalizedEvent) -> str:
     if event.src and event.src.hostname:
         return event.src.hostname
@@ -111,12 +136,27 @@ def describe(event: NormalizedEvent) -> str:
         return f"{_user(event)} ejecutó {name} en {_host(event)}{lanzado}{detalle}."
 
     if event.class_name == CLASS_NETWORK:
-        if event.activity == "blocked" or event.status == "failure":
-            return f"Se bloqueó una conexión de {_host(event)} hacia {_target(event)}."
+        destino = _target(event)
+        origen = _connector(event)
+        # Si el que registra no es el que conecta, decirlo: es la procedencia
+        # del dato, y ademas explica por que aparece ese aparato en el grafo.
+        testigo = ""
+        device = event.device.hostname if event.device else None
+        if device and device != origen:
+            testigo = f", según {device}"
+        bloqueada = event.activity == "blocked" or event.status == "failure"
+        # `origen == destino` sale cuando el log no dice quién inició: entonces
+        # `_connector` y `_target` acaban leyendo el mismo campo y la frase
+        # quedaría en «45.132.88.17 se conectó a 45.132.88.17».
+        if not origen or origen == destino:
+            verbo = "Se bloqueó una conexión" if bloqueada else "Se registró una conexión"
+            return f"{verbo} hacia {destino}{testigo}."
+        if bloqueada:
+            return f"Se bloqueó una conexión de {origen} hacia {destino}{testigo}."
         proceso = ""
         if event.process and event.process.name:
             proceso = f" mediante {event.process.name}"
-        return f"{_host(event)} se conectó a {_target(event)}{proceso}."
+        return f"{origen} se conectó a {destino}{proceso}{testigo}."
 
     if event.class_name == CLASS_FILE:
         name = (event.file.name if event.file else None) or "un fichero"
@@ -126,7 +166,10 @@ def describe(event: NormalizedEvent) -> str:
         return f"{autor} {verbo} {name}{ruta} en {_host(event)}."
 
     if event.class_name == CLASS_DNS:
-        return f"{_host(event)} resolvió el dominio {event.domain or 'desconocido'}."
+        # Mismo caso que arriba: quien pregunta es `src`, no el resolutor que lo
+        # apunta en su log.
+        quien = _connector(event) or _host(event)
+        return f"{quien} resolvió el dominio {event.domain or 'desconocido'}."
 
     if event.class_name == CLASS_EMAIL:
         remitente = (event.email.sender if event.email else None) or "un remitente desconocido"

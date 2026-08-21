@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, HTTPException, Query
 
 from ..config import SETTINGS
+from ..graph import story
 from ..graph.query import build_filtered, parse_moment, timeline
 from ..store import STORE
 
@@ -73,6 +74,41 @@ def get_neighbors(
     if not graph.nodes:
         raise HTTPException(status_code=404, detail=f"El nodo '{node}' no existe en la investigacion.")
     return graph.model_dump(by_alias=True, mode="json")
+
+
+@router.get("/graph/story")
+def get_story(
+    node: str = Query(description="id de nodo, p.ej. 'user:jlopez'"),
+    hops: int = Query(default=1, ge=1, le=3),
+    min_severity: int = Query(default=0, ge=0, le=5, alias="minSeverity"),
+    limit: int = Query(default=story.MAX_STEPS, ge=1, le=500),
+) -> Dict[str, Any]:
+    """Lo que hizo una entidad, en orden, para recorrerlo con la camara.
+
+    El grafo ensena el estado final del incidente; esto ensena como se llego a
+    el. Cada paso trae la arista por la que ocurrio, con quien, la frase que lo
+    cuenta y los uids para abrir el log original.
+    """
+    graph = build_filtered(
+        STORE.events,
+        min_severity=min_severity,
+        focus=node,
+        hops=hops,
+        max_nodes=SETTINGS.max_graph_nodes,
+    )
+    if not graph.nodes:
+        raise HTTPException(status_code=404,
+                            detail=f"El nodo '{node}' no existe en la investigacion.")
+
+    result = story.build(graph, STORE.events, node, limit=limit)
+    if not result["found"]:
+        raise HTTPException(status_code=404,
+                            detail=f"El nodo '{node}' no existe en la investigacion.")
+    # El subgrafo viaja con el recorrido: la interfaz necesita las dos cosas a la
+    # vez (con que se queda en pantalla, y por donde va pasando) y pedirlas por
+    # separado abriria la puerta a que no cuadren entre si.
+    result["graph"] = graph.model_dump(by_alias=True, mode="json")
+    return result
 
 
 @router.get("/timeline")
