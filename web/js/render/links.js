@@ -258,3 +258,48 @@ export function assignCurvature(links, amount = 0.22) {
     });
   });
 }
+
+/* ------------------------------------------------------- resaltado en vivo */
+
+/**
+ * Atenúa o restaura las aristas YA dibujadas, sin reconstruir nada.
+ *
+ * El color de la arista lo pone el accesor `linkColor` de la librería, y
+ * reasignarlo dispara una actualización completa del componente. Eso, sumado al
+ * `refresh()` de los nodos, era lo que congelaba la aplicación cada vez que el
+ * ratón rozaba algo.
+ *
+ * La librería guarda la línea de cada arista en `link.__lineObj`, así que se le
+ * cambia la opacidad del material directamente. Las decoraciones nuestras
+ * (texto, degradado, trazo discontinuo) cuelgan de `__gdObj` y llevan su propio
+ * material, así que se tratan igual.
+ */
+export function applyHighlight(links, isDimmed, options) {
+  const dim = Math.max(0.04, options.dimOpacity ?? 0.07);
+  for (let i = 0; i < links.length; i += 1) {
+    const link = links[i];
+    const dimmed = isDimmed(link);
+    const objetos = [link.__lineObj, link.__arrowObj, link.__gdObj];
+    for (let j = 0; j < objetos.length; j += 1) {
+      const obj = objetos[j];
+      if (!obj) continue;
+      obj.traverse((child) => {
+        if (!child.material) return;
+        // La opacidad de partida se guarda la primera vez que se toca: leerla
+        // después de haber atenuado daría el valor atenuado como base y la
+        // arista no volvería nunca a su aspecto original.
+        if (child.userData.gdBaseOpacity === undefined) {
+          child.userData.gdBaseOpacity = child.material.opacity;
+          child.userData.gdBaseTransparent = child.material.transparent;
+        }
+        if (dimmed) {
+          child.material.transparent = true;
+          child.material.opacity = dim;
+        } else {
+          child.material.transparent = child.userData.gdBaseTransparent;
+          child.material.opacity = child.userData.gdBaseOpacity;
+        }
+      });
+    }
+  }
+}

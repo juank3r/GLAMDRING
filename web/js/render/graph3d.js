@@ -173,6 +173,57 @@ function qualityFor() {
   return 'high';
 }
 
+/* Atenua o restaura un nodo YA construido, sin tocar su geometria.
+   Es lo que permite que resaltar al pasar el raton cueste microsegundos en vez
+   de reconstruir la escena entera. */
+function applyNodeDim(group, dimmed) {
+  const list = group.userData.gdMaterials;
+  if (!list) return;
+  const dim = Math.max(0.04, opt('interaction', 'dimOpacity', 0.07));
+  for (let i = 0; i < list.length; i += 1) {
+    const entry = list[i];
+    if (dimmed) {
+      entry.material.transparent = true;
+      entry.material.opacity = dim;
+    } else {
+      entry.material.transparent = entry.transparent;
+      entry.material.opacity = entry.opacity;
+    }
+  }
+}
+
+/* Pone la etiqueta al dia sin reconstruir el nodo.
+
+   Las tres modalidades utiles ('hover', 'selection' y la de por defecto,
+   'smart') dependen de que este resaltado en ese momento, asi que mover el
+   raton cambia que nodos llevan rotulo. Crearla la primera vez que hace falta y
+   a partir de ahi solo esconderla evita tener que rehacer el objeto entero, y
+   evita tambien fabricar mil texturas de texto que nadie va a mirar. */
+function applyNodeLabel(group, node) {
+  const wants = shouldLabelNode(node);
+  let label = group.userData.gdLabel;
+  if (wants && !label) {
+    label = buildLabel(node, radiusOf(node));
+    group.userData.gdLabel = label;
+    group.add(label);
+  }
+  if (label) label.visible = wants;
+}
+
+/* Recalcula atenuado y etiquetas de TODOS los nodos a partir del resaltado
+   actual. Sustituye a refresh() en hover y seleccion. */
+export function applyHighlight() {
+  const nodes = data.nodes || [];
+  for (let i = 0; i < nodes.length; i += 1) {
+    const node = nodes[i];
+    const group = node.__threeObj;
+    if (!group) continue;
+    applyNodeDim(group, isDimmedNode(node));
+    applyNodeLabel(group, node);
+  }
+  links.applyHighlight(data.links || [], isDimmedLink, linkOptions());
+}
+
 function buildNodeObject(node) {
   const group = new THREE.Group();
   const radius = radiusOf(node);
@@ -202,19 +253,30 @@ function buildNodeObject(node) {
   }
   group.add(figure);
 
-  if (isDimmedNode(node)) {
-    const dim = opt('interaction', 'dimOpacity', 0.07);
-    group.traverse((child) => {
-      if (child.material) {
-        child.material = child.material.clone();
-        child.material.transparent = true;
-        child.material.opacity = Math.max(0.04, dim);
-      }
-    });
-  }
+  // Los materiales vienen compartidos desde models.js (hay una cache por color
+  // y emisivo), asi que tocarlos directamente atenuaria de golpe a todos los
+  // nodos que usen ese mismo color. Se clonan UNA vez aqui, al construir, y se
+  // guardan para poder cambiarles la opacidad sin reconstruir nada.
+  //
+  // Antes esto se hacia al reves: el atenuado se cocinaba dentro de la figura y
+  // cambiar el resaltado obligaba a llamar a refresh(), que tira TODOS los
+  // objetos 3D y los vuelve a construir. Con 228 nodos eso bloqueaba el hilo
+  // 138 ms; con los 1500 del tope, casi un segundo. Y pasaba cada vez que el
+  // raton rozaba un nodo.
+  const materials = [];
+  group.traverse((child) => {
+    if (!child.material) return;
+    const clone = child.material.clone();
+    child.material = clone;
+    materials.push({ material: clone, opacity: clone.opacity, transparent: clone.transparent });
+  });
+  group.userData.gdMaterials = materials;
+  applyNodeDim(group, isDimmedNode(node));
 
   if (shouldLabelNode(node)) {
-    group.add(buildLabel(node, radius));
+    const label = buildLabel(node, radius);
+    group.userData.gdLabel = label;
+    group.add(label);
   }
   group.userData.nodeId = node.id;
   // orient.js gira SOLO la figura, nunca el grupo: la etiqueta cuelga del grupo
@@ -289,6 +351,10 @@ function buildLinkObject(link) {
     group.add(label);
   }
   group.userData.hasDash = wantsDash;
+  // Referencia propia para poder atenuar la arista sin reconstruirla. La
+  // libreria guarda su linea en `__lineObj`, pero lo que devuelve
+  // linkThreeObject no queda accesible con un nombre estable.
+  link.__gdObj = group;
   return group;
 }
 
@@ -538,7 +604,10 @@ function onNodeHover(node) {
 
   if (!selection.node && !selection.link) {
     setHighlightFromNode(node);
-    refresh();
+    // applyHighlight() y no refresh(): refresh() tira TODOS los objetos 3D y
+    // los reconstruye, que con 228 nodos son 138 ms de hilo bloqueado. Pasar el
+    // raton por encima de un grafo denso era una sucesion de tirones.
+    applyHighlight();
   }
   handlers.onNodeHover?.(node);
 }
@@ -558,7 +627,7 @@ function onLinkHover(link) {
       if (from) highlight.nodes.add(from);
       if (to) highlight.nodes.add(to);
     }
-    refresh();
+    applyHighlight();
   }
 }
 
@@ -777,9 +846,36 @@ export function setColorMode(mode) {
 
 export const getColorMode = () => colorMode;
 
+/* Ensena u oculta nodos y aristas segun el cursor temporal, tocando el `visible`
+   de los objetos que ya existen.
+
+   Los accesores nodeVisibility/linkVisibility de la libreria calculan lo mismo,
+   pero solo se reevaluan en su ciclo de actualizacion, y forzarlo significaba
+   llamar a refresh(). La reproduccion mueve el cursor en cada fotograma, asi
+   que eso era reconstruir la escena entera sesenta veces por segundo.
+
+   No se desincronizan: cuando la libreria vuelva a evaluar sus accesores por
+   cualquier otro motivo, saldra de visibleAt() y dara exactamente este mismo
+   resultado. */
+function applyTimeVisibility() {
+  const nodes = data.nodes || [];
+  for (let i = 0; i < nodes.length; i += 1) {
+    const object = nodes[i].__threeObj;
+    if (object) object.visible = visibleAt(nodes[i]);
+  }
+  const linkList = data.links || [];
+  for (let i = 0; i < linkList.length; i += 1) {
+    const link = linkList[i];
+    const shown = visibleAt(link);
+    if (link.__lineObj) link.__lineObj.visible = shown;
+    if (link.__arrowObj) link.__arrowObj.visible = shown;
+    if (link.__gdObj) link.__gdObj.visible = shown;
+  }
+}
+
 export function setTimeCursor(cursor) {
   timeCursor = cursor;
-  refresh();
+  applyTimeVisibility();
 }
 
 export const getTimeRange = () => ({ from: data.__gdTmin || 0, to: data.__gdTmax || 0 });
@@ -789,7 +885,7 @@ export function selectNode(nodeId, focusCamera = true) {
   selection.node = node || null;
   selection.link = null;
   setHighlightFromNode(node);
-  refresh();
+  applyHighlight();
 
   if (focusCamera && node && node.x !== undefined) {
     // Matemática del ejemplo `click-to-focus`: se apunta al nodo desde fuera.
@@ -813,7 +909,7 @@ export function toggleMultiSelect(node) {
     highlight.nodes.add(item);
     (adjacency[item.id] || []).forEach(({ link }) => highlight.links.add(link));
   });
-  refresh();
+  applyHighlight();
   return [...selection.multi];
 }
 
@@ -832,7 +928,7 @@ export function selectLink(linkId) {
     if (from) highlight.nodes.add(from);
     if (to) highlight.nodes.add(to);
   }
-  refresh();
+  applyHighlight();
   return link;
 }
 
@@ -844,7 +940,7 @@ export function clearSelection() {
   highlight.links.clear();
   highlight.hoverNode = null;
   highlight.hoverLink = null;
-  refresh();
+  applyHighlight();
 }
 
 export const getSelection = () => selection;
