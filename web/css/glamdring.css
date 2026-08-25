@@ -733,3 +733,95 @@ body.auto-on #btn-auto {
   background: var(--accent-dim); color: #f0fdfa;
   border-color: var(--accent);
 }
+
+/* ==========================================================================
+   Modo escaparate (cine.js): el grafo solo, a pantalla completa.
+
+   Se apaga todo lo que no se va a tocar mientras esto esta puesto en una
+   pantalla del SOC o proyectado. Con `display: none` y no con opacidad: un
+   panel invisible sigue ocupando su columna del grid y el lienzo no crece.
+   ========================================================================== */
+
+body.cine .topbar,
+body.cine .panel-left,
+body.cine .panel-right,
+body.cine .timeline-bar,
+body.cine .stage-stats { display: none; }
+
+/* El grid pasa a una sola columna y la escena ocupa la ventana entera. */
+body.cine .layout {
+  grid-template-columns: 1fr;
+  height: 100vh;
+}
+
+/* La leyenda se queda: sin ella, quien mire de lejos no sabe que es cada
+   figura, que es justo lo que este modo tiene que comunicar. */
+body.cine .stage-legend { opacity: 0.75; }
+
+/* --------------------------------------------------------- fondo elegible */
+
+body[data-cine-fondo="negro"] { --bg: #000000; }
+body[data-cine-fondo="papel"] {
+  --bg:            #ffffff;
+  --bg-panel:      #f4f6fa;
+  --bg-panel-alt:  #eaeef5;
+  --border:        #d3dae6;
+  --border-strong: #b9c3d4;
+  --text:          #0b1220;
+  --text-dim:      #4a5670;
+  --text-faint:    #7c88a0;
+  --accent-dim:    #0d9488;
+}
+
+/* Sobre blanco, la tarjeta del recorrido y la del modo automatico necesitan
+   su propio contraste: el borde tenue del tema oscuro desaparece. */
+body.cine-claro .follow-bar,
+body.cine-claro .auto-card {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: var(--accent-dim);
+  box-shadow: 0 10px 34px rgba(15, 30, 60, 0.18);
+}
+body.cine-claro .auto-rotulo { background: rgba(255, 255, 255, 0.55); }
+body.cine-claro .follow-text,
+body.cine-claro .auto-name { color: var(--text); }
+
+/* ------------------------------------------------------------- la barrita */
+
+.cine-bar {
+  position: absolute; top: 14px; right: 14px; z-index: 8;
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 9px; border-radius: var(--radius);
+  background: color-mix(in srgb, var(--bg-panel) 88%, transparent);
+  border: 1px solid var(--border);
+  /* Discreta hasta que se la busca: esto acaba proyectado y no tiene por que
+     salir en la foto. */
+  opacity: 0.22; transition: opacity 0.18s ease;
+}
+.cine-bar:hover { opacity: 1; }
+.cine-label {
+  font-size: 10px; letter-spacing: 1.5; text-transform: uppercase;
+  color: var(--text-faint); margin-right: 2px;
+}
+.cine-fondo-btn {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-dim); border-radius: var(--radius);
+  padding: 3px 10px; font-size: 11px; cursor: pointer;
+  font-family: inherit;
+}
+.cine-fondo-btn:hover { border-color: var(--border-strong); color: var(--text); }
+.cine-fondo-btn.activo {
+  background: var(--accent-dim); border-color: var(--accent); color: #f0fdfa;
+}
+body.cine-claro .cine-fondo-btn.activo { color: #ffffff; }
+.cine-x { margin-left: 4px; }
+
+/* En modo papel la leyenda hereda --text-dim, que ya se redefine oscuro arriba,
+   pero su fondo translucido sobre blanco la deja casi sin borde. Se le sube el
+   contraste para que siga leyendose a distancia, que es de lo que va este modo. */
+body.cine-claro .stage-legend {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: var(--border-strong);
+  color: #33405c;
+  box-shadow: 0 4px 18px rgba(15, 30, 60, 0.12);
+}
+body.cine-claro .stage-legend .head { color: #5b6880; }

@@ -32,8 +32,57 @@ function rampColor(ramp, ratio) {
   return lerpHex(ramp[index], ramp[index + 1], scaled - index);
 }
 
-export function hexToRgba(hex, alpha) {
+/* ------------------------------------------------- adaptacion a fondo claro
+
+   La paleta esta calculada para fondo oscuro: tonos separados en matiz Y en
+   luminancia, pero luminancia ALTA, que es lo que hace que se lean sobre
+   #070a10. Puestos sobre blanco, esos mismos tonos casi desaparecen: un verde
+   #4ade80 sobre blanco tiene menos contraste que sobre negro un gris medio.
+
+   No se cambia la paleta: se oscurece al vuelo conservando el matiz, que es lo
+   que permite que el modo papel signifique lo mismo que el oscuro. Un host
+   sigue siendo verde y una alerta sigue siendo roja; solo que del verde y del
+   rojo que se leen sobre blanco.
+
+   `OBJETIVO` es la luminancia a la que se lleva lo que este por encima. 118
+   sale de dejar unos 4:1 de contraste contra el blanco, que es legible para
+   texto grande y de sobra para una figura. */
+let fondoClaro = false;
+const OBJETIVO = 118;
+
+export function setLightBackground(activo) {
+  fondoClaro = Boolean(activo);
+}
+
+export const isLightBackground = () => fondoClaro;
+
+function luminancia(r, g, b) {
+  return (r * 299 + g * 587 + b * 114) / 1000;
+}
+
+/** Devuelve el color tal cual, o su version legible sobre blanco. */
+export function adapt(hex) {
+  if (!fondoClaro) return hex;
   let value = String(hex || '#94a3b8').replace('#', '');
+  if (value.length === 3) {
+    value = value[0] + value[0] + value[1] + value[1] + value[2] + value[2];
+  }
+  if (value.length < 6) return hex;
+  const n = parseInt(value.slice(0, 6), 16);
+  if (Number.isNaN(n)) return hex;
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const lum = luminancia(r, g, b);
+  if (lum <= OBJETIVO) return hex;
+  // Escalar los tres canales por igual conserva el matiz; bajar solo el mas
+  // alto lo desplazaria hacia otro color.
+  const factor = OBJETIVO / lum;
+  const ajustado = (c) => Math.max(0, Math.min(255, Math.round(c * factor)));
+  return `#${[ajustado(r), ajustado(g), ajustado(b)]
+    .map((c) => c.toString(16).padStart(2, '0')).join('')}`;
+}
+
+export function hexToRgba(hex, alpha) {
+  let value = String(adapt(hex) || '#94a3b8').replace('#', '');
   if (value.length === 3) {
     value = value[0] + value[0] + value[1] + value[1] + value[2] + value[2];
   }
@@ -65,9 +114,9 @@ const RESOLVERS = {
 export function nodeColor(node, mode = 'type') {
   const resolver = RESOLVERS[mode] || RESOLVERS.type;
   try {
-    return resolver(node) || '#94a3b8';
+    return adapt(resolver(node) || '#94a3b8');
   } catch (error) {
-    return '#94a3b8';
+    return adapt('#94a3b8');
   }
 }
 
@@ -76,8 +125,8 @@ export function nodeColor(node, mode = 'type') {
    leerse siempre, se esté mirando lo que se esté mirando. */
 export function accentColor(node) {
   const role = node.props && node.props.role;
-  if (role === 'hostile') return ont.role('hostile').color;
-  return ont.severity(node.maxSeverity).color;
+  if (role === 'hostile') return adapt(ont.role('hostile').color);
+  return adapt(ont.severity(node.maxSeverity).color);
 }
 
 export function isAlarmed(node) {

@@ -18,6 +18,7 @@ import * as admin from './ui/admin.js';
 import * as report from './ui/report.js';
 import * as follow from './ui/follow.js';
 import * as auto from './ui/auto.js';
+import * as cine from './ui/cine.js';
 
 const state = {
   window: { from: null, to: null },
@@ -454,6 +455,7 @@ function contextActions() {
     escape: () => {
       // Salir del recorrido va primero: si se sigue a alguien, escape significa
       // "sacame de aqui", no "quita la seleccion".
+      if (cine.activo()) { cine.salir(); return; }
       if (auto.activo()) { auto.parar(); return; }
       if (follow.activo()) { follow.salir(); return; }
       graph3d.clearSelection();
@@ -469,6 +471,7 @@ function contextActions() {
       else toast('Selecciona una entidad antes de seguirla.', null, 3000);
     },
     toggleAuto: () => auto.arrancar(state.graph),
+    toggleCine: () => cine.alternar(),
     fit: () => graph3d.zoomToFit(),
     togglePlay: () => (timeline.isPlaying() ? timeline.pause() : timeline.play()),
     setView,
@@ -590,6 +593,23 @@ async function boot() {
       const link = graph3d.linkById(paso.linkId);
       if (link) selectLink(link);
     },
+  });
+
+  cine.init({
+    // El modo escaparate cambia el tema en LOCAL, sin tocar el perfil guardado
+    // en el servidor: es una forma de mirar, no una preferencia del equipo.
+    // Por eso se llama a applyProfile directamente y no a la ruta de guardado.
+    snapshotProfile: () => JSON.parse(JSON.stringify(state.profile || {})),
+    onFondo: (parche) => {
+      const copia = JSON.parse(JSON.stringify(state.profile || {}));
+      Object.entries(parche).forEach(([seccion, valores]) => {
+        copia[seccion] = { ...(copia[seccion] || {}), ...valores };
+      });
+      applyProfile(copia);
+    },
+    restoreProfile: (anterior) => applyProfile(anterior),
+    onEnter: () => toast('Pantalla completa. Pulsa P o Esc para salir.', null, 3200),
+    onExit: () => toast('De vuelta al panel', null, 1800),
   });
 
   auto.init({

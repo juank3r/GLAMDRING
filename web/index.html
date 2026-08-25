@@ -53,6 +53,7 @@
     <button class="btn" id="btn-upload" title="Subir un export del SIEM">Subir</button>
     <button class="btn" id="btn-siem" title="Consultar Splunk / Sentinel / QRadar en vivo">SIEM</button>
     <button class="btn" id="btn-auto" title="Recorrer el incidente solo, en bucle (t)">Auto</button>
+    <button class="btn" id="btn-cine" title="Pantalla completa: solo el grafo (p)">Pantalla</button>
     <button class="btn" id="btn-report" title="Generar informe del incidente (r)">Informe</button>
     <button class="btn btn-icon" id="btn-admin" title="Panel de administrador (a)">⚙</button>
     <button class="btn btn-icon" id="btn-help" title="Atajos de teclado (?)">?</button>
@@ -126,6 +127,17 @@
 
     <!-- Rotulo de quien viene ahora en el modo automatico. -->
     <div class="auto-rotulo" id="auto-card" hidden></div>
+
+    <!-- Controles del modo escaparate. Solo aparecen dentro de el, y se
+         esconden solos hasta que el raton se acerca: la idea es no salir en la
+         foto cuando esto esta proyectado. -->
+    <div class="cine-bar" id="cine-bar" hidden>
+      <span class="cine-label">Fondo</span>
+      <button class="cine-fondo-btn activo" data-fondo="sala" title="El tema de siempre, para sala en penumbra">Sala</button>
+      <button class="cine-fondo-btn" data-fondo="negro" title="Negro puro, para OLED y salas a oscuras">Negro</button>
+      <button class="cine-fondo-btn" data-fondo="papel" title="Blanco, para proyectar con luz o para una captura">Papel</button>
+      <button class="btn btn-icon cine-x" id="cine-salir" title="Salir de pantalla completa (p o esc)">✕</button>
+    </div>
 
     <!-- Recorrido de una entidad. Aparece sobre el lienzo, no debajo: hay que
          poder leer la frase sin apartar la vista de lo que hace la camara. -->

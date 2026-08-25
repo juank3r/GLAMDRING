@@ -39,6 +39,7 @@ const SHORTCUTS = [
   ['doble clic', 'expandir vecinos desde el servidor'],
   ['s', 'seguir a la entidad seleccionada'],
   ['t', 'recorrido automático del incidente, en bucle'],
+  ['p', 'pantalla completa: solo el grafo'],
   ['clic derecho', 'menú contextual'],
   ['arrastrar nodo', 'fijarlo en su sitio'],
   ['espacio', 'reproducir / pausar la cronología'],
@@ -156,6 +157,7 @@ export function init(handlers) {
       case 'c': case 'C': actions.cycleColorMode?.(); break;
       case 's': case 'S': actions.followSelected?.(); break;
       case 't': case 'T': actions.toggleAuto?.(); break;
+      case 'p': case 'P': actions.toggleCine?.(); break;
       case 'a': case 'A': actions.openAdmin?.(); break;
       case 'r': case 'R': actions.openReport?.(); break;
       case '/': event.preventDefault(); document.getElementById('search').focus(); break;
