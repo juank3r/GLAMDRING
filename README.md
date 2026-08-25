@@ -15,8 +15,6 @@ el log literal que los generó. Corre en local, un proceso, sin autenticación.
 
 ## Arranque rápido
 
-Probado con **Python 3.12**.
-
 ```powershell
 cd GLAMDRING
 python -m venv .venv
@@ -25,21 +23,7 @@ pip install -r requirements.txt
 powershell -ExecutionPolicy Bypass -File tools\run.ps1
 ```
 
-- Abre <http://localhost:8000> y pulsa **Demo** (52 eventos, 38 entidades) o
-  **Demo mínima** (6 eventos, 10 nodos, 16 aristas) para ver la forma del grafo sin
-  nada encima.
-- Sin SIEM y sin credenciales: `samples/` trae el incidente repartido entre los cuatro
-  formatos de ingesta soportados.
-- Frontend sin build: no hay `npm install`.
-- `tools\run.ps1` (51 líneas) cierra lo que hubiera y arranca **siempre en :8000**.
-  Acepta `-Port 8080` y `-Reload` (la recarga levanta un proceso más, el vigilante, por
-  eso se pide a propósito y no viene puesta).
-- Servidores vivos de sesiones anteriores:
-  `powershell -ExecutionPolicy Bypass -File tools\stop_servers.ps1`. Busca por línea de
-  comandos y no solo por puerto, para cazar también al vigilante de `--reload`. Acepta
-  `-Keep 8000` y `-WhatIf`.
-- Linux/macOS: `source .venv/bin/activate` y `uvicorn glamdring.main:app --port 8000`.
-  `run.ps1` es solo para PowerShell.
+Abre <http://localhost:8000> y pulsa **Demo**.
 
 ---
 

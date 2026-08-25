@@ -622,13 +622,25 @@ async function boot() {
     onLoaded: async (resultado) => {
       // Cambiar de incidente invalida lo que estuviera en marcha: el recorrido
       // iba por unas entidades que ya no existen.
+      //
+      // Pero si el modo automatico estaba puesto, SE MANTIENE. Cambiar de caso
+      // es justo lo que se espera que haga solo; apagarlo al hacerlo obligaria
+      // a volver a darle cada vez, y entonces ya no es automatico.
+      const seguiaEnAuto = auto.activo() || auto.cambiandoDeIncidente();
       if (auto.activo()) auto.parar({ avisar: false });
       if (follow.activo()) follow.salir({ restaurar: false });
-      cine.reflejarAuto(false);
       state.window = { from: null, to: null };
       state.hidden.clear();
       await reload();
       toast(`${resultado.title || 'Incidente'}: ${resultado.events} eventos`, 'ok', 3500);
+
+      if (seguiaEnAuto) {
+        // Un respiro para que el trazado se asiente antes de empezar a volar:
+        // arrancar sobre nodos que todavia se estan colocando marea.
+        setTimeout(() => auto.arrancar(state.graph), 1200);
+      } else {
+        cine.reflejarAuto(false);
+      }
     },
     onError: (mensaje) => toast(mensaje, 'error', 6000),
   });
@@ -642,6 +654,12 @@ async function boot() {
     },
     onStop: () => { cine.reflejarAuto(false); toast('Recorrido automático detenido', null, 2200); },
     onLoop: (vuelta) => toast(`Vuelta ${vuelta} completada`, null, 2600),
+    // Agotadas las vueltas de este incidente, se salta al siguiente y el modo
+    // automatico sigue puesto. Es lo que permite dejarlo en una pantalla.
+    onIncidenteAgotado: async () => {
+      const proximo = await incidentes.siguiente();
+      if (!proximo) auto.parar();
+    },
     onInterrupted: () => {
       cine.reflejarAuto(false);
       toast('Recorrido detenido: has tomado el control', null, 2600);

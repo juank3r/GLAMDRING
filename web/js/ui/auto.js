@@ -29,6 +29,21 @@ const PAPELES_QUE_SE_SALTAN = new Set(['neutral']);
 const ENTRE_ENTIDADES_MS = 2200;   // rótulo de quién viene ahora
 const MIN_ACCIONES = 2;            // con una sola acción no hay recorrido que contar
 
+/* Vueltas a un mismo incidente antes de pasar al siguiente.
+   Una se queda corta: la primera se ve sin saber todavía qué se está mirando, y
+   la segunda es la que se entiende. Tres ya aburre a quien pasa por delante. */
+const VUELTAS_POR_INCIDENTE = 2;
+
+/* Techo de tiempo, ademas de las vueltas.
+   Medido sobre los incidentes que hay: la demo minima da una vuelta en poco mas
+   de un minuto, pero Akira o ScatteredSpider tardan diez, asi que dos vueltas
+   serian VEINTE MINUTOS de una sola entidad en pantalla. Con diecinueve
+   incidentes, una rotacion completa se iria a cinco horas.
+   Lo que manda es lo primero que se cumpla: dos vueltas si el incidente es
+   pequeno, o este techo si es grande. Asi la rotacion es predecible sin
+   depender del tamano del caso. */
+const MAX_MS_POR_INCIDENTE = 8 * 60 * 1000;
+
 let handlers = {};
 let rotulo = null;
 
@@ -39,6 +54,12 @@ const estado = {
   vueltas: 0,
   temporizador: null,
   incluirContexto: false,
+  /* Se esta cambiando de incidente por haber agotado las vueltas. Sirve para
+     que la parada que eso conlleva no se anuncie como si alguien la hubiera
+     pedido, y para saber que hay que volver a arrancar al otro lado. */
+  cambiandoIncidente: false,
+  /* Cuando empezo con ESTE incidente, para el techo de tiempo. */
+  desde: 0,
 };
 
 const el = (id) => document.getElementById(id);
@@ -102,12 +123,28 @@ function siguienteEntidad() {
   if (!estado.activo) return;
 
   if (estado.posicion >= estado.cola.length) {
-    // Vuelta completa: encuadre general y a empezar otra vez.
     estado.posicion = 0;
     estado.vueltas += 1;
     follow.salir();
     graph3d.zoomToFit(900, 90);
     handlers.onLoop?.(estado.vueltas);
+
+    // Agotadas las vueltas, se pasa al siguiente incidente SIN salir del modo
+    // automático. Es lo que convierte esto en algo que se deja puesto: si no,
+    // una pantalla del SOC acaba repitiendo el mismo caso toda la tarde.
+    //
+    // Quien carga el incidente es app.js, que es el unico que sabe de la lista.
+    // Aqui solo se avisa y se suelta el bucle: lo volvera a arrancar el que
+    // cargue, cuando tenga datos nuevos que recorrer.
+    const agotadoPorTiempo = estado.desde
+      && (Date.now() - estado.desde) >= MAX_MS_POR_INCIDENTE;
+    if ((estado.vueltas >= VUELTAS_POR_INCIDENTE || agotadoPorTiempo)
+        && handlers.onIncidenteAgotado) {
+      estado.cambiandoIncidente = true;
+      handlers.onIncidenteAgotado();
+      return;
+    }
+
     estado.temporizador = setTimeout(siguienteEntidad, ENTRE_ENTIDADES_MS * 1.6);
     return;
   }
@@ -164,9 +201,11 @@ export function arrancar(doc) {
 
   estado.activo = true;
   estado.cola = cola;
+  estado.cambiandoIncidente = false;
   if (!seguir) {
     estado.posicion = 0;
     estado.vueltas = 0;
+    estado.desde = Date.now();
   }
   document.body.classList.add('auto-on');
   handlers.onStart?.(cola.length, seguir ? estado.posicion + 1 : 0);
@@ -181,6 +220,9 @@ export function parar({ avisar = true } = {}) {
   estado.activo = false;
   clearTimeout(estado.temporizador);
   estado.temporizador = null;
+  // Si la parada la pide alguien, para de verdad: no puede quedarse la bandera
+  // puesta y que el siguiente cambio de incidente lo resucite solo.
+  if (avisar) estado.cambiandoIncidente = false;
   ocultarRotulo();
   document.body.classList.remove('auto-on');
   follow.salir();
@@ -188,6 +230,23 @@ export function parar({ avisar = true } = {}) {
 }
 
 export const activo = () => estado.activo;
+
+/* True mientras se esta saltando al siguiente incidente por haber agotado las
+   vueltas. Lo consulta app.js para saber que la parada no la pidio nadie y que
+   hay que volver a arrancar en cuanto haya datos nuevos. */
+export const cambiandoDeIncidente = () => estado.cambiandoIncidente;
+
+/* Estado interno para diagnostico: cuantas vueltas lleva, por que entidad va y
+   cuantas tiene la cola. Sin esto, saber por que el recorrido no salta de
+   incidente obliga a mirarlo con un cronometro. */
+export const progreso = () => ({
+  vueltas: estado.vueltas,
+  posicion: estado.posicion,
+  entidades: estado.cola.length,
+  vueltasPorIncidente: VUELTAS_POR_INCIDENTE,
+  segundosEnEsteIncidente: estado.desde ? Math.round((Date.now() - estado.desde) / 1000) : 0,
+  techoSegundos: MAX_MS_POR_INCIDENTE / 1000,
+});
 
 /* Lo llama app.js cuando follow termina el recorrido de una entidad. */
 export function entidadTerminada() {

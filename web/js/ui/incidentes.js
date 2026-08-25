@@ -54,8 +54,9 @@ function pintar() {
 
 /* ------------------------------------------------------------------ cargar */
 
-async function cambiar(id) {
-  if (cargando || !id || id === estado.actual) return;
+async function cambiar(id, { forzar = false } = {}) {
+  if (cargando || !id) return;
+  if (id === estado.actual && !forzar) return;
   cargando = true;
   selector.disabled = true;
   const anterior = estado.actual;
@@ -77,6 +78,25 @@ async function cambiar(id) {
     cargando = false;
     selector.disabled = false;
   }
+}
+
+/**
+ * Carga el siguiente de la lista, dando la vuelta al llegar al final.
+ *
+ * Es lo que usa el modo automático cuando agota las vueltas de un incidente. El
+ * orden es el de la lista, no aleatorio: dejando esto puesto una tarde, quien
+ * pase por delante ve siempre la misma secuencia y acaba sabiendo qué viene,
+ * que es justo lo que se quiere de una pantalla de sala.
+ */
+export async function siguiente() {
+  if (!estado.fichas.length) return null;
+  const donde = estado.fichas.findIndex((f) => f.id === estado.actual);
+  const proximo = estado.fichas[(donde + 1) % estado.fichas.length];
+  if (!proximo) return null;
+  // forzar: con un solo incidente en la lista, el siguiente es el mismo y hay
+  // que recargarlo igual para que el recorrido vuelva a empezar limpio.
+  await cambiar(proximo.id, { forzar: proximo.id === estado.actual });
+  return proximo;
 }
 
 /** Marca cuál está cargado sin recargarlo. Lo usan los botones de demo. */

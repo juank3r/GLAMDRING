@@ -45,20 +45,54 @@ class FileConnector(Connector):
     # -- lectura -----------------------------------------------------------
 
     def read_path(self, path: str) -> Tuple[List[Dict[str, Any]], str]:
-        """Lee un fichero del disco del servidor. Solo si esta permitido."""
-        target = Path(path)
-        is_sample = _within(target, SAMPLES_DIR) or not target.is_absolute()
+        """Lee un fichero del disco del servidor. Solo si esta permitido.
 
-        if not is_sample and not SETTINGS.allow_file_paths:
+        SE RESUELVE PRIMERO Y SE DECIDE DESPUES, y ese orden es el arreglo.
+
+        Antes se clasificaba sobre la cadena tal cual llegaba:
+
+            is_sample = _within(target, SAMPLES_DIR) or not target.is_absolute()
+
+        Ese `not is_absolute()` declaraba "muestra" a toda ruta relativa, y con
+        ello se saltaba la comprobacion de GLAMDRING_ALLOW_FILE_PATHS. Despues,
+        unas lineas mas abajo, la ruta se resolvia contra el directorio de
+        trabajo del proceso. Resultado, con la lectura de rutas DESACTIVADA:
+
+            .env.example                      -> 36 registros
+            glamdring/config.py               -> 128 registros
+            ../../../../../Windows/win.ini    -> 7 registros
+            /Windows/win.ini                  -> 7 registros
+
+        Y en Windows no hacia falta ni un `../`: `is_absolute()` devuelve False
+        para rutas con raiz pero sin unidad, asi que `/Windows/win.ini` pasaba
+        por muestra. Solo se bloqueaba la variante con letra de unidad.
+
+        Arrancado desde la raiz del repositorio, `path='.env'` entregaba los
+        tokens de Splunk, QRadar y Azure. Y con la API sin autenticacion, a
+        cualquiera que alcanzase el puerto.
+
+        Ahora la contencion se comprueba sobre la ruta YA RESUELTA, que es la
+        unica que dice a donde se va a leer de verdad.
+        """
+        pedido = Path(path)
+
+        if pedido.is_absolute():
+            target = pedido.resolve()
+        else:
+            # Una relativa se busca primero entre las muestras. Se usa la ruta
+            # entera y no solo el nombre, para poder pedir 'apt/Akira.json'.
+            candidato = (SAMPLES_DIR / pedido).resolve()
+            if _within(candidato, SAMPLES_DIR) and candidato.is_file():
+                target = candidato
+            else:
+                target = pedido.resolve()
+
+        if not _within(target, SAMPLES_DIR) and not SETTINGS.allow_file_paths:
             raise ConnectorError(
                 self.name,
                 "La lectura de rutas del servidor esta desactivada. "
                 "Sube el fichero o activa GLAMDRING_ALLOW_FILE_PATHS=1.",
             )
-
-        if not target.is_absolute():
-            candidate = (SAMPLES_DIR / Path(path).name)
-            target = candidate if candidate.exists() else Path(path).resolve()
 
         if not target.exists() or not target.is_file():
             raise ConnectorError(self.name, f"No existe el fichero: {path}")
