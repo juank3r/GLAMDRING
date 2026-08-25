@@ -59,6 +59,16 @@ class EventStore:
         self._lock = threading.RLock()
         self.last_ingest: Optional[datetime] = None
         self.ingest_log: List[Dict[str, Any]] = []
+        # Sube cada vez que el contenido cambia. Es lo que permite cachear el
+        # grafo construido sin miedo: mientras no suba, lo cacheado sigue
+        # valiendo, y cuando sube todo lo anterior caduca de golpe.
+        self._version = 0
+
+    @property
+    def version(self) -> int:
+        """Cuantas veces ha cambiado el contenido desde el arranque."""
+        with self._lock:
+            return self._version
 
     # -- lectura -----------------------------------------------------------
 
@@ -131,6 +141,10 @@ class EventStore:
             self.ingest_log.append(entry)
             if len(self.ingest_log) > 50:
                 self.ingest_log = self.ingest_log[-50:]
+            # Solo si de verdad entro algo: una ingesta de puros duplicados no
+            # cambia el grafo y tirar la cache por eso seria gratuito.
+            if added:
+                self._version += 1
         return {"added": added, "duplicates": duplicates, "dropped": dropped, "total": len(self._events)}
 
     def clear(self) -> None:
@@ -139,6 +153,7 @@ class EventStore:
             self._by_uid.clear()
             self.ingest_log.clear()
             self.last_ingest = None
+            self._version += 1
 
 
 # Instancia unica del proceso.

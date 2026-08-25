@@ -108,6 +108,7 @@ def make_report(request: ReportRequest) -> Response:
 
     graph = build_filtered(
         STORE.events,
+        version=STORE.version,
         time_from=time_from,
         time_to=time_to,
         min_severity=request.severity_floor,
@@ -149,7 +150,8 @@ def preview_report(
     parsed_from, parsed_to = parse_moment(time_from), parse_moment(time_to)
     events = filter_events(STORE.events, time_from=parsed_from, time_to=parsed_to,
                            min_severity=min_severity)
-    graph = build_filtered(STORE.events, time_from=parsed_from, time_to=parsed_to,
+    graph = build_filtered(STORE.events, version=STORE.version,
+                           time_from=parsed_from, time_to=parsed_to,
                            min_severity=min_severity, max_nodes=0)
     return build(graph, events)
 
@@ -164,7 +166,7 @@ def get_iocs(
     Nunca incluye direcciones RFC1918: una lista de bloqueo perimetral con la
     propia red dentro es, en el mejor de los casos, inutil.
     """
-    graph = build_filtered(STORE.events, min_severity=min_severity,
+    graph = build_filtered(STORE.events, version=STORE.version, min_severity=min_severity,
                            max_nodes=SETTINGS.max_graph_nodes)
     iocs = collect_iocs(graph)
 

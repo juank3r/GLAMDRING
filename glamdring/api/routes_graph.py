@@ -41,6 +41,7 @@ def get_graph(
     """Grafo de la investigacion con todos los filtros aplicados en servidor."""
     graph = build_filtered(
         STORE.events,
+        version=STORE.version,
         time_from=parse_moment(time_from),
         time_to=parse_moment(time_to),
         min_severity=min_severity,
@@ -66,6 +67,7 @@ def get_neighbors(
     """Vecindad de N saltos: el 'expandir nodo' del analista."""
     graph = build_filtered(
         STORE.events,
+        version=STORE.version,
         min_severity=min_severity,
         focus=node,
         hops=hops,
@@ -91,6 +93,7 @@ def get_story(
     """
     graph = build_filtered(
         STORE.events,
+        version=STORE.version,
         min_severity=min_severity,
         focus=node,
         hops=hops,
@@ -145,7 +148,7 @@ def get_events(
     if uids:
         selected = STORE.get_many(_csv(uids) or [], limit=limit)
     elif node:
-        graph = build_filtered(STORE.events, focus=node, hops=1,
+        graph = build_filtered(STORE.events, version=STORE.version, focus=node, hops=1,
                                max_nodes=SETTINGS.max_graph_nodes)
         target = next((n for n in graph.nodes if n.id == node), None)
         if target is None:
@@ -169,6 +172,7 @@ def export_graph(
     """Grafo completo sin recortes, para adjuntar a un informe o reimportarlo."""
     graph = build_filtered(
         STORE.events,
+        version=STORE.version,
         time_from=parse_moment(time_from),
         time_to=parse_moment(time_to),
         min_severity=min_severity,
