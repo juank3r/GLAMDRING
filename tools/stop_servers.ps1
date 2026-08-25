@@ -99,7 +99,12 @@ if ($quedan) {
     Write-Host "Siguen ocupados estos puertos:" -ForegroundColor Yellow
     $quedan | Select-Object LocalPort, OwningProcess | Sort-Object LocalPort | Format-Table -AutoSize
     if ($fallidos -gt 0) {
-        Write-Host "Si alguno da 'Acceso denegado', abre PowerShell como administrador." -ForegroundColor Yellow
+        Write-Host "" -ForegroundColor Yellow
+        Write-Host "Los que dan 'Acceso denegado' se lanzaron desde otro contexto de" -ForegroundColor Yellow
+        Write-Host "seguridad y no se dejan cerrar desde una ventana normal, aunque sean" -ForegroundColor Yellow
+        Write-Host "del mismo usuario. En una ventana COMO ADMINISTRADOR:" -ForegroundColor Yellow
+        $pids = ($quedan | ForEach-Object { $_.OwningProcess } | Sort-Object -Unique) -join ' /PID '
+        Write-Host "    taskkill /F /PID $pids" -ForegroundColor White
     }
 } else {
     Write-Host "Todos los puertos libres." -ForegroundColor Green

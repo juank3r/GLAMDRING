@@ -46,15 +46,23 @@ if ($ocupa) {
         }
     }
 
+    # La ruta va COMPLETA a proposito. El mensaje se lee desde cualquier
+    # directorio, y una ruta relativa manda a copiar un comando que falla en
+    # cuanto no estas justo en la carpeta del proyecto.
+    $yo = Join-Path $PSScriptRoot 'run.ps1'
+
     Write-Host ""
     Write-Host "El puerto $Port sigue ocupado por el PID $duenyo." -ForegroundColor Red
     Write-Host ""
-    Write-Host "Para liberarlo, en PowerShell COMO ADMINISTRADOR:" -ForegroundColor Yellow
-    Write-Host "    Stop-Process -Id $duenyo -Force" -ForegroundColor White
+    Write-Host "Para liberarlo, en una ventana COMO ADMINISTRADOR:" -ForegroundColor Yellow
+    Write-Host "    taskkill /F /PID $duenyo        (vale en cmd y en PowerShell)" -ForegroundColor White
+    Write-Host ""
+    Write-Host "  Un proceso lanzado desde otro contexto de seguridad no se deja" -ForegroundColor DarkGray
+    Write-Host "  cerrar desde una ventana normal, aunque sea del mismo usuario." -ForegroundColor DarkGray
     if ($libre) {
         Write-Host ""
         Write-Host "O para seguir ahora mismo en otro puerto:" -ForegroundColor Yellow
-        Write-Host "    powershell -ExecutionPolicy Bypass -File tools\run.ps1 -Port $libre" -ForegroundColor White
+        Write-Host "    powershell -ExecutionPolicy Bypass -File `"$yo`" -Port $libre" -ForegroundColor White
     }
     exit 1
 }
