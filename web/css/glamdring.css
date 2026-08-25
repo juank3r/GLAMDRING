@@ -625,11 +625,7 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
    ========================================================================== */
 
 .follow-bar {
-  position: absolute;
-  left: 14px;
-  bottom: 14px;
-  width: min(560px, calc(100% - 28px));
-  z-index: 6;
+  width: 100%;
   padding: 12px 14px 10px;
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--bg-panel) 94%, transparent);
@@ -872,16 +868,22 @@ body.cine .auto-rotulo { display: none !important; }
    se va a la derecha, que esta libre en las dos situaciones (en pantalla
    completa no hay inspector, y sin ella el borde del lienzo esta vacio).
    Se mueve la leyenda y no la barra porque la barra es lo que se esta leyendo. */
-body.following .stage-legend {
-  left: auto;
-  right: 14px;
+/* LA LEYENDA YA NO CABE ABAJO A LA IZQUIERDA: esa esquina es del selector de
+   incidente y de la descripcion del paso, que estan siempre.
+
+   Se le da sitio propio en el lado derecho, y arriba o abajo segun quien ocupe
+   la esquina de abajo:
+     ventana normal   -> arriba, porque abajo esta la tarjeta del modo automatico
+     pantalla completa -> abajo, porque ahi esa tarjeta no existe y arriba esta
+                          la barra de fondo
+   Asi no se solapa con nada en ninguno de los dos casos. */
+body:not(.cine) .stage-legend {
+  left: auto; right: 12px;
+  bottom: auto; top: 12px;
 }
-/* En ventana normal la esquina de abajo a la derecha es de la tarjeta del modo
-   automatico, asi que la leyenda sube. En pantalla completa esa tarjeta no
-   existe y la leyenda se queda abajo, que es donde estorba menos. */
-body.following:not(.cine) .stage-legend {
-  bottom: auto;
-  top: 14px;
+body.cine .stage-legend {
+  left: auto; right: 14px;
+  top: auto; bottom: 14px;
 }
 
 /* ==========================================================================
@@ -906,3 +908,51 @@ body.following:not(.cine) .stage-legend {
 @media (min-height: 961px) {
   :root { --timeline-h: 100px; }
 }
+
+/* ==========================================================================
+   Selector de incidente.
+
+   Justo encima de la barra de la descripcion y con el mismo ancho: se leen
+   como una sola pieza, "estas viendo ESTE incidente y vas por este paso".
+   Separarlos, o ponerlo arriba con los botones de herramienta, obligaria a
+   mirar a dos sitios para la misma pregunta.
+   ========================================================================== */
+/* La columna de abajo a la izquierda: selector de incidente arriba,
+   descripcion del paso debajo. Apilados con flex porque el alto de la
+   descripcion depende de lo larga que sea la frase, y cualquier posicion fija
+   los solaparia en cuanto la frase creciera una linea. */
+.esquina-abajo-izq {
+  position: absolute;
+  left: 14px; bottom: 14px; z-index: 6;
+  display: flex; flex-direction: column; gap: 8px;
+  align-items: flex-start;
+  width: min(560px, calc(100% - 28px));
+  pointer-events: none;
+}
+.esquina-abajo-izq > * { pointer-events: auto; }
+
+.incidente-bar {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%;
+  padding: 7px 12px; border-radius: var(--radius);
+  background: color-mix(in srgb, var(--bg-panel) 94%, transparent);
+  border: 1px solid var(--border-strong);
+  backdrop-filter: blur(6px);
+}
+.incidente-label {
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-faint); flex: none;
+}
+#incidente-select {
+  flex: 1 1 auto; min-width: 0;
+  background: var(--bg); border: 1px solid var(--border);
+  color: var(--text); border-radius: var(--radius);
+  padding: 4px 8px; font-size: 12px; font-family: inherit;
+}
+#incidente-select:hover { border-color: var(--border-strong); }
+.incidente-cuenta { font-size: 10.5px; color: var(--text-faint); flex: none; }
+
+/* Con el recorrido en marcha, el selector se apoya sobre la descripcion en vez
+   de taparla. El alto de la descripcion cambia con lo larga que sea la frase,
+   asi que se ancla al hueco de arriba y no a una distancia fija del suelo. */
+body.cine-claro .incidente-bar { background: rgba(255, 255, 255, 0.94); }

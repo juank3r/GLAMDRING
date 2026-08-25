@@ -71,6 +71,13 @@ export const ontology = () => request('api/ontology');
 export const connectors = () => request('api/connectors');
 export const demo = (set = 'completo') =>
   request(`api/demo?set=${encodeURIComponent(set)}`, { method: 'POST' });
+
+/* Incidentes que se pueden cargar. Hoy salen de samples/; manana, de la base de
+   datos. La interfaz consume la ficha (id, titulo, subtitulo) y no sabe de
+   donde viene, que es lo que permite cambiar la fuente sin tocar el front. */
+export const incidents = () => request('api/incidents');
+export const loadIncident = (id) =>
+  request(`api/incidents/load?id=${encodeURIComponent(id)}`, { method: 'POST' });
 export const reset = () => request('api/reset', { method: 'POST' });
 
 export function ingestFile(file) {

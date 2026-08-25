@@ -19,6 +19,7 @@ import * as report from './ui/report.js';
 import * as follow from './ui/follow.js';
 import * as auto from './ui/auto.js';
 import * as cine from './ui/cine.js';
+import * as incidentes from './ui/incidentes.js';
 
 const state = {
   window: { from: null, to: null },
@@ -329,6 +330,7 @@ function wireTopbar() {
     toast('Cargando incidente de ejemplo…', null, 15000);
     try {
       const result = await api.demo(set);
+      incidentes.marcar(`demo:${set}`);
       toast(`Demo cargada: ${result.events} eventos de ${result.files.length} ficheros`, 'ok');
       state.window = { from: null, to: null };
       state.hidden.clear();
@@ -616,10 +618,27 @@ async function boot() {
     autoActivo: () => auto.activo(),
   });
 
+  incidentes.init({
+    onLoaded: async (resultado) => {
+      // Cambiar de incidente invalida lo que estuviera en marcha: el recorrido
+      // iba por unas entidades que ya no existen.
+      if (auto.activo()) auto.parar({ avisar: false });
+      if (follow.activo()) follow.salir({ restaurar: false });
+      cine.reflejarAuto(false);
+      state.window = { from: null, to: null };
+      state.hidden.clear();
+      await reload();
+      toast(`${resultado.title || 'Incidente'}: ${resultado.events} eventos`, 'ok', 3500);
+    },
+    onError: (mensaje) => toast(mensaje, 'error', 6000),
+  });
+
   auto.init({
-    onStart: (total) => {
+    onStart: (total, reanudadoEn) => {
       cine.reflejarAuto(true);
-      toast(`Recorrido automático: ${total} entidades en orden cronológico`, 'ok', 4000);
+      toast(reanudadoEn
+        ? `Recorrido reanudado en la entidad ${reanudadoEn} de ${total}`
+        : `Recorrido automático: ${total} entidades en orden cronológico`, 'ok', 4000);
     },
     onStop: () => { cine.reflejarAuto(false); toast('Recorrido automático detenido', null, 2200); },
     onLoop: (vuelta) => toast(`Vuelta ${vuelta} completada`, null, 2600),

@@ -145,15 +145,37 @@ export function arrancar(doc) {
     handlers.onError?.('No hay entidades con suficientes acciones para recorrer.');
     return;
   }
+
+  // SE REANUDA DONDE SE DEJO, no desde el principio.
+  //
+  // Tocar el lienzo para girar o acercarse detiene el recorrido, que es lo
+  // correcto. Pero si al volver a darle empieza otra vez por la primera
+  // entidad, se pierde el sitio: en un incidente de diecisiete hay que
+  // tragarse de nuevo todo lo ya visto para llegar a donde se estaba. Eso hace
+  // que parezca que el boton no funciona, cuando lo que pasa es que ha
+  // rebobinado.
+  //
+  // Se conserva la posicion solo si la cola es la misma. Si han cambiado los
+  // datos —otro incidente, otro filtro— la posicion anterior ya no significa
+  // nada y se empieza de cero.
+  const mismaCola = estado.cola.length === cola.length
+    && estado.cola.every((n, i) => n.id === cola[i].id);
+  const seguir = mismaCola && estado.posicion > 0 && estado.posicion < cola.length;
+
   estado.activo = true;
   estado.cola = cola;
-  estado.posicion = 0;
-  estado.vueltas = 0;
+  if (!seguir) {
+    estado.posicion = 0;
+    estado.vueltas = 0;
+  }
   document.body.classList.add('auto-on');
-  handlers.onStart?.(cola.length);
+  handlers.onStart?.(cola.length, seguir ? estado.posicion + 1 : 0);
   siguienteEntidad();
 }
 
+/* Detiene el recorrido CONSERVANDO la posicion, para poder reanudarlo donde
+   estaba. La cola tampoco se vacia: es lo que permite saber, al volver, si se
+   esta ante el mismo incidente. */
 export function parar({ avisar = true } = {}) {
   if (!estado.activo) return;
   estado.activo = false;

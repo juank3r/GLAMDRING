@@ -146,27 +146,44 @@
 
     <!-- Recorrido de una entidad. Aparece sobre el lienzo, no debajo: hay que
          poder leer la frase sin apartar la vista de lo que hace la camara. -->
-    <div class="follow-bar" id="follow-bar" hidden>
-      <div class="follow-head">
-        <span class="follow-eye">◉</span>
-        <strong id="follow-title">—</strong>
-        <span class="follow-count" id="follow-count">0 / 0</span>
-        <button class="btn btn-icon follow-x" id="follow-close"
-                title="Salir del recorrido y volver al grafo completo">✕</button>
+    <!-- Selector de incidente y descripcion del paso, en una sola columna.
+         El alto de la descripcion cambia con lo larga que sea la frase, asi
+         que apilarlos con flex es lo unico que los mantiene pegados sin
+         calcular nada a mano. -->
+    <div class="esquina-abajo-izq">
+      <!-- Selector de incidente. Va encima de la descripcion, en la misma
+           columna, para que se lea como "estas viendo ESTE incidente, y aqui
+           dentro va por este paso". Hoy lista samples/; el dia que haya base de
+           datos de incidentes cambia lo que devuelve /api/incidents y esto no se
+           entera. -->
+      <div class="incidente-bar" id="incidente-bar" hidden>
+        <span class="incidente-label">Incidente</span>
+        <select id="incidente-select" title="Cambiar de incidente"></select>
+        <span class="incidente-cuenta" id="incidente-cuenta"></span>
       </div>
-      <div class="follow-progress" id="follow-progress"></div>
-      <div class="follow-step" id="follow-step"></div>
-      <div class="follow-controls">
-        <button class="btn btn-icon" id="follow-prev" title="Paso anterior">⏮</button>
-        <button class="btn btn-icon" id="follow-play" title="Reproducir">▶</button>
-        <button class="btn btn-icon" id="follow-next" title="Paso siguiente">⏭</button>
-        <select id="follow-speed" title="Velocidad del recorrido">
-          <option value="0.5">lento</option>
-          <option value="1" selected>normal</option>
-          <option value="2">rápido</option>
-        </select>
-        <button class="btn follow-logs" id="follow-logs" hidden
-                title="Abrir los logs originales de este paso">ver el log</button>
+
+      <div class="follow-bar" id="follow-bar" hidden>
+        <div class="follow-head">
+          <span class="follow-eye">◉</span>
+          <strong id="follow-title">—</strong>
+          <span class="follow-count" id="follow-count">0 / 0</span>
+          <button class="btn btn-icon follow-x" id="follow-close"
+                  title="Salir del recorrido y volver al grafo completo">✕</button>
+        </div>
+        <div class="follow-progress" id="follow-progress"></div>
+        <div class="follow-step" id="follow-step"></div>
+        <div class="follow-controls">
+          <button class="btn btn-icon" id="follow-prev" title="Paso anterior">⏮</button>
+          <button class="btn btn-icon" id="follow-play" title="Reproducir">▶</button>
+          <button class="btn btn-icon" id="follow-next" title="Paso siguiente">⏭</button>
+          <select id="follow-speed" title="Velocidad del recorrido">
+            <option value="0.5">lento</option>
+            <option value="1" selected>normal</option>
+            <option value="2">rápido</option>
+          </select>
+          <button class="btn follow-logs" id="follow-logs" hidden
+                  title="Abrir los logs originales de este paso">ver el log</button>
+        </div>
       </div>
     </div>
   </section>

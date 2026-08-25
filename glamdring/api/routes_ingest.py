@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
@@ -91,6 +93,84 @@ DEMO_SETS = {
     "completo": "",
     "minimo": "minimo",
 }
+
+
+@router.get("/incidents")
+def list_incidents() -> Dict[str, Any]:
+    """Los incidentes que se pueden cargar, para poder saltar de uno a otro.
+
+    HOY salen de ``samples/``: los dos conjuntos de demostracion y las muestras
+    sinteticas de ``samples/apt/``, una por grupo de ransomware.
+
+    MANANA saldran de la base de datos de incidentes reales. Por eso esta ruta
+    devuelve una LISTA DE FICHAS y no un listado de ficheros: id, titulo,
+    subtitulo y de donde se carga. El dia que haya base de datos se cambia lo
+    que hay dentro de esta funcion y la interfaz no se entera, porque lo que
+    consume es la ficha.
+    """
+    fichas: List[Dict[str, Any]] = []
+
+    for clave, etiqueta, detalle in (
+        ("completo", "Incidente completo", "52 eventos de los cuatro formatos"),
+        ("minimo", "Incidente minimo", "6 eventos: la forma del grafo sin nada encima"),
+    ):
+        directorio = SAMPLES_DIR / DEMO_SETS[clave] if DEMO_SETS[clave] else SAMPLES_DIR
+        if directorio.exists():
+            fichas.append({
+                "id": f"demo:{clave}",
+                "title": etiqueta,
+                "subtitle": detalle,
+                "kind": "demo",
+                "set": clave,
+            })
+
+    apt_dir = SAMPLES_DIR / "apt"
+    if apt_dir.exists():
+        for fichero in sorted(apt_dir.glob("*.json")):
+            grupo = fichero.stem.replace("_", " ")
+            fichas.append({
+                "id": f"apt:{fichero.stem}",
+                "title": grupo,
+                "subtitle": "muestra sintetica con el repertorio real del grupo",
+                "kind": "apt",
+                "path": f"apt/{fichero.name}",
+            })
+
+    return {"count": len(fichas), "incidents": fichas}
+
+
+@router.post("/incidents/load")
+def load_incident(id: str) -> Dict[str, Any]:
+    """Carga uno de los incidentes de ``/api/incidents``, sustituyendo lo que haya.
+
+    Sustituye y no acumula: saltar de un incidente a otro y quedarse con los dos
+    mezclados daria un grafo que no corresponde a ninguno de los dos.
+    """
+    if id.startswith("demo:"):
+        return load_demo(reset=True, set=id.split(":", 1)[1])
+
+    if not id.startswith("apt:"):
+        raise HTTPException(status_code=400, detail=f"Identificador '{id}' no reconocido.")
+
+    nombre = id.split(":", 1)[1]
+    # El identificador acaba siendo una ruta en disco: solo se acepta lo previsible.
+    if not re.fullmatch(r"[A-Za-z0-9_.-]{1,64}", nombre):
+        raise HTTPException(status_code=400, detail="Identificador con caracteres no permitidos.")
+
+    fichero = (SAMPLES_DIR / "apt" / f"{nombre}.json").resolve()
+    if not fichero.is_file() or SAMPLES_DIR.resolve() not in fichero.parents:
+        raise HTTPException(status_code=404, detail=f"No existe la muestra '{nombre}'.")
+
+    STORE.clear()
+    connector = FileConnector()
+    try:
+        records, fmt = connector.read_path(str(fichero))
+    except ConnectorError as exc:
+        raise HTTPException(status_code=400, detail=exc.message) from exc
+
+    stats = _ingest_records(records, f"incident:{nombre}")
+    return {"id": id, "title": nombre.replace("_", " "), "format": fmt,
+            "events": len(STORE), **stats}
 
 
 @router.post("/demo")
