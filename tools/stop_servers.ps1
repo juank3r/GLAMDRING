@@ -36,8 +36,26 @@ if ($Keep -gt 0) {
 }
 
 # Todo proceso de Python que este sirviendo ESTE proyecto.
-$objetivos = Get-CimInstance Win32_Process -Filter "Name='python.exe' OR Name='pythonw.exe'" -ErrorAction SilentlyContinue |
-    Where-Object { $_.CommandLine -match 'uvicorn' -and $_.CommandLine -match 'glamdring' }
+#
+# Se busca por dos vias porque la linea de comandos NO SIEMPRE SE PUEDE LEER:
+# si el proceso lo lanzo otra sesion o un contexto de seguridad distinto,
+# CommandLine viene vacio y el filtro no encuentra nada. Fiarse solo de eso
+# hacia que el script dijera "no hay ninguno corriendo" con seis puertos
+# ocupados, que es peor que no tener script.
+$python = Get-CimInstance Win32_Process -Filter "Name='python.exe' OR Name='pythonw.exe'" -ErrorAction SilentlyContinue
+$porLinea = $python | Where-Object { $_.CommandLine -match 'uvicorn' -and $_.CommandLine -match 'glamdring' }
+
+# Segunda via: cualquier Python escuchando en el rango de puertos del proyecto.
+$pidsEnPuerto = $porPuerto.Keys
+$porPuertoOcupado = $python | Where-Object { $pidsEnPuerto -contains [int]$_.ProcessId }
+
+$objetivos = @($porLinea) + @($porPuertoOcupado) | Sort-Object ProcessId -Unique | Where-Object { $_ }
+
+$sinLinea = ($python | Where-Object { -not $_.CommandLine } | Measure-Object).Count
+if ($sinLinea -gt 0) {
+    Write-Host ("Aviso: {0} procesos de Python no dejan leer su linea de comandos." -f $sinLinea) -ForegroundColor DarkGray
+    Write-Host "       Se identifican por el puerto que ocupan." -ForegroundColor DarkGray
+}
 
 if (-not $objetivos) {
     Write-Host "No hay ningun GLAMDRING corriendo." -ForegroundColor Green
