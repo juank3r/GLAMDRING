@@ -38,6 +38,13 @@
 
 * { box-sizing: border-box; }
 
+/* El atributo `hidden` del HTML solo esconde porque la hoja del navegador le
+   pone display:none, y CUALQUIER regla nuestra con display gana a esa. Basta un
+   `.algo { display: flex }` para que un elemento marcado como oculto salga en
+   pantalla: paso con la barra de fondo del modo escaparate, que aparecia en la
+   ventana normal. Se blinda aqui de una vez para todos. */
+[hidden] { display: none !important; }
+
 html, body {
   margin: 0;
   height: 100%;
@@ -404,7 +411,6 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
   display: flex; align-items: center; justify-content: center;
   backdrop-filter: blur(3px);
 }
-.modal[hidden] { display: none; }
 
 .modal-card {
   width: min(620px, 92vw); max-height: 86vh; overflow: auto;
@@ -484,7 +490,6 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
   box-shadow: -14px 0 44px rgba(0, 0, 0, .5);
   display: flex; flex-direction: column; z-index: 55;
 }
-.admin[hidden] { display: none; }
 .admin-head {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 14px; border-bottom: 1px solid var(--border);
@@ -560,7 +565,6 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
   background: var(--bg-panel); border: 1px solid var(--border-strong);
   border-radius: 6px; padding: 4px; box-shadow: 0 12px 36px rgba(0, 0, 0, .62);
 }
-.ctx-menu[hidden] { display: none; }
 .ctx-item {
   display: flex; flex-direction: column; align-items: flex-start; width: 100%;
   background: transparent; border: 0; text-align: left; cursor: pointer;
@@ -576,7 +580,6 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
   background: color-mix(in srgb, var(--bg) 84%, transparent);
   display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px);
 }
-.help-overlay[hidden] { display: none; }
 .help-card {
   background: var(--bg-panel); border: 1px solid var(--border-strong);
   border-radius: 8px; padding: 22px 26px; min-width: 380px;
@@ -705,28 +708,36 @@ body.following .timeline-bar { opacity: 0.35; pointer-events: none; }
    pantalla del SOC o proyectarlo mientras se explica un caso.
    ========================================================================== */
 
+/* Antes esto era un cartel a pantalla partida con el fondo velado detras. Se
+   veia bien, pero tapaba justo el grafo al que se ha ido a mirar y el velo
+   apagaba la escena entera durante dos segundos de cada entidad.
+   Ahora es una tarjeta pequena abajo a la derecha: dice quien viene sin
+   ponerse delante. */
 .auto-rotulo {
-  position: absolute; inset: 0; z-index: 7;
-  display: flex; align-items: center; justify-content: center;
+  position: absolute; right: 14px; bottom: 14px; z-index: 7;
   pointer-events: none;
-  background: color-mix(in srgb, var(--bg) 55%, transparent);
-  animation: auto-entra 0.35s ease;
+  animation: auto-entra 0.3s ease;
 }
-@keyframes auto-entra { from { opacity: 0; } to { opacity: 1; } }
+@keyframes auto-entra {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
 
 .auto-card {
-  text-align: center; padding: 26px 44px;
+  text-align: right; padding: 12px 16px;
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--bg-panel) 92%, transparent);
+  background: color-mix(in srgb, var(--bg-panel) 94%, transparent);
   border: 1px solid var(--accent-dim);
-  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  max-width: 340px;
 }
 .auto-kicker {
-  color: var(--text-faint); font-size: 11px;
-  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;
+  color: var(--text-faint); font-size: 10px;
+  letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 5px;
 }
-.auto-name { font-size: 28px; font-weight: 700; letter-spacing: 0.3px; }
-.auto-meta { color: var(--text-dim); font-size: 13px; margin-top: 7px; }
+.auto-name { font-size: 17px; font-weight: 700; letter-spacing: 0.2px; }
+.auto-meta { color: var(--text-dim); font-size: 11.5px; margin-top: 3px; }
 
 /* Con el modo automatico corriendo, el boton avisa de que esta activo. */
 body.auto-on #btn-auto {
@@ -841,4 +852,34 @@ body.cine .auto-rotulo { display: none !important; }
 body.following .stage-legend {
   left: auto;
   right: 14px;
+}
+/* En ventana normal la esquina de abajo a la derecha es de la tarjeta del modo
+   automatico, asi que la leyenda sube. En pantalla completa esa tarjeta no
+   existe y la leyenda se queda abajo, que es donde estorba menos. */
+body.following:not(.cine) .stage-legend {
+  bottom: auto;
+  top: 14px;
+}
+
+/* ==========================================================================
+   El pie de cronologia en pantallas bajas.
+
+   A 936 px de alto la franja de 92 px cabe, pero va sin aire: el texto de ayuda
+   ocupa tres lineas apretadas y el histograma queda pegado al borde inferior.
+   No es que se corte, es que no respira, y desde fuera se lee igual de mal.
+
+   Lo primero que sobra ahi es el texto de ayuda. Explica el brush y el boton de
+   reproducir, cosas que se descubren solas y que quien lleva media hora usando
+   esto ya no lee. Quitandolo, el histograma se lleva ese ancho y la franja
+   entera queda holgada.
+   ========================================================================== */
+@media (max-height: 960px) {
+  .timeline-legend { display: none; }
+  .timeline-bar { grid-template-columns: 150px 1fr; padding-bottom: 12px; }
+}
+
+/* Con sitio de sobra, la franja se da algo mas de margen: el histograma pegado
+   al borde de la ventana es lo que hacia pensar que estaba cortado. */
+@media (min-height: 961px) {
+  :root { --timeline-h: 100px; }
 }
