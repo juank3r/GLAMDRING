@@ -27,7 +27,7 @@ from .api import (
 )
 from .appearance import MODELS_DIR, load as load_appearance
 from .config import SETTINGS, WEB_DIR
-from .connectors import ConnectorError
+from .connectors import ConnectorError, close_all
 
 logging.basicConfig(
     level=logging.INFO,
@@ -54,6 +54,10 @@ async def lifespan(_app: FastAPI):
     if not WEB_DIR.exists():
         log.warning("No existe %s: el frontend no se servira.", WEB_DIR)
     yield
+    # Desde el contrato v2 los conectores mantienen su cliente HTTP abierto
+    # entre consultas. Sin esto, al apagar quedan conexiones a medio cerrar y
+    # httpx se queja por consola justo cuando ya no se puede hacer nada.
+    await close_all()
 
 
 app = FastAPI(

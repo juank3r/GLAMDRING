@@ -35,6 +35,11 @@ class QueryRequest(BaseModel):
     # y en rows[:-n] en Sentinel, que tira las ultimas filas sin decir nada.
     limit: int = Field(default=10_000, ge=1, le=SETTINGS.max_results)
     reset: bool = Field(default=False, description="vaciar la investigacion antes de ingestar")
+    # Para las fuentes que paginan con estado: se devuelve en la respuesta y se
+    # vuelve a mandar aqui para seguir donde se quedo, en vez de repetir la
+    # consulta entera y volver a deduplicar lo mismo.
+    cursor: Optional[str] = Field(default=None, max_length=2048,
+                                  description="continuar desde una consulta anterior")
 
     model_config = {"populate_by_name": True}
 
@@ -276,18 +281,29 @@ async def query_siem(request: QueryRequest) -> Dict[str, Any]:
         )
 
     try:
-        records = await connector.fetch(
+        salida = await connector.fetch(
             query=request.query,
             time_from=parse_moment(request.time_from),
             time_to=parse_moment(request.time_to),
             limit=min(request.limit, SETTINGS.max_results),
+            cursor=request.cursor,
         )
     except ConnectorError as exc:
         # 502: el fallo es del SIEM o de la consulta, no del servidor.
         raise HTTPException(status_code=502, detail=exc.message) from exc
 
-    result = _ingest_records(records, f"{request.connector}:{request.query[:80]}")
+    result = _ingest_records(salida.records, f"{request.connector}:{request.query[:80]}")
     result["connector"] = request.connector
+    # Lo que dice el contrato v2 sobre si el resultado esta completo. Va en la
+    # respuesta y no solo en el log porque es informacion del ANALISTA: un grafo
+    # cortado y uno entero se ven igual en pantalla.
+    result.update(salida.as_dict())
+    if salida.truncated:
+        result.setdefault("warnings", []).insert(
+            0,
+            "El SIEM tenia mas eventos de los pedidos: el grafo esta incompleto. "
+            "Acota la ventana temporal o sube 'limit'.",
+        )
     return result
 
 

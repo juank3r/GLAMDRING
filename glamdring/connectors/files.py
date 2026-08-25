@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from ..config import SAMPLES_DIR, SETTINGS
 from ..normalize.detect import parse_payload
-from .base import Connector, ConnectorError
+from .base import Connector, ConnectorError, FetchResult, Health
 
 MAX_BYTES = 200 * 1024 * 1024  # 200 MB: por encima, esto no es una investigacion puntual
 
@@ -38,9 +38,21 @@ class FileConnector(Connector):
         time_from: Optional[datetime] = None,
         time_to: Optional[datetime] = None,
         limit: int = 10_000,
-    ) -> List[Dict[str, Any]]:
-        records, _fmt = self.read_path(query)
-        return records[:limit]
+        cursor: Optional[str] = None,
+    ) -> FetchResult:
+        records, fmt = self.read_path(query)
+        return FetchResult(
+            records=records[:limit],
+            truncated=len(records) > limit,
+            total=len(records),
+            warnings=[f"Formato detectado: {fmt}."] if fmt else [],
+        )
+
+    async def ping(self) -> Health:
+        """El disco local siempre esta ahi; lo que puede faltar es samples/."""
+        if not SAMPLES_DIR.exists():
+            return Health(ok=False, detail=f"No existe {SAMPLES_DIR.name}/.", probed=True)
+        return Health(ok=True, detail="Lectura local disponible.", probed=True)
 
     # -- lectura -----------------------------------------------------------
 

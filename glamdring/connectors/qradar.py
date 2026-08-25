@@ -12,17 +12,22 @@ por configuracion en lugar de dejarla a lo que traiga el servidor por defecto.
 from __future__ import annotations
 
 import asyncio
+import re
+import time
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from ..config import SETTINGS, QRadarConfig
-from .base import Connector, ConnectorError
+from .base import PING_TIMEOUT, ConnectorError, FetchResult, Health, HttpConnector
 
 _POLL_SECONDS = 1.5
 _TERMINAL_ERROR_STATES = {"ERROR", "CANCELED"}
 
+# Content-Range: items 0-49/1000
+_RANGO = re.compile(r"items\s+\d+\s*-\s*\d+\s*/\s*(\d+)", re.IGNORECASE)
 
-class QRadarConnector(Connector):
+
+class QRadarConnector(HttpConnector):
     name = "qradar"
     query_language = "AQL"
     example_query = (
@@ -31,6 +36,7 @@ class QRadarConnector(Connector):
     )
 
     def __init__(self, config: Optional[QRadarConfig] = None) -> None:
+        super().__init__()
         self.config = config or SETTINGS.qradar
 
     @property
@@ -44,59 +50,73 @@ class QRadarConnector(Connector):
             "Accept": "application/json",
         }
 
+    def _client_kwargs(self) -> Dict[str, Any]:
+        return {
+            "verify": self.config.verify_tls,
+            "timeout": SETTINGS.query_timeout,
+            "headers": self._headers(),
+        }
+
     async def fetch(
         self,
         query: str,
         time_from: Optional[datetime] = None,
         time_to: Optional[datetime] = None,
         limit: int = 10_000,
-    ) -> List[Dict[str, Any]]:
+        cursor: Optional[str] = None,
+    ) -> FetchResult:
         if not self.configured:
             raise ConnectorError(self.name, "QRadar no esta configurado (QRADAR_URL / QRADAR_TOKEN).")
 
-        try:
-            import httpx
-        except ImportError as exc:  # pragma: no cover
-            raise ConnectorError(self.name, "Falta la dependencia 'httpx'.") from exc
-
         aql = _apply_window(query.strip(), time_from, time_to)
         base = self.config.url.rstrip("/")
+        tope = max(1, min(limit, SETTINGS.max_results))
+        client = self._client()
 
-        async with httpx.AsyncClient(verify=self.config.verify_tls,
-                                     timeout=SETTINGS.query_timeout,
-                                     headers=self._headers()) as client:
-            # Las ofensas se piden por su propio endpoint, no por Ariel.
-            if aql.lower().startswith("offenses"):
-                return await self._fetch_offenses(client, base, limit)
+        # Las ofensas se piden por su propio endpoint, no por Ariel.
+        if aql.lower().startswith("offenses"):
+            return await self._fetch_offenses(client, base, tope)
 
-            create = await client.post(f"{base}/api/ariel/searches",
-                                       params={"query_expression": aql})
-            if create.status_code >= 400:
-                raise ConnectorError(self.name, f"AQL rechazada: {create.text[:300]}",
-                                     status=create.status_code)
-            search_id = create.json().get("search_id")
-            if not search_id:
-                raise ConnectorError(self.name, "QRadar no devolvio search_id.")
+        create = await client.post(f"{base}/api/ariel/searches",
+                                   params={"query_expression": aql})
+        if create.status_code >= 400:
+            raise ConnectorError(self.name, f"AQL rechazada: {create.text[:300]}",
+                                 status=create.status_code)
+        search_id = create.json().get("search_id")
+        if not search_id:
+            raise ConnectorError(self.name, "QRadar no devolvio search_id.")
 
-            status = await self._wait(client, base, search_id)
-            if status in _TERMINAL_ERROR_STATES:
-                raise ConnectorError(self.name, f"La busqueda termino en estado {status}.")
+        status = await self._wait(client, base, search_id)
+        if status in _TERMINAL_ERROR_STATES:
+            raise ConnectorError(self.name, f"La busqueda termino en estado {status}.")
 
-            results = await client.get(
-                f"{base}/api/ariel/searches/{search_id}/results",
-                headers={**self._headers(), "Range": f"items=0-{max(limit - 1, 0)}"},
-            )
-            if results.status_code >= 400:
-                raise ConnectorError(self.name, f"HTTP {results.status_code}: {results.text[:300]}",
-                                     status=results.status_code)
-            payload = results.json()
+        # items=0-tope son tope+1 elementos: el ultimo es el testigo que dice si
+        # habia mas. Se descarta al entregar.
+        results = await client.get(
+            f"{base}/api/ariel/searches/{search_id}/results",
+            headers={"Range": f"items=0-{tope}"},
+        )
+        if results.status_code >= 400:
+            raise ConnectorError(self.name, f"HTTP {results.status_code}: {results.text[:300]}",
+                                 status=results.status_code)
+        payload = results.json()
+        total = _total_de(results.headers.get("Content-Range"))
 
         # La clave del array depende de si se consultaron events o flows.
         for key in ("events", "flows", "records", "assets"):
-            rows = payload.get(key)
-            if isinstance(rows, list):
-                return [row for row in rows if isinstance(row, dict)][:limit]
-        return []
+            filas = payload.get(key)
+            if isinstance(filas, list):
+                limpias = [row for row in filas if isinstance(row, dict)]
+                return FetchResult(
+                    records=limpias[:tope],
+                    truncated=len(limpias) > tope or (total is not None and total > tope),
+                    total=total,
+                )
+
+        return FetchResult(
+            records=[],
+            warnings=["La respuesta de QRadar no traia events, flows, records ni assets."],
+        )
 
     async def _wait(self, client, base: str, search_id: str) -> str:
         """Sondea hasta COMPLETED, error o agotar el tiempo de la consulta."""
@@ -113,17 +133,75 @@ class QRadarConnector(Connector):
             await asyncio.sleep(_POLL_SECONDS)
         raise ConnectorError(self.name, f"La busqueda no termino en {SETTINGS.query_timeout}s (estado {status}).")
 
-    async def _fetch_offenses(self, client, base: str, limit: int) -> List[Dict[str, Any]]:
+    async def _fetch_offenses(self, client, base: str, tope: int) -> FetchResult:
         response = await client.get(
             f"{base}/api/siem/offenses",
-            headers={**self._headers(), "Range": f"items=0-{max(limit - 1, 0)}"},
+            headers={"Range": f"items=0-{tope}"},
             params={"filter": "status=OPEN", "sort": "-magnitude"},
         )
         if response.status_code >= 400:
             raise ConnectorError(self.name, f"HTTP {response.status_code}: {response.text[:300]}",
                                  status=response.status_code)
         payload = response.json()
-        return [item for item in payload if isinstance(item, dict)][:limit] if isinstance(payload, list) else []
+        total = _total_de(response.headers.get("Content-Range"))
+        if not isinstance(payload, list):
+            return FetchResult(records=[], total=total,
+                               warnings=["QRadar no devolvio una lista de ofensas."])
+        limpias = [item for item in payload if isinstance(item, dict)]
+        return FetchResult(
+            records=limpias[:tope],
+            truncated=len(limpias) > tope or (total is not None and total > tope),
+            total=total,
+        )
+
+    async def ping(self) -> Health:
+        if not self.configured:
+            return Health(ok=False, detail="Sin credenciales configuradas.", probed=False)
+
+        import httpx
+
+        # /api/system/about exige el token y no toca Ariel: no lanza busqueda ni
+        # deja rastro en la consola de QRadar.
+        url = f"{self.config.url.rstrip('/')}/api/system/about"
+        arranque = time.monotonic()
+        client = self._client()
+        try:
+            response = await client.get(url, timeout=PING_TIMEOUT)
+        except httpx.HTTPError as exc:
+            return Health(ok=False, detail=f"No responde: {exc}", probed=True)
+
+        tardanza = int((time.monotonic() - arranque) * 1000)
+        if response.status_code in (401, 403):
+            return Health(ok=False, detail="Token SEC rechazado por QRadar.",
+                          probed=True, latency_ms=tardanza)
+        if response.status_code == 422:
+            # QRadar responde 422 cuando la cabecera Version no es una de las
+            # que soporta. Merece mensaje propio: es lo mas facil de dejar mal
+            # puesto y el 422 a secas no lo sugiere.
+            return Health(ok=False,
+                          detail=f"QRADAR_API_VERSION '{self.config.api_version}' no la admite este servidor.",
+                          probed=True, latency_ms=tardanza)
+        if response.status_code >= 400:
+            return Health(ok=False, detail=f"HTTP {response.status_code}.",
+                          probed=True, latency_ms=tardanza)
+        return Health(ok=True, detail="Responde.", probed=True, latency_ms=tardanza)
+
+
+def _total_de(cabecera: Optional[str]) -> Optional[int]:
+    """Saca el total de un Content-Range de QRadar, si viene.
+
+    Es el unico de los cuatro SIEM que dice cuantos habia en realidad, y por eso
+    se aprovecha: permite contar "de 40.000" en vez de solo "hay mas".
+    """
+    if not cabecera:
+        return None
+    encontrado = _RANGO.search(cabecera)
+    if not encontrado:
+        return None
+    try:
+        return int(encontrado.group(1))
+    except ValueError:  # pragma: no cover
+        return None
 
 
 def _apply_window(aql: str, time_from: Optional[datetime], time_to: Optional[datetime]) -> str:

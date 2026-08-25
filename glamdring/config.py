@@ -11,6 +11,7 @@ conector esta configurado, nunca con que.
 
 from __future__ import annotations
 
+import importlib.util
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -97,6 +98,17 @@ class SplunkConfig:
         return bool(self.url and (self.token or (self.username and self.password)))
 
 
+def _sdk_azure_disponible() -> bool:
+    """True si estan los SDK de Azure, SIN importarlos.
+
+    find_spec mira si el modulo existe y no ejecuta nada suyo. Importar
+    azure.identity de verdad aqui costaria casi un segundo en el arranque, y por
+    una pregunta que se hace solo para pintar un semaforo.
+    """
+    return all(importlib.util.find_spec(m) is not None
+               for m in ("azure.identity", "azure.monitor.query"))
+
+
 @dataclass
 class SentinelConfig:
     workspace_id: str = ""
@@ -105,8 +117,28 @@ class SentinelConfig:
     client_secret: str = ""
 
     @property
+    def explicit_credentials(self) -> bool:
+        """Las tres variables que exige la via REST."""
+        return bool(self.tenant_id and self.client_id and self.client_secret)
+
+    @property
     def configured(self) -> bool:
-        return bool(self.workspace_id)
+        """Si hay ALGUNA via viable, no solo si hay workspace.
+
+        Antes esto era ``bool(self.workspace_id)`` y con eso el semaforo se
+        ponia verde poniendo un identificador de workspace y nada mas. Sin SDK
+        instalado y sin las variables de Entra ID no hay ninguna forma de
+        autenticarse, asi que la consulta fallaba siempre: el analista escribia
+        su KQL, esperaba, y recibia un error de credenciales que el semaforo
+        llevaba rato asegurando que no existia.
+        """
+        if not self.workspace_id:
+            return False
+        if self.explicit_credentials:
+            return True
+        # Sin credenciales explicitas la unica via es el SDK, que sabe sacarlas
+        # de az login o de una identidad administrada.
+        return _sdk_azure_disponible()
 
 
 @dataclass

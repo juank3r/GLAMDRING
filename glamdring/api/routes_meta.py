@@ -7,7 +7,7 @@ from typing import Any, Dict
 from fastapi import APIRouter
 
 from ..config import SETTINGS
-from ..connectors import FileConnector, describe_all
+from ..connectors import FileConnector, describe_all, ping_all
 from ..graph import ontology
 from ..store import STORE
 
@@ -44,6 +44,17 @@ def get_ontology() -> Dict[str, Any]:
 @router.get("/connectors")
 def connectors() -> Dict[str, Any]:
     return {"connectors": describe_all()}
+
+
+@router.get("/connectors/ping")
+async def connectors_ping() -> Dict[str, Any]:
+    """Comprueba de verdad que cada fuente responde.
+
+    Separado de /connectors a proposito: aquel es instantaneo y se puede pedir
+    en cada pintado, este habla por la red y puede tardar. Mezclarlos convertiria
+    el arranque de la interfaz en una espera de varios segundos.
+    """
+    return {"connectors": await ping_all()}
 
 
 @router.get("/samples")
