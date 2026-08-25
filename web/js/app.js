@@ -610,13 +610,23 @@ async function boot() {
     restoreProfile: (anterior) => applyProfile(anterior),
     onEnter: () => toast('Pantalla completa. Pulsa P o Esc para salir.', null, 3200),
     onExit: () => toast('De vuelta al panel', null, 1800),
+    // El unico sitio desde donde se puede reanudar el recorrido sin salir de
+    // pantalla completa: ahi el boton Auto de la barra superior no existe.
+    onToggleAuto: () => auto.arrancar(state.graph),
+    autoActivo: () => auto.activo(),
   });
 
   auto.init({
-    onStart: (total) => toast(`Recorrido automático: ${total} entidades en orden cronológico`, 'ok', 4000),
-    onStop: () => toast('Recorrido automático detenido', null, 2200),
+    onStart: (total) => {
+      cine.reflejarAuto(true);
+      toast(`Recorrido automático: ${total} entidades en orden cronológico`, 'ok', 4000);
+    },
+    onStop: () => { cine.reflejarAuto(false); toast('Recorrido automático detenido', null, 2200); },
     onLoop: (vuelta) => toast(`Vuelta ${vuelta} completada`, null, 2600),
-    onInterrupted: () => toast('Recorrido detenido: has tomado el control', null, 2600),
+    onInterrupted: () => {
+      cine.reflejarAuto(false);
+      toast('Recorrido detenido: has tomado el control', null, 2600);
+    },
     onError: (mensaje) => toast(mensaje, 'error', 5000),
   });
   report.init({

@@ -802,13 +802,14 @@ body.cine-claro .auto-name { color: var(--text); }
   position: absolute; top: 14px; right: 14px; z-index: 8;
   display: flex; align-items: center; gap: 6px;
   padding: 7px 9px; border-radius: var(--radius);
-  background: color-mix(in srgb, var(--bg-panel) 88%, transparent);
-  border: 1px solid var(--border);
-  /* Discreta hasta que se la busca: esto acaba proyectado y no tiene por que
-     salir en la foto. */
-  opacity: 0.22; transition: opacity 0.18s ease;
+  background: color-mix(in srgb, var(--bg-panel) 94%, transparent);
+  border: 1px solid var(--border-strong);
+  /* Antes se quedaba al 22% hasta pasar el raton por encima, para no salir en
+     la foto. Mala idea: unos botones que no se ven son unos botones que no se
+     usan, y aqui esta el unico sitio desde donde se puede reanudar el modo
+     automatico. Se quedan visibles. */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
-.cine-bar:hover { opacity: 1; }
 .cine-label {
   font-size: 10px; letter-spacing: 1.5; text-transform: uppercase;
   color: var(--text-faint); margin-right: 2px;
@@ -825,6 +826,28 @@ body.cine-claro .auto-name { color: var(--text); }
 }
 body.cine-claro .cine-fondo-btn.activo { color: #ffffff; }
 .cine-x { margin-left: 4px; }
+
+/* Separador entre el grupo de fondo y el control del recorrido. */
+.cine-sep {
+  width: 1px; height: 18px; margin: 0 4px;
+  background: var(--border-strong);
+}
+
+/* El boton del modo automatico dentro del escaparate. Sin el, tocar el lienzo
+   paraba el recorrido y no habia forma de reanudarlo sin salir de pantalla
+   completa, que es justo lo contrario de lo que hace falta cuando esto esta
+   proyectado. */
+.cine-auto-btn {
+  background: transparent; border: 1px solid var(--border-strong);
+  color: var(--text-dim); border-radius: var(--radius);
+  padding: 3px 12px; font-size: 11px; cursor: pointer;
+  font-family: inherit; display: flex; align-items: center; gap: 5px;
+}
+.cine-auto-btn:hover { color: var(--text); border-color: var(--text-faint); }
+.cine-auto-btn.corriendo {
+  background: var(--accent-dim); border-color: var(--accent); color: #f0fdfa;
+}
+body.cine-claro .cine-auto-btn.corriendo { color: #ffffff; }
 
 /* En modo papel la leyenda hereda --text-dim, que ya se redefine oscuro arriba,
    pero su fondo translucido sobre blanco la deja casi sin borde. Se le sube el

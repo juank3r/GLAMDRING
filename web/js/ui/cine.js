@@ -87,6 +87,7 @@ export function entrar() {
   document.body.classList.add('cine');
   barra.hidden = false;
   aplicarFondo(estado.fondo);
+  reflejarAuto(handlers.autoActivo?.());
 
   // El lienzo cambia de tamano al desaparecer los paneles: si no se le avisa,
   // la escena se queda con la relacion de aspecto anterior y sale estirada.
@@ -122,6 +123,20 @@ export function salir() {
 export const activo = () => estado.activo;
 export const alternar = () => (estado.activo ? salir() : entrar());
 
+/* Pone el boton del recorrido al dia. Lo llama app.js cada vez que el modo
+   automatico arranca, se para o lo interrumpe alguien tocando el lienzo: sin
+   esto el boton diria "parar" con el recorrido ya detenido. */
+export function reflejarAuto(corriendo) {
+  const boton = el('cine-auto');
+  if (!boton) return;
+  boton.classList.toggle('corriendo', Boolean(corriendo));
+  el('cine-auto-icono').textContent = corriendo ? '❚❚' : '▶';
+  el('cine-auto-texto').textContent = corriendo ? 'Parar' : 'Auto';
+  boton.title = corriendo
+    ? 'Parar el recorrido automático (t)'
+    : 'Reanudar el recorrido automático (t)';
+}
+
 /* -------------------------------------------------------------------- init */
 
 export function init(hooks) {
@@ -134,6 +149,7 @@ export function init(hooks) {
   });
   el('cine-salir')?.addEventListener('click', () => salir());
   el('btn-cine')?.addEventListener('click', () => alternar());
+  el('cine-auto')?.addEventListener('click', () => handlers.onToggleAuto?.());
 
-  return { entrar, salir, alternar, activo, fondoActual };
+  return { entrar, salir, alternar, activo, fondoActual, reflejarAuto };
 }
