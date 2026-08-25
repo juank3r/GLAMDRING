@@ -1,69 +1,111 @@
 # Pendiente
 
-Estado al 20 de agosto de 2026. Todo lo de abajo está publicado y en verde
-(260 tests); esto es lo que queda por hacer, por orden de lo que más aporta.
+Estado a 25 de agosto de 2026. Todo lo de abajo esta publicado en main y con los
+380 tests en verde.
 
----
+## Por donde se retoma: CEF, LEEF y syslog
 
-## 1. Activar la wiki de GitHub
+Es lo siguiente, y ya esta el terreno mirado. `glamdring/normalize/cef.py`.
 
-**Bloqueado, y solo lo puede desbloquear una persona.** GitHub no deja empujar a
-`GLAMDRING.wiki.git` hasta que la wiki existe: hoy responde *Repository not found*.
+Cinco hallazgos altos, todos reproducidos (el detalle en
+[HALLAZGOS-CLASIFICACION.md](HALLAZGOS-CLASIFICACION.md)):
 
-Hay que entrar una vez a <https://github.com/juank3r/GLAMDRING/wiki> y pulsar
-**Create the first page** (vale con guardar cualquier cosa). Después:
+1. **LEEF pierde la severidad.** `sev=8` sale como severidad 2 porque
+   `CEF_KEY_ALIASES` no tiene entrada para `sev`, asi que `first(record,
+   "cef_severity", "severity", "priority")` no encuentra nada y se cae al
+   `3 if failure else 2`. El evento mas grave del fichero acaba siendo el mas
+   facil de filtrar. Arreglo: anadir el alias.
 
-```powershell
-cd <scratchpad>\wikipush
-git push origin master
-```
+2. **`parse_syslog` no vuelve a mirar el texto.** En
+   `Failed password for invalid user administrator from 10.4.2.11` el usuario y
+   la IP se quedan dentro de la cadena. Una fuerza bruta SSH seguida de login
+   correcto -el patron mas reconocible que hay- no dibuja nada. Las tres lineas
+   9, 10 y 11 de `samples/perimeter.cef` son exactamente eso.
 
-Las 16 páginas ya están escritas y versionadas en [`wiki/`](../wiki/) dentro del
-repo, así que mientras tanto se leen desde ahí. No se pierde nada, solo no están
-en la pestaña Wiki.
+3. **La escalera de palabras clasifica al reves.** El orden es AUTH, PROC,
+   FILE, NET, y las listas se pisan:
+   - `_FILE_HINTS` contiene `"malware"`, asi que la linea 6 (Umbrella,
+     `DNS Request` con `cs1=Malware`) casa como FICHERO antes que como red y
+     sale con activity `create`. Ni dominio ni aristas.
+   - `_PROC_HINTS` contiene `"command"`, que casa con
+     `cat=command-and-control`: la linea 8 (LEEF de PAN-OS, trafico C2) sale
+     como `launch`. Se pierde la conexion 10.4.2.11 -> 45.132.88.17.
 
-## 2. Documentar la detección de ransomware en la wiki
+4. **`Malware Detected` sale como creacion de fichero.** Linea 7, Defender, con
+   `act=quarantine_failed`. El informe lo redacta como "jlopez creo m.exe": el
+   antivirus dice que NO pudo contenerlo y la herramienta lo cuenta como si el
+   usuario hubiera creado un fichero. Tiene que ser `malware_detect` en
+   `CLASS_FINDING` con status de fallo.
 
-El README ya la explica, pero la wiki no tiene página propia:
+5. **Traducir al vocabulario cerrado**: `logon_failed` -> `logon` + status,
+   `blocked` -> status, `connect` -> `network_connect`, `create` ->
+   `file_create`, `launch` -> `process_launch`.
 
-- Página nueva sobre las tres vías de detección, las ocho etapas y la ponderación
-  de la atribución. El material está en [`docs/diagrams/06-cadena-ransomware.svg`](diagrams/06-cadena-ransomware.svg)
-  y en los docstrings de `glamdring/threat/`.
-- Página para los 17 incidentes de [`samples/apt/`](../samples/apt/): qué grupo
-  representa cada uno y qué se espera ver al cargarlo.
-- Añadir ambas a `wiki/_Sidebar.md` y a `wiki/Home.md`, que hoy no las indexan.
-- Enlazar los seis diagramas desde la wiki, no solo desde el README.
+Aviso de un verificador que conviene tener presente: para la linea 6, poner
+`CLASS_DNS` a secas **deja el dominio huerfano**, porque `event.domain` solo se
+rellena desde `url` o desde `domain`/`dest_domain`/`query`, y Umbrella pone el
+dominio en `dhost` -> `dest_host`. Son dos piezas: el orden de clasificacion y
+alimentar `event.domain` desde `dest_host` cuando no es una IP.
 
-## 3. Enseñar la valoración de amenaza en la interfaz
+Comprobacion util mientras se trabaja: cada linea de `samples/perimeter.cef` (son
+11) tiene que caer en su clase. Faltan los tests que lo fijen linea a linea.
 
-Ahora mismo solo sale por `GET /api/threat` y en los informes. En la interfaz no
-hay nada. Faltaría un panel con:
+## Despues de CEF
 
-- las etapas de despliegue alcanzadas, con la que marca el punto de no retorno
-- las herramientas vistas, agrupadas por categoría
-- la atribución con su grado de confianza y el aviso de que es una hipótesis
+- **QRadar** (`normalize/qradar_events.py`), 5 hallazgos altos: los bytes de
+  `Large Outbound Transfer` se tiran; `Malware Detected Not Cleaned` sale como
+  creacion de fichero con exito; el evento DNS fabrica una arista `resolved`
+  FALSA en la que el dominio malicioso resuelve al servidor DNS interno de la
+  empresa; y las categorias de la ofensa se convierten en tecnicas ATT&CK
+  inventadas con ids del tipo `['MALWARE DETECTED'`.
+- **Sentinel** (`normalize/sentinel_defender.py`), 3 hallazgos altos: la tabla
+  `DeviceEvents` entera se clasifica como consulta DNS con severidad 1;
+  `_guess_table` mira `RemoteIP` antes que `LogonType`, asi que un logon sin
+  `Type` se convierte en conexion de red y pierde la cuenta; y seis tablas que
+  `matches()` reclama no tienen handler.
+- **Tests linea a linea** sobre las cuatro muestras.
 
-El endpoint ya devuelve todo lo necesario; es trabajo de frontend.
+## Fases 3 y 4, sin empezar
 
----
+- **Netskope y Zscaler**. El terreno ya esta comprobado contra la documentacion
+  de los fabricantes, en [PROXIES-SASE.md](PROXIES-SASE.md). Lo importante: el
+  receptor que se hizo en la fase 1 vale tal cual, porque Cloud NSS admite
+  cabeceras HTTP a medida. Queda por comprobar la API de ZPA (ambitos y
+  paginacion), y esta marcado como pendiente ahi.
+- **Varios incidentes a la vez y fusion de dos que resultan ser el mismo.**
+- **Autenticacion**, que no estaba en el plan y hace falta antes de que esto
+  toque un SIEM de produccion. Hoy quien alcance el puerto, entra.
 
-## Dos cosas del entorno que conviene recordar
+## Lo que quedo hecho
 
-**Puerto 8000 ocupado.** Hay un `uvicorn` colgado de otra sesión, con código
-viejo, que no se deja matar (acceso denegado). No sirve para probar nada. Levanta
-en otro puerto:
+**Fase 1, completa.**
 
-```powershell
-uvicorn glamdring.main:app --port 8001
-```
+- La lectura de ficheros arbitrarios del servidor, cerrada. Leia el `.env` con
+  los tokens de los SIEM.
+- `limit` validado (`limit=0` llegaba a Splunk como `count=0`, que en su API
+  significa SIN limite: pedias "nada" y te bajabas el indice entero).
+- El `.env` ya no contamina el entorno del proceso.
+- `redact()` tacha por FORMA del valor, no solo por nombre de clave.
+- Contrato de conector v2: `FetchResult` con `truncated`, `total`, `cursor` y
+  `warnings`; `ping()` de verdad; `close()` con el cliente reutilizado.
+- Sentinel ya no congela el proceso entero hasta 120 segundos.
+- Receptor `POST /api/receive/{fuente}`, con clave por fuente, comparacion en
+  tiempo constante y limites de cuerpo y de ritmo.
+- El aviso de grafo incompleto, en pantalla y persistente.
+- El semaforo del SIEM comprueba de verdad en vez de mirar si hay un token.
 
-**Para ver los SVG renderizados** sin Node instalado, vale Edge sin cabeza:
+**Fase 2, empezada.**
 
-```powershell
-& "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" `
-  --headless --disable-gpu --window-size=1360,900 `
-  --screenshot=salida.png "file:///ruta/al/diagrama.svg"
-```
+- Vocabulario cerrado de 34 actividades en `models.py`, con clase OCSF y el nodo
+  que produce cada una.
+- Los tres fallos del grafo: el proceso anclado al literal `'?'`, el fichero sin
+  arista a su maquina y el cortafuegos como nodo suelto.
+- Splunk entero: se acabo la red que mandaba a "inicio de sesion correcto"
+  cualquier registro con `Account_Name`.
 
-Escribe el fichero con retardo, así que hay que esperar un par de segundos antes
-de abrirlo.
+## Una cosa que no depende de mi
+
+Los puertos 8000, 8001 y 8002 siguen ocupados por procesos huerfanos que no se
+dejan cerrar desde una ventana normal. Desde una **como administrador**:
+
+    taskkill /F /PID 23528 /PID 23892 /PID 17780
