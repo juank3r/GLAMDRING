@@ -600,3 +600,88 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
   .admin { width: 100%; }
   .report-grid { grid-template-columns: 1fr; }
 }
+
+/* ==========================================================================
+   Recorrido de una entidad (follow.js)
+
+   Va sobre el lienzo y no en el pie: mientras la camara vuela hay que poder
+   leer lo que paso sin apartar la vista de lo que se esta moviendo. Anclada
+   abajo a la izquierda para no taparle el sitio al inspector.
+   ========================================================================== */
+
+.follow-bar {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  width: min(560px, calc(100% - 28px));
+  z-index: 6;
+  padding: 12px 14px 10px;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--bg-panel) 94%, transparent);
+  border: 1px solid var(--accent-dim);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.follow-head {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 9px;
+}
+.follow-head strong { font-size: 14px; letter-spacing: 0.2px; }
+.follow-eye { color: var(--accent); font-size: 12px; }
+.follow-count {
+  margin-left: auto; color: var(--text-faint);
+  font-size: 11px; font-variant-numeric: tabular-nums;
+}
+.follow-x { margin-left: 4px; }
+
+/* Una marca por paso, coloreada por gravedad: de un vistazo se ve donde estan
+   los momentos graves y cuanto queda por delante. */
+.follow-progress {
+  display: flex; gap: 2px; align-items: stretch;
+  height: 7px; margin-bottom: 10px;
+}
+.follow-tick {
+  flex: 1 1 0; min-width: 2px; border-radius: 1px;
+  background: var(--border-strong);
+  cursor: pointer; transition: transform 0.12s ease, opacity 0.12s ease;
+}
+.follow-tick:hover { transform: scaleY(1.7); }
+.follow-tick.visto { opacity: 0.5; }
+.follow-tick.aqui  { transform: scaleY(2.1); box-shadow: 0 0 7px currentColor; }
+.follow-tick.sev-0, .follow-tick.sev-1 { background: #1e3a5f; }
+.follow-tick.sev-2 { background: #1d4ed8; }
+.follow-tick.sev-3 { background: #eab308; }
+.follow-tick.sev-4 { background: var(--warn); }
+.follow-tick.sev-5 { background: var(--danger); }
+
+.follow-step {
+  min-height: 42px; margin-bottom: 9px;
+  font-size: 13px; line-height: 1.45;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 7px;
+}
+.follow-idle { color: var(--text-faint); font-size: 12px; }
+.follow-clock {
+  color: var(--accent); font-family: Consolas, "Cascadia Mono", monospace;
+  font-size: 11.5px; white-space: nowrap;
+}
+.follow-arrow { font-weight: 700; }
+.follow-arrow.sev-4 { color: var(--warn); }
+.follow-arrow.sev-5 { color: var(--danger); }
+.follow-text { flex: 1 1 260px; color: var(--text); }
+.follow-times {
+  color: var(--text-faint); font-size: 11px;
+  border: 1px solid var(--border-strong); border-radius: 8px; padding: 0 6px;
+}
+
+.follow-controls { display: flex; align-items: center; gap: 6px; }
+.follow-controls select {
+  background: var(--bg); border: 1px solid var(--border);
+  color: var(--text-dim); border-radius: var(--radius);
+  padding: 3px 6px; font-size: 11px;
+}
+.follow-logs { margin-left: auto; font-size: 11px; padding: 3px 10px; }
+
+/* Mientras se sigue a alguien, el pie de cronologia estorba: el recorrido
+   tiene su propio tiempo y dos lineas temporales a la vez confunden. */
+body.following .timeline-bar { opacity: 0.35; pointer-events: none; }

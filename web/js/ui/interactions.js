@@ -14,7 +14,11 @@ let actions = {};
 /* Cada acción declara cuándo aplica y qué hace. `when` recibe el contexto del
    click (nodo o arista) y decide si la entrada aparece. */
 const NODE_ACTIONS = [
-  { id: 'focus', label: 'Centrar aquí', hint: 'Aísla la vecindad de este nodo' },
+  { id: 'follow', label: 'Seguir a esta entidad',
+    hint: 'Deja solo lo suyo y recorre sus acciones en orden' },
+  // Antes se llamaba "Centrar aquí" y prometía aislar, que es justo lo que NO
+  // hace: solo selecciona y mueve la cámara. Aislar de verdad es el recorrido.
+  { id: 'focus', label: 'Centrar la cámara', hint: 'Enfoca este nodo sin tocar el resto' },
   { id: 'expand', label: 'Expandir vecinos', hint: 'Trae del servidor lo que le rodea' },
   { id: 'pin', label: 'Fijar / soltar', hint: 'Ancla el nodo en su sitio' },
   { id: 'hide', label: 'Ocultar', hint: 'Quita este nodo de la vista actual' },
@@ -33,6 +37,7 @@ const SHORTCUTS = [
   ['clic', 'seleccionar y centrar'],
   ['ctrl + clic', 'añadir a la selección múltiple'],
   ['doble clic', 'expandir vecinos desde el servidor'],
+  ['s', 'seguir a la entidad seleccionada'],
   ['clic derecho', 'menú contextual'],
   ['arrastrar nodo', 'fijarlo en su sitio'],
   ['espacio', 'reproducir / pausar la cronología'],
@@ -148,6 +153,7 @@ export function init(handlers) {
       case '2': actions.setView?.('killchain'); break;
       case '3': actions.setView?.('timeline3d'); break;
       case 'c': case 'C': actions.cycleColorMode?.(); break;
+      case 's': case 'S': actions.followSelected?.(); break;
       case 'a': case 'A': actions.openAdmin?.(); break;
       case 'r': case 'R': actions.openReport?.(); break;
       case '/': event.preventDefault(); document.getElementById('search').focus(); break;

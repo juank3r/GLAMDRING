@@ -94,6 +94,9 @@ export const querySiem = (payload) => request('api/query', {
 
 export const graph = (filters) => request(`api/graph${qs(filters)}`);
 export const neighbors = (node, hops = 1) => request(`api/graph/neighbors${qs({ node, hops })}`);
+/* El recorrido de una entidad: sus actos en orden, y el subgrafo aislado a su
+   vecindad. Vienen juntos a proposito, para que no puedan no cuadrar. */
+export const story = (node, hops = 1) => request(`api/graph/story${qs({ node, hops })}`);
 export const timeline = (filters) => request(`api/timeline${qs(filters)}`);
 export const events = (params) => request(`api/events${qs(params)}`);
 

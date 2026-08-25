@@ -733,6 +733,10 @@ function construct() {
   });
 
   resize();
+  // Red de seguridad: entre construir y recibir los primeros datos hay
+  // fotogramas que pueden matar el bucle. Se comprueba un par de veces.
+  setTimeout(reviveAnimation, 300);
+  setTimeout(reviveAnimation, 1500);
 }
 
 function destroy() {
@@ -788,6 +792,44 @@ export function refresh() {
   if (graph) graph.refresh();
 }
 
+/**
+ * Revive el bucle de animación de la librería si se ha muerto.
+ *
+ * EL FALLO, que es del bundle y no nuestro: `three-forcegraph` guarda la
+ * simulación en `state.layout`, y solo la asigna AL FINAL de una actualización
+ * de `graphData`. Si un fotograma cae dentro de esa ventana, su `tickFrame()`
+ * hace `layout.tick()` sobre un `undefined` y lanza.
+ *
+ * Lo grave es dónde lanza. El ciclo es, todo en la misma expresión:
+ *
+ *     forceGraph.tickFrame(), renderObjs.tick(), requestAnimationFrame(...)
+ *
+ * Si la primera revienta, no se llega a reprogramar el fotograma siguiente y el
+ * bucle NO VUELVE. Se queda muerto para el resto de la sesión, y con él:
+ *
+ *   - la simulación de fuerzas, que deja de asentarse (se queda con los
+ *     warmupTicks iniciales y nunca corre los cooldownTicks)
+ *   - las transiciones de cámara, porque el tween se avanza en renderObjs.tick()
+ *   - las partículas de las aristas
+ *
+ * La escena se sigue dibujando —eso lo hace otro bucle distinto— así que desde
+ * fuera no se nota que algo se ha parado: simplemente nada se mueve nunca.
+ *
+ * No basta con `resumeAnimation()`: comprueba si el identificador del fotograma
+ * pendiente es nulo, y como la excepción salta ANTES de la línea que lo
+ * reasigna, se queda con el del fotograma que ya se consumió. La librería cree
+ * que sigue corriendo y no hace nada. Hay que pararlo explícitamente primero,
+ * que es lo que pone el identificador a nulo, y entonces sí arranca.
+ *
+ * Sobre un bucle sano esto es inofensivo: cancela el fotograma pendiente y pide
+ * otro. Para cuando corre, `layout` ya existe y no vuelve a lanzar.
+ */
+function reviveAnimation() {
+  if (!graph || typeof graph.resumeAnimation !== 'function') return;
+  graph.pauseAnimation();
+  graph.resumeAnimation();
+}
+
 export function setData(doc) {
   data = decorate(doc);
   heavy = data.nodes.length > opt('render', 'heavyThreshold', 350);
@@ -801,6 +843,9 @@ export function setData(doc) {
   graph.graphData(data);
   applyPhysics();
   applyLayout();
+  // Cambiar los datos y la fisica es justo lo que abre la ventana en la que el
+  // bucle de la libreria se mata solo. Se comprueba despues, no antes.
+  setTimeout(reviveAnimation, 0);
   return data;
 }
 
@@ -830,6 +875,7 @@ export function applyProfile(next) {
   if (opt('camera', 'figureFacing', 'yaw') === 'fixed') orient.reset(data.nodes);
   startOrbit();
   refresh();
+  setTimeout(reviveAnimation, 0);
 }
 
 export function setView(name) {
@@ -960,6 +1006,86 @@ export function zoomToFit(ms = 700, padding = 90) {
   if (graph) graph.zoomToFit(ms, padding);
 }
 
+/**
+ * Lleva la cámara a encuadrar UNA relación, con sus dos extremos a la vista.
+ *
+ * No sirve la matemática de `selectNode()`, que proyecta desde el origen de la
+ * escena hacia el nodo: eso centra bien una entidad suelta, pero al mirar una
+ * arista deja la cámara en línea con ella y los dos extremos se tapan entre sí.
+ * El recorrido necesita justo lo contrario: ver a la vez quién hizo qué y a
+ * quién, porque de eso trata el paso.
+ *
+ * Así que se apunta al punto medio y se retrocede en una dirección
+ * PERPENDICULAR a la arista, a una distancia proporcional a lo larga que sea.
+ *
+ * Devuelve el punto al que se mira, para poder resaltarlo.
+ */
+export function focusOnLink(link, ms = 900) {
+  if (!graph || !link) return null;
+  const from = data.nodes.find((n) => n.id === idOf(link.source));
+  const to = data.nodes.find((n) => n.id === idOf(link.target));
+  if (!from || !to || !Number.isFinite(from.x) || !Number.isFinite(to.x)) return null;
+
+  const mid = {
+    x: (from.x + to.x) / 2,
+    y: (from.y + to.y) / 2,
+    z: ((from.z || 0) + (to.z || 0)) / 2,
+  };
+
+  // Vector de la arista y su longitud.
+  const ax = to.x - from.x;
+  const ay = to.y - from.y;
+  const az = (to.z || 0) - (from.z || 0);
+  const largo = Math.hypot(ax, ay, az) || 1;
+
+  // Perpendicular: producto vectorial de la arista con la vertical del mundo.
+  // Si la arista es casi vertical el resultado sería casi cero y la cámara se
+  // quedaría encima del punto medio, así que en ese caso se usa otro eje.
+  let px = ay * 0 - az * 1;
+  let py = az * 0 - ax * 0;
+  let pz = ax * 1 - ay * 0;
+  if (Math.hypot(px, py, pz) < largo * 0.15) {
+    px = 1; py = 0; pz = 0;
+  }
+  const norma = Math.hypot(px, py, pz) || 1;
+
+  // Lo bastante lejos para que quepan los dos extremos, con un suelo para que
+  // dos entidades pegadas no dejen la cámara dentro de una figura.
+  const distancia = Math.max(opt('camera', 'focusDistance', 130) * 0.75, largo * 1.35);
+
+  graph.cameraPosition({
+    x: mid.x + (px / norma) * distancia,
+    y: mid.y + (py / norma) * distancia + largo * 0.25,
+    z: mid.z + (pz / norma) * distancia,
+  }, mid, ms);
+  return mid;
+}
+
+/** Coloca el resaltado en una entidad y una arista concretas, sin mover cámara. */
+export function highlightPair(nodeId, link) {
+  highlight.nodes.clear();
+  highlight.links.clear();
+  const node = data.nodes.find((n) => n.id === nodeId);
+  if (node) highlight.nodes.add(node);
+  if (link) {
+    highlight.links.add(link);
+    const from = data.nodes.find((n) => n.id === idOf(link.source));
+    const to = data.nodes.find((n) => n.id === idOf(link.target));
+    if (from) highlight.nodes.add(from);
+    if (to) highlight.nodes.add(to);
+  }
+  applyHighlight();
+}
+
+/** Posición y objetivo actuales de la cámara, para poder volver luego. */
+export function cameraState() {
+  return graph ? graph.cameraPosition() : null;
+}
+
+export function restoreCamera(state, ms = 700) {
+  if (graph && state) graph.cameraPosition(state, undefined, ms);
+}
+
 /** Destello puntual sobre una arista: el evento "ocurre" a la vista. */
 export function pulse(link) {
   try {
@@ -1006,6 +1132,7 @@ const api = {
   selectNode, selectLink, clearSelection, getSelection, toggleMultiSelect,
   multiSelection, nodeById, linkById, neighborsOf, currentData, idOf,
   releaseFixed, zoomToFit, pulse, snapshot, stats, disposeAll, scene, camera,
+  applyHighlight, focusOnLink, highlightPair, cameraState, restoreCamera,
 };
 
 export default api;
