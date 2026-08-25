@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1010" width="1400" height="1010" font-family="Segoe UI, Inter, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg7" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/><stop offset="1" stop-color="#070a10"/>
+    </linearGradient>
+    <marker id="f7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2dd4bf"/>
+    </marker>
+    <filter id="glow7" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1400" height="1010" fill="url(#bg7)"/>
+
+  <text x="48" y="52" fill="#dce4f0" font-size="26" font-weight="700" letter-spacing="1">Qué ve bien cada SIEM, y qué se le escapa</text>
+  <text x="48" y="78" fill="#8b98ad" font-size="14">Ninguno lo ve todo. Por eso la pregunta útil no es cuál es mejor, sino qué pasa cuando hay dos y nadie los cruza.</text>
+
+  <!-- ============ la matriz ============ -->
+  <rect x="40" y="104" width="1320" height="430" rx="12" fill="#0d121c" stroke="#1d2635"/>
+
+  <!-- cabecera de columnas -->
+  <g fill="#5b6880" font-size="11" letter-spacing="1.2" text-anchor="middle">
+    <text x="500" y="140">ENDPOINT</text>
+    <text x="608" y="140">IDENTIDAD</text>
+    <text x="716" y="140">CORREO</text>
+    <text x="824" y="140">RED Y FLUJOS</text>
+    <text x="944" y="140">PERÍMETRO</text>
+    <text x="1052" y="140">CLOUD</text>
+  </g>
+  <line x1="60" y1="152" x2="1340" y2="152" stroke="#1d2635"/>
+
+  <!-- ========== Splunk ========== -->
+  <g transform="translate(0,164)">
+    <circle cx="80" cy="30" r="11" fill="#65a637"/>
+    <text x="104" y="28" fill="#dce4f0" font-size="16" font-weight="700">Splunk</text>
+    <text x="104" y="46" fill="#8b98ad" font-size="11">SPL · REST :8089 · licencia por volumen ingerido</text>
+    <g font-size="17" text-anchor="middle">
+      <text x="500" y="34" fill="#4ade80">●●●</text>
+      <text x="608" y="34" fill="#5b6880">●○○</text>
+      <text x="716" y="34" fill="#5b6880">●○○</text>
+      <text x="824" y="34" fill="#eab308">●●○</text>
+      <text x="944" y="34" fill="#eab308">●●○</text>
+      <text x="1052" y="34" fill="#5b6880">●○○</text>
+    </g>
+    <text x="1120" y="26" fill="#94a3b8" font-size="11.5">Lo mejor: línea de comandos completa,</text>
+    <text x="1120" y="42" fill="#94a3b8" font-size="11.5">árbol de procesos, Sysmon y 4688.</text>
+    <text x="1120" y="60" fill="#ff8fa3" font-size="11">Flojo: identidad cloud.</text>
+  </g>
+  <line x1="60" y1="252" x2="1340" y2="252" stroke="#1d2635" stroke-opacity="0.6"/>
+
+  <!-- ========== Sentinel ========== -->
+  <g transform="translate(0,258)">
+    <circle cx="80" cy="30" r="11" fill="#0078d4"/>
+    <text x="104" y="28" fill="#dce4f0" font-size="16" font-weight="700">Microsoft Sentinel</text>
+    <text x="104" y="46" fill="#8b98ad" font-size="11">KQL · Log Analytics · nativo en el ecosistema Microsoft</text>
+    <g font-size="17" text-anchor="middle">
+      <text x="500" y="34" fill="#eab308">●●○</text>
+      <text x="608" y="34" fill="#4ade80">●●●</text>
+      <text x="716" y="34" fill="#4ade80">●●●</text>
+      <text x="824" y="34" fill="#5b6880">●○○</text>
+      <text x="944" y="34" fill="#5b6880">●○○</text>
+      <text x="1052" y="34" fill="#4ade80">●●●</text>
+    </g>
+    <text x="1120" y="26" fill="#94a3b8" font-size="11.5">Lo mejor: inicios de sesión, phishing</text>
+    <text x="1120" y="42" fill="#94a3b8" font-size="11.5">entregado, alertas del EDR ya correladas.</text>
+    <text x="1120" y="60" fill="#ff8fa3" font-size="11">Flojo: todo lo que no es Microsoft.</text>
+  </g>
+  <line x1="60" y1="346" x2="1340" y2="346" stroke="#1d2635" stroke-opacity="0.6"/>
+
+  <!-- ========== QRadar ========== -->
+  <g transform="translate(0,352)">
+    <circle cx="80" cy="30" r="11" fill="#1f70c1"/>
+    <text x="104" y="28" fill="#dce4f0" font-size="16" font-weight="700">IBM QRadar</text>
+    <text x="104" y="46" fill="#8b98ad" font-size="11">AQL · Ariel · ofensas ya agrupadas con magnitud</text>
+    <g font-size="17" text-anchor="middle">
+      <text x="500" y="34" fill="#5b6880">●○○</text>
+      <text x="608" y="34" fill="#eab308">●●○</text>
+      <text x="716" y="34" fill="#5b6880">●○○</text>
+      <text x="824" y="34" fill="#4ade80">●●●</text>
+      <text x="944" y="34" fill="#4ade80">●●●</text>
+      <text x="1052" y="34" fill="#5b6880">●○○</text>
+    </g>
+    <text x="1120" y="26" fill="#94a3b8" font-size="11.5">Lo mejor: quién habló con quién y</text>
+    <text x="1120" y="42" fill="#94a3b8" font-size="11.5">cuántos bytes. Correlación ya hecha.</text>
+    <text x="1120" y="60" fill="#ff8fa3" font-size="11">Flojo: identifica por IP, no por nombre.</text>
+  </g>
+  <line x1="60" y1="440" x2="1340" y2="440" stroke="#1d2635" stroke-opacity="0.6"/>
+
+  <!-- ========== CEF ========== -->
+  <g transform="translate(0,446)">
+    <circle cx="80" cy="30" r="11" fill="#94a3b8"/>
+    <text x="104" y="28" fill="#dce4f0" font-size="16" font-weight="700">CEF / LEEF / syslog</text>
+    <text x="104" y="46" fill="#8b98ad" font-size="11">sin lenguaje propio · fichero o syslog crudo</text>
+    <g font-size="17" text-anchor="middle">
+      <text x="500" y="34" fill="#5b6880">●○○</text>
+      <text x="608" y="34" fill="#5b6880">●○○</text>
+      <text x="716" y="34" fill="#5b6880">●○○</text>
+      <text x="824" y="34" fill="#eab308">●●○</text>
+      <text x="944" y="34" fill="#4ade80">●●●</text>
+      <text x="1052" y="34" fill="#5b6880">●○○</text>
+    </g>
+    <text x="1120" y="26" fill="#94a3b8" font-size="11.5">Lo mejor: el comodín. Cortafuegos,</text>
+    <text x="1120" y="42" fill="#94a3b8" font-size="11.5">proxy, antivirus, VPN, cabinas.</text>
+    <text x="1120" y="60" fill="#ff8fa3" font-size="11">Flojo: cada fabricante lo estira a su gusto.</text>
+  </g>
+
+  <!-- leyenda -->
+  <g transform="translate(60,516)" font-size="11">
+    <text x="0" y="0" fill="#4ade80">●●●</text><text x="30" y="0" fill="#8b98ad">fuente principal</text>
+    <text x="150" y="0" fill="#eab308">●●○</text><text x="180" y="0" fill="#8b98ad">aporta, con lagunas</text>
+    <text x="310" y="0" fill="#5b6880">●○○</text><text x="340" y="0" fill="#8b98ad">testimonial o ausente</text>
+  </g>
+
+  <!-- ============ el problema real ============ -->
+  <rect x="40" y="556" width="648" height="238" rx="12" fill="#160d12" stroke="#7f1d1d" stroke-opacity="0.55"/>
+  <text x="64" y="586" fill="#ff2d55" font-size="12" font-weight="700" letter-spacing="1.5">EL PROBLEMA CUANDO HAY DOS</text>
+  <text x="64" y="614" fill="#dce4f0" font-size="13">Dos SIEM no son el doble de visibilidad. Son dos mitades</text>
+  <text x="64" y="632" fill="#dce4f0" font-size="13">que nadie junta, y cada analista mira solo la suya.</text>
+
+  <g transform="translate(64,650)">
+    <rect width="600" height="54" rx="6" fill="#121927" stroke="#2a3547"/>
+    <text x="14" y="22" fill="#fb923c" font-size="12" font-weight="600">Una empresa con dos SIEM</text>
+    <text x="14" y="42" fill="#8b98ad" font-size="11.5">Uno heredado y otro nuevo, o uno de TI y otro de OT. El ataque cruza los dos.</text>
+  </g>
+  <g transform="translate(64,714)">
+    <rect width="600" height="60" rx="6" fill="#121927" stroke="#2a3547"/>
+    <text x="14" y="22" fill="#fb923c" font-size="12" font-weight="600">Dos empresas que se fusionan</text>
+    <text x="14" y="42" fill="#8b98ad" font-size="11.5">Datos parecidos, herramientas distintas, y una migración que dura años.</text>
+    <text x="14" y="56" fill="#8b98ad" font-size="11.5">Mientras tanto hay que investigar incidentes que atraviesan las dos redes.</text>
+  </g>
+
+  <!-- ============ lo que aporta ============ -->
+  <rect x="712" y="556" width="648" height="238" rx="12" fill="#0d121c" stroke="#2dd4bf" stroke-opacity="0.45"/>
+  <text x="736" y="586" fill="#2dd4bf" font-size="12" font-weight="700" letter-spacing="1.5">LO QUE APORTA GLAMDRING</text>
+  <text x="736" y="614" fill="#dce4f0" font-size="13">No sustituye a ninguno. Los lee a los dos y los cose por</text>
+  <text x="736" y="632" fill="#dce4f0" font-size="13">las entidades que tienen en común.</text>
+
+  <g font-size="12" fill="#8b98ad">
+    <text x="736" y="662"><tspan fill="#2dd4bf">▸</tspan> <tspan fill="#dce4f0">Mismo modelo para los cuatro.</tspan> Todo cae a OCSF-lite,</text>
+    <text x="752" y="680">así que un proceso de Splunk y un flujo de QRadar se comparan.</text>
+    <text x="736" y="704"><tspan fill="#2dd4bf">▸</tspan> <tspan fill="#dce4f0">La identidad se unifica.</tspan> CORP\jlopez, jlopez@corp.com y</text>
+    <text x="752" y="722">jlopez son un nodo, no tres. Y 10.4.1.5 se funde en srv-dc01.</text>
+    <text x="736" y="746"><tspan fill="#2dd4bf">▸</tspan> <tspan fill="#dce4f0">Cada arista recuerda de dónde salió,</tspan> así que siempre se</text>
+    <text x="752" y="764">puede volver al log original en el SIEM que lo tiene.</text>
+  </g>
+
+  <!-- ============ el ejemplo concreto ============ -->
+  <rect x="40" y="816" width="1320" height="158" rx="12" fill="#0d121c" stroke="#1d2635"/>
+  <text x="64" y="846" fill="#5b6880" font-size="11" letter-spacing="2">EL MISMO ATAQUE, REPARTIDO ENTRE DOS SIEM</text>
+
+  <g transform="translate(64,862)">
+    <rect width="380" height="96" rx="8" fill="#121927" stroke="#65a637" stroke-opacity="0.4"/>
+    <text x="16" y="24" fill="#65a637" font-size="12" font-weight="600">Solo en el SIEM A (Splunk)</text>
+    <text x="16" y="48" fill="#8b98ad" font-size="11.5">«jlopez ejecutó powershell.exe con la</text>
+    <text x="16" y="65" fill="#8b98ad" font-size="11.5">línea ofuscada en WKS-0421.»</text>
+    <text x="16" y="86" fill="#5b6880" font-size="11">No sabes si llegó a salir de la red.</text>
+  </g>
+
+  <text x="470" y="918" fill="#5b6880" font-size="20">+</text>
+
+  <g transform="translate(500,862)">
+    <rect width="380" height="96" rx="8" fill="#121927" stroke="#1f70c1" stroke-opacity="0.4"/>
+    <text x="16" y="24" fill="#4ea8ff" font-size="12" font-weight="600">Solo en el SIEM B (QRadar)</text>
+    <text x="16" y="48" fill="#8b98ad" font-size="11.5">«10.4.2.11 sacó 4,2 GB hacia</text>
+    <text x="16" y="65" fill="#8b98ad" font-size="11.5">45.132.88.17 en 40 minutos.»</text>
+    <text x="16" y="86" fill="#5b6880" font-size="11">No sabes qué proceso fue ni quién.</text>
+  </g>
+
+  <text x="906" y="918" fill="#5b6880" font-size="20">=</text>
+
+  <g transform="translate(936,862)">
+    <rect width="400" height="96" rx="8" fill="#0f1a1a" stroke="#0f766e"/>
+    <text x="16" y="24" fill="#2dd4bf" font-size="12" font-weight="600">Cosidos por equipo y por hora</text>
+    <text x="16" y="48" fill="#dce4f0" font-size="11.5">«jlopez ejecutó powershell.exe en</text>
+    <text x="16" y="65" fill="#dce4f0" font-size="11.5">WKS-0421 y doce minutos después ese</text>
+    <text x="16" y="82" fill="#dce4f0" font-size="11.5">mismo equipo sacó 4,2 GB.»</text>
+  </g>
+
+  <g stroke="#2dd4bf" stroke-width="2" fill="none" marker-end="url(#f7)" opacity="0.8">
+    <path d="M448,910 L466,910"/><path d="M884,910 L902,910"/>
+  </g>
+</svg>

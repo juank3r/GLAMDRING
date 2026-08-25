@@ -1,0 +1,467 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1286" width="1400" height="1286" font-family="Segoe UI, Inter, system-ui, sans-serif">
+<defs><linearGradient id="bg8" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1220"/><stop offset="1" stop-color="#070a10"/></linearGradient></defs>
+<rect width="1400" height="1286" fill="url(#bg8)"/>
+<text x="40" y="52" fill="#dce4f0" font-size="26" font-weight="700" letter-spacing="1">Los 17 grupos que GLAMDRING reconoce</text>
+<text x="40" y="78" fill="#8b98ad" font-size="14">216 herramientas distintas, clasificadas en ocho categorias. Lo que se busca no es el cifrador: es el rastro de las horas anteriores.</text>
+<rect x="40" y="98" width="1320" height="76" rx="10" fill="#0d121c" stroke="#1d2635"/>
+<text x="62" y="122" fill="#5b6880" font-size="11" letter-spacing="2">LAS OCHO CATEGORIAS, EN ORDEN DE INTRUSION</text>
+<rect x="62" y="138" width="10" height="10" rx="2" fill="#4ea8ff"/>
+<text x="78" y="147" fill="#94a3b8" font-size="11.5">Control remoto</text>
+<rect x="180.39999999999998" y="138" width="10" height="10" rx="2" fill="#22d3ee"/>
+<text x="196.39999999999998" y="147" fill="#94a3b8" font-size="11.5">Reconocimiento</text>
+<rect x="298.79999999999995" y="138" width="10" height="10" rx="2" fill="#a78bfa"/>
+<text x="314.79999999999995" y="147" fill="#94a3b8" font-size="11.5">Robo de credenciales</text>
+<rect x="456.79999999999995" y="138" width="10" height="10" rx="2" fill="#f472b6"/>
+<text x="472.79999999999995" y="147" fill="#94a3b8" font-size="11.5">Utillaje ofensivo</text>
+<rect x="595.0" y="138" width="10" height="10" rx="2" fill="#4ade80"/>
+<text x="611.0" y="147" fill="#94a3b8" font-size="11.5">Tuneles y red</text>
+<rect x="706.8" y="138" width="10" height="10" rx="2" fill="#fb923c"/>
+<text x="722.8" y="147" fill="#94a3b8" font-size="11.5">Exfiltracion</text>
+<rect x="812.0" y="138" width="10" height="10" rx="2" fill="#eab308"/>
+<text x="828.0" y="147" fill="#94a3b8" font-size="11.5">Evasion de defensas</text>
+<rect x="963.4" y="138" width="10" height="10" rx="2" fill="#94a3b8"/>
+<text x="979.4" y="147" fill="#94a3b8" font-size="11.5">Binarios del sistema</text>
+<g transform="translate(40,196)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#ff2d55"/>
+  <circle cx="46" cy="42" r="21" fill="#ff2d55" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#ff2d55" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#ff2d55" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">SS</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">ScatteredSpider</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">78 herramientas · 8 de 8 categorias · 8 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="113" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 26</title></rect>
+  <rect x="114" y="0" width="48" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 11</title></rect>
+  <rect x="163" y="0" width="43" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 10</title></rect>
+  <rect x="207" y="0" width="26" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 6</title></rect>
+  <rect x="234" y="0" width="74" height="9" fill="#4ade80" rx="1.5"><title>Tuneles y red: 17</title></rect>
+  <rect x="309" y="0" width="26" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 6</title></rect>
+  <rect x="336" y="0" width="4" height="9" fill="#eab308" rx="1.5"><title>Evasion de defensas: 1</title></rect>
+  <rect x="341" y="0" width="4" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 1</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">26</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">11</text>
+  <text x="124" y="0" fill="#a78bfa">Cred</text><text x="154" y="0" fill="#94a3b8">10</text>
+  <text x="186" y="0" fill="#f472b6">OffS</text><text x="216" y="0" fill="#94a3b8">6</text>
+  <text x="248" y="0" fill="#4ade80">Red</text><text x="278" y="0" fill="#94a3b8">17</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">sin nota que lo distinga en el catalogo</text>
+  </g>
+<g transform="translate(488,196)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#fb923c"/>
+  <circle cx="46" cy="42" r="21" fill="#fb923c" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#fb923c" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">TG</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">TheGentlemen</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">41 herramientas · 8 de 8 categorias · 4 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="25" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 3</title></rect>
+  <rect x="26" y="0" width="99" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 12</title></rect>
+  <rect x="126" y="0" width="25" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 3</title></rect>
+  <rect x="152" y="0" width="66" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 8</title></rect>
+  <rect x="219" y="0" width="66" height="9" fill="#4ade80" rx="1.5"><title>Tuneles y red: 8</title></rect>
+  <rect x="286" y="0" width="8" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 1</title></rect>
+  <rect x="295" y="0" width="41" height="9" fill="#eab308" rx="1.5"><title>Evasion de defensas: 5</title></rect>
+  <rect x="337" y="0" width="8" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 1</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">3</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">12</text>
+  <text x="124" y="0" fill="#a78bfa">Cred</text><text x="154" y="0" fill="#94a3b8">3</text>
+  <text x="186" y="0" fill="#f472b6">OffS</text><text x="216" y="0" fill="#94a3b8">8</text>
+  <text x="248" y="0" fill="#4ade80">Red</text><text x="278" y="0" fill="#94a3b8">8</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">nota propia</text>
+  <text x="140" y="126" fill="#94a3b8" font-size="10" font-family="Consolas, monospace">README-GENTLEMEN.txt</text>
+  </g>
+<g transform="translate(936,196)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#eab308"/>
+  <circle cx="46" cy="42" r="21" fill="#eab308" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#eab308" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#eab308" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">WA</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">Warlock</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">26 herramientas · 8 de 8 categorias · 3 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="26" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 2</title></rect>
+  <rect x="27" y="0" width="26" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 2</title></rect>
+  <rect x="54" y="0" width="26" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 2</title></rect>
+  <rect x="81" y="0" width="39" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 3</title></rect>
+  <rect x="121" y="0" width="104" height="9" fill="#4ade80" rx="1.5"><title>Tuneles y red: 8</title></rect>
+  <rect x="226" y="0" width="13" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 1</title></rect>
+  <rect x="240" y="0" width="39" height="9" fill="#eab308" rx="1.5"><title>Evasion de defensas: 3</title></rect>
+  <rect x="280" y="0" width="65" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 5</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">2</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">2</text>
+  <text x="124" y="0" fill="#a78bfa">Cred</text><text x="154" y="0" fill="#94a3b8">2</text>
+  <text x="186" y="0" fill="#f472b6">OffS</text><text x="216" y="0" fill="#94a3b8">3</text>
+  <text x="248" y="0" fill="#4ade80">Red</text><text x="278" y="0" fill="#94a3b8">8</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">nota propia</text>
+  <text x="140" y="126" fill="#94a3b8" font-size="10" font-family="Consolas, monospace">How to decrypt my data.txt</text>
+  </g>
+<g transform="translate(40,358)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#4ade80"/>
+  <circle cx="46" cy="42" r="21" fill="#4ade80" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#4ade80" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">BS</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">BlackSuit</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">24 herramientas · 8 de 8 categorias · 2 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="56" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 4</title></rect>
+  <rect x="57" y="0" width="56" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 4</title></rect>
+  <rect x="114" y="0" width="99" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 7</title></rect>
+  <rect x="214" y="0" width="28" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 2</title></rect>
+  <rect x="243" y="0" width="42" height="9" fill="#4ade80" rx="1.5"><title>Tuneles y red: 3</title></rect>
+  <rect x="286" y="0" width="14" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 1</title></rect>
+  <rect x="301" y="0" width="28" height="9" fill="#eab308" rx="1.5"><title>Evasion de defensas: 2</title></rect>
+  <rect x="330" y="0" width="14" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 1</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">4</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">4</text>
+  <text x="124" y="0" fill="#a78bfa">Cred</text><text x="154" y="0" fill="#94a3b8">7</text>
+  <text x="186" y="0" fill="#f472b6">OffS</text><text x="216" y="0" fill="#94a3b8">2</text>
+  <text x="248" y="0" fill="#4ade80">Red</text><text x="278" y="0" fill="#94a3b8">3</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">nota propia</text>
+  <text x="140" y="126" fill="#94a3b8" font-size="10" font-family="Consolas, monospace">README.BlackSuit.txt</text>
+  </g>
+<g transform="translate(488,358)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#2dd4bf"/>
+  <circle cx="46" cy="42" r="21" fill="#2dd4bf" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#2dd4bf" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#2dd4bf" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">AK</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">Akira</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">23 herramientas · 7 de 8 categorias · 2 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="59" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 4</title></rect>
+  <rect x="60" y="0" width="73" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 5</title></rect>
+  <rect x="134" y="0" width="44" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 3</title></rect>
+  <rect x="179" y="0" width="15" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 1</title></rect>
+  <rect x="195" y="0" width="44" height="9" fill="#4ade80" rx="1.5"><title>Tuneles y red: 3</title></rect>
+  <rect x="240" y="0" width="73" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 5</title></rect>
+  <rect x="314" y="0" width="29" height="9" fill="#eab308" rx="1.5"><title>Evasion de defensas: 2</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">4</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">5</text>
+  <text x="124" y="0" fill="#a78bfa">Cred</text><text x="154" y="0" fill="#94a3b8">3</text>
+  <text x="186" y="0" fill="#f472b6">OffS</text><text x="216" y="0" fill="#94a3b8">1</text>
+  <text x="248" y="0" fill="#4ade80">Red</text><text x="278" y="0" fill="#94a3b8">3</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">nota propia</text>
+  <text x="140" y="126" fill="#94a3b8" font-size="10" font-family="Consolas, monospace">akira_readme.txt</text>
+  </g>
+<g transform="translate(936,358)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#22d3ee"/>
+  <circle cx="46" cy="42" r="21" fill="#22d3ee" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#22d3ee" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">BB</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">BlackBasta</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">21 herramientas · 7 de 8 categorias · 3 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="97" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 6</title></rect>
+  <rect x="98" y="0" width="80" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 5</title></rect>
+  <rect x="179" y="0" width="16" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 1</title></rect>
+  <rect x="196" y="0" width="64" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 4</title></rect>
+  <rect x="261" y="0" width="32" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 2</title></rect>
+  <rect x="294" y="0" width="16" height="9" fill="#eab308" rx="1.5"><title>Evasion de defensas: 1</title></rect>
+  <rect x="311" y="0" width="32" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 2</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">6</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">5</text>
+  <text x="124" y="0" fill="#a78bfa">Cred</text><text x="154" y="0" fill="#94a3b8">1</text>
+  <text x="186" y="0" fill="#f472b6">OffS</text><text x="216" y="0" fill="#94a3b8">4</text>
+  <text x="248" y="0" fill="#fb923c">Exfi</text><text x="278" y="0" fill="#94a3b8">2</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">nota propia</text>
+  <text x="140" y="126" fill="#94a3b8" font-size="10" font-family="Consolas, monospace">blackbasta1.txt</text>
+  </g>
+<g transform="translate(40,520)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#4ea8ff"/>
+  <circle cx="46" cy="42" r="21" fill="#4ea8ff" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#4ea8ff" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#4ea8ff" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">QI</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">Qilin</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">18 herramientas · 8 de 8 categorias · 6 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="19" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 1</title></rect>
+  <rect x="20" y="0" width="38" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 2</title></rect>
+  <rect x="59" y="0" width="19" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 1</title></rect>
+  <rect x="79" y="0" width="56" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 3</title></rect>
+  <rect x="136" y="0" width="19" height="9" fill="#4ade80" rx="1.5"><title>Tuneles y red: 1</title></rect>
+  <rect x="156" y="0" width="19" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 1</title></rect>
+  <rect x="176" y="0" width="113" height="9" fill="#eab308" rx="1.5"><title>Evasion de defensas: 6</title></rect>
+  <rect x="290" y="0" width="56" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 3</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">1</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">2</text>
+  <text x="124" y="0" fill="#a78bfa">Cred</text><text x="154" y="0" fill="#94a3b8">1</text>
+  <text x="186" y="0" fill="#f472b6">OffS</text><text x="216" y="0" fill="#94a3b8">3</text>
+  <text x="248" y="0" fill="#4ade80">Red</text><text x="278" y="0" fill="#94a3b8">1</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">nota propia</text>
+  <text x="140" y="126" fill="#94a3b8" font-size="10" font-family="Consolas, monospace">DtMXQFOCos-RECOVER-README.txt</text>
+  </g>
+<g transform="translate(488,520)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#818cf8"/>
+  <circle cx="46" cy="42" r="21" fill="#818cf8" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#818cf8" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#818cf8" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">BL</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">BianLian</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">16 herramientas · 6 de 8 categorias · 2 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="127" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 6</title></rect>
+  <rect x="128" y="0" width="106" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 5</title></rect>
+  <rect x="235" y="0" width="21" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 1</title></rect>
+  <rect x="257" y="0" width="21" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 1</title></rect>
+  <rect x="279" y="0" width="42" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 2</title></rect>
+  <rect x="322" y="0" width="21" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 1</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">6</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">5</text>
+  <text x="124" y="0" fill="#a78bfa">Cred</text><text x="154" y="0" fill="#94a3b8">1</text>
+  <text x="186" y="0" fill="#f472b6">OffS</text><text x="216" y="0" fill="#94a3b8">1</text>
+  <text x="248" y="0" fill="#fb923c">Exfi</text><text x="278" y="0" fill="#94a3b8">2</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">nota propia</text>
+  <text x="140" y="126" fill="#94a3b8" font-size="10" font-family="Consolas, monospace">Look at this instruction.txt</text>
+  </g>
+<g transform="translate(936,520)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#a78bfa"/>
+  <circle cx="46" cy="42" r="21" fill="#a78bfa" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#a78bfa" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">DF</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">DragonForce</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">15 herramientas · 6 de 8 categorias · 2 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="90" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 4</title></rect>
+  <rect x="91" y="0" width="45" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 2</title></rect>
+  <rect x="137" y="0" width="23" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 1</title></rect>
+  <rect x="161" y="0" width="45" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 2</title></rect>
+  <rect x="207" y="0" width="113" height="9" fill="#eab308" rx="1.5"><title>Evasion de defensas: 5</title></rect>
+  <rect x="321" y="0" width="23" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 1</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#22d3ee">Desc</text><text x="30" y="0" fill="#94a3b8">4</text>
+  <text x="62" y="0" fill="#a78bfa">Cred</text><text x="92" y="0" fill="#94a3b8">2</text>
+  <text x="124" y="0" fill="#f472b6">OffS</text><text x="154" y="0" fill="#94a3b8">1</text>
+  <text x="186" y="0" fill="#fb923c">Exfi</text><text x="216" y="0" fill="#94a3b8">2</text>
+  <text x="248" y="0" fill="#eab308">Evas</text><text x="278" y="0" fill="#94a3b8">5</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">nota propia</text>
+  <text x="140" y="126" fill="#94a3b8" font-size="10" font-family="Consolas, monospace">[rand].README.txt</text>
+  </g>
+<g transform="translate(40,682)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#d4a5ff"/>
+  <circle cx="46" cy="42" r="21" fill="#d4a5ff" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#d4a5ff" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#d4a5ff" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">BE</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">Beast</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">13 herramientas · 6 de 8 categorias · 1 informe</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="26" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 1</title></rect>
+  <rect x="27" y="0" width="104" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 4</title></rect>
+  <rect x="132" y="0" width="78" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 3</title></rect>
+  <rect x="211" y="0" width="52" height="9" fill="#4ade80" rx="1.5"><title>Tuneles y red: 2</title></rect>
+  <rect x="264" y="0" width="52" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 2</title></rect>
+  <rect x="317" y="0" width="26" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 1</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">1</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">4</text>
+  <text x="124" y="0" fill="#a78bfa">Cred</text><text x="154" y="0" fill="#94a3b8">3</text>
+  <text x="186" y="0" fill="#4ade80">Red</text><text x="216" y="0" fill="#94a3b8">2</text>
+  <text x="248" y="0" fill="#fb923c">Exfi</text><text x="278" y="0" fill="#94a3b8">2</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">sin nota que lo distinga en el catalogo</text>
+  </g>
+<g transform="translate(488,682)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#f472b6"/>
+  <circle cx="46" cy="42" r="21" fill="#f472b6" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#f472b6" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#f472b6" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">EC</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">EvilCorp</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">12 herramientas · 6 de 8 categorias · 2 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="28" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 1</title></rect>
+  <rect x="29" y="0" width="56" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 2</title></rect>
+  <rect x="86" y="0" width="84" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 3</title></rect>
+  <rect x="171" y="0" width="56" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 2</title></rect>
+  <rect x="228" y="0" width="84" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 3</title></rect>
+  <rect x="313" y="0" width="28" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 1</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">1</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">2</text>
+  <text x="124" y="0" fill="#a78bfa">Cred</text><text x="154" y="0" fill="#94a3b8">3</text>
+  <text x="186" y="0" fill="#f472b6">OffS</text><text x="216" y="0" fill="#94a3b8">2</text>
+  <text x="248" y="0" fill="#fb923c">Exfi</text><text x="278" y="0" fill="#94a3b8">3</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">sin nota que lo distinga en el catalogo</text>
+  </g>
+<g transform="translate(936,682)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#fb7185"/>
+  <circle cx="46" cy="42" r="21" fill="#fb7185" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#fb7185" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#fb7185" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">IN</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">Interlock</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">11 herramientas · 7 de 8 categorias · 2 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="61" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 2</title></rect>
+  <rect x="62" y="0" width="61" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 2</title></rect>
+  <rect x="124" y="0" width="31" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 1</title></rect>
+  <rect x="156" y="0" width="31" height="9" fill="#4ade80" rx="1.5"><title>Tuneles y red: 1</title></rect>
+  <rect x="188" y="0" width="61" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 2</title></rect>
+  <rect x="250" y="0" width="61" height="9" fill="#eab308" rx="1.5"><title>Evasion de defensas: 2</title></rect>
+  <rect x="312" y="0" width="31" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 1</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">2</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">2</text>
+  <text x="124" y="0" fill="#f472b6">OffS</text><text x="154" y="0" fill="#94a3b8">1</text>
+  <text x="186" y="0" fill="#4ade80">Red</text><text x="216" y="0" fill="#94a3b8">1</text>
+  <text x="248" y="0" fill="#fb923c">Exfi</text><text x="278" y="0" fill="#94a3b8">2</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">nota propia</text>
+  <text x="140" y="126" fill="#94a3b8" font-size="10" font-family="Consolas, monospace">!!!OPEN_ME!!!.txt</text>
+  </g>
+<g transform="translate(40,844)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#f97316"/>
+  <circle cx="46" cy="42" r="21" fill="#f97316" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#f97316" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#f97316" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">PS</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">ProphetSpider</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">11 herramientas · 5 de 8 categorias · 4 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="31" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 1</title></rect>
+  <rect x="32" y="0" width="31" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 1</title></rect>
+  <rect x="64" y="0" width="154" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 5</title></rect>
+  <rect x="219" y="0" width="31" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 1</title></rect>
+  <rect x="251" y="0" width="92" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 3</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#22d3ee">Desc</text><text x="30" y="0" fill="#94a3b8">1</text>
+  <text x="62" y="0" fill="#a78bfa">Cred</text><text x="92" y="0" fill="#94a3b8">1</text>
+  <text x="124" y="0" fill="#f472b6">OffS</text><text x="154" y="0" fill="#94a3b8">5</text>
+  <text x="186" y="0" fill="#fb923c">Exfi</text><text x="216" y="0" fill="#94a3b8">1</text>
+  <text x="248" y="0" fill="#94a3b8">LOL</text><text x="278" y="0" fill="#94a3b8">3</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">sin nota que lo distinga en el catalogo</text>
+  </g>
+<g transform="translate(488,844)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#a3e635"/>
+  <circle cx="46" cy="42" r="21" fill="#a3e635" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#a3e635" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#a3e635" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">PL</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">PLAY</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">10 herramientas · 7 de 8 categorias · 1 informe</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="34" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 1</title></rect>
+  <rect x="35" y="0" width="34" height="9" fill="#a78bfa" rx="1.5"><title>Robo de credenciales: 1</title></rect>
+  <rect x="70" y="0" width="68" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 2</title></rect>
+  <rect x="139" y="0" width="34" height="9" fill="#4ade80" rx="1.5"><title>Tuneles y red: 1</title></rect>
+  <rect x="174" y="0" width="34" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 1</title></rect>
+  <rect x="209" y="0" width="101" height="9" fill="#eab308" rx="1.5"><title>Evasion de defensas: 3</title></rect>
+  <rect x="311" y="0" width="34" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 1</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#22d3ee">Desc</text><text x="30" y="0" fill="#94a3b8">1</text>
+  <text x="62" y="0" fill="#a78bfa">Cred</text><text x="92" y="0" fill="#94a3b8">1</text>
+  <text x="124" y="0" fill="#f472b6">OffS</text><text x="154" y="0" fill="#94a3b8">2</text>
+  <text x="186" y="0" fill="#4ade80">Red</text><text x="216" y="0" fill="#94a3b8">1</text>
+  <text x="248" y="0" fill="#fb923c">Exfi</text><text x="278" y="0" fill="#94a3b8">1</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">nota propia</text>
+  <text x="140" y="126" fill="#94a3b8" font-size="10" font-family="Consolas, monospace">readme2.txt</text>
+  </g>
+<g transform="translate(936,844)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#34d399"/>
+  <circle cx="46" cy="42" r="21" fill="#34d399" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#34d399" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#34d399" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">IR</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">INC Ransom</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">9 herramientas · 3 de 8 categorias · 5 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="75" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 2</title></rect>
+  <rect x="76" y="0" width="188" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 5</title></rect>
+  <rect x="265" y="0" width="75" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 2</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#22d3ee">Desc</text><text x="30" y="0" fill="#94a3b8">2</text>
+  <text x="62" y="0" fill="#fb923c">Exfi</text><text x="92" y="0" fill="#94a3b8">5</text>
+  <text x="124" y="0" fill="#94a3b8">LOL</text><text x="154" y="0" fill="#94a3b8">2</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">sin nota que lo distinga en el catalogo</text>
+  </g>
+<g transform="translate(40,1006)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#38bdf8"/>
+  <circle cx="46" cy="42" r="21" fill="#38bdf8" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#38bdf8" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">YU</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">Yurei</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">9 herramientas · 4 de 8 categorias · 1 informe</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="38" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 1</title></rect>
+  <rect x="39" y="0" width="75" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 2</title></rect>
+  <rect x="115" y="0" width="150" height="9" fill="#f472b6" rx="1.5"><title>Utillaje ofensivo: 4</title></rect>
+  <rect x="266" y="0" width="75" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 2</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">1</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">2</text>
+  <text x="124" y="0" fill="#f472b6">OffS</text><text x="154" y="0" fill="#94a3b8">4</text>
+  <text x="186" y="0" fill="#94a3b8">LOL</text><text x="216" y="0" fill="#94a3b8">2</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">sin nota que lo distinga en el catalogo</text>
+  </g>
+<g transform="translate(488,1006)">
+  <rect width="434" height="148" rx="10" fill="#0d121c" stroke="#1d2635"/>
+  <rect width="4" height="148" rx="2" fill="#c084fc"/>
+  <circle cx="46" cy="42" r="21" fill="#c084fc" opacity="0.16"/>
+  <circle cx="46" cy="42" r="21" fill="none" stroke="#c084fc" stroke-width="1.5"/>
+  <text x="46" y="49" fill="#c084fc" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="0.5">SP</text>
+  <text x="78" y="34" fill="#dce4f0" font-size="15.5" font-weight="700">SafePay</text>
+  <text x="78" y="52" fill="#8b98ad" font-size="11">8 herramientas · 4 de 8 categorias · 0 informes</text>
+  <g transform="translate(78,64)">
+  <rect x="0" y="0" width="42" height="9" fill="#4ea8ff" rx="1.5"><title>Control remoto: 1</title></rect>
+  <rect x="43" y="0" width="42" height="9" fill="#22d3ee" rx="1.5"><title>Reconocimiento: 1</title></rect>
+  <rect x="86" y="0" width="127" height="9" fill="#fb923c" rx="1.5"><title>Exfiltracion: 3</title></rect>
+  <rect x="214" y="0" width="127" height="9" fill="#94a3b8" rx="1.5"><title>Binarios del sistema: 3</title></rect>
+  </g>
+  <g transform="translate(78,92)" font-size="10">
+  <text x="0" y="0" fill="#4ea8ff">RMM</text><text x="30" y="0" fill="#94a3b8">1</text>
+  <text x="62" y="0" fill="#22d3ee">Desc</text><text x="92" y="0" fill="#94a3b8">1</text>
+  <text x="124" y="0" fill="#fb923c">Exfi</text><text x="154" y="0" fill="#94a3b8">3</text>
+  <text x="186" y="0" fill="#94a3b8">LOL</text><text x="216" y="0" fill="#94a3b8">3</text>
+  </g>
+  <text x="78" y="126" fill="#5b6880" font-size="10">nota propia</text>
+  <text x="140" y="126" fill="#94a3b8" font-size="10" font-family="Consolas, monospace">readme_safepay.txt</text>
+  </g>
+<rect x="40" y="1180" width="1320" height="88" rx="10" fill="#160d12" stroke="#7f1d1d" stroke-opacity="0.5"/>
+<text x="62" y="1206" fill="#ff2d55" font-size="11.5" font-weight="700" letter-spacing="1.5">ESTO NO SIRVE PARA SEÑALAR A NADIE</text>
+<text x="62" y="1228" fill="#dce4f0" font-size="12.5">Estos grupos comparten afiliados y casi todos usan las mismas utilidades, que ademas usan los administradores legitimos.</text>
+<text x="62" y="1246" fill="#dce4f0" font-size="12.5">El solape orienta la busqueda: dice que mirar a continuacion, no quien fue.</text>
+<text x="62" y="1262" fill="#5b6880" font-size="10.5">Datos: Ransomware Tool Matrix (BushidoUK, CC BY 4.0) y ransomware.live (Julien Mousqueton). Los emblemas son monogramas, no logotipos.</text>
+</svg>
