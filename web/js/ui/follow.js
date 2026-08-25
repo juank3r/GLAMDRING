@@ -24,8 +24,13 @@
 import * as api from '../api.js';
 import * as graph3d from '../render/graph3d.js';
 
-const PAUSA_MS = 2600;        // cuánto se queda quieta la cámara en cada paso
-const VUELO_MS = 850;         // lo que tarda en llegar
+/* La pausa sale de lo que hay que leer, no de un número fijo. «jlopez se
+   autenticó en wks-0421» se lee en un segundo; una línea de comandos con la
+   ruta entera necesita el triple. Un tiempo fijo deja las cortas eternas y
+   corta las largas por la mitad. */
+const PAUSA_MIN = 1500;
+const PAUSA_MAX = 5200;
+const MS_POR_CARACTER = 32;   // ~19 caracteres por segundo, lectura cómoda
 
 let barra = null;
 let handlers = {};
@@ -90,18 +95,35 @@ function pintar() {
 
 /* ------------------------------------------------------------------- pasos */
 
+/* Cuánto tiene que quedarse este paso en pantalla. */
+function pausaDe(paso) {
+  const largo = (paso && paso.text ? paso.text.length : 40) * MS_POR_CARACTER;
+  return Math.max(PAUSA_MIN, Math.min(PAUSA_MAX, largo)) / estado.velocidad;
+}
+
 function irA(indice) {
   if (!estado.pasos.length) return;
   estado.indice = Math.max(0, Math.min(estado.pasos.length - 1, indice));
   const paso = estado.pasos[estado.indice];
 
+  // El grafo se va construyendo según avanza el recorrido: en cada paso aparece
+  // lo que acaba de ocurrir y nada de lo que viene después. Enseñarlo entero
+  // desde el principio cuenta el final antes que el principio.
+  //
+  // Reutiliza el cursor temporal, que ya sabe ocultar y enseñar por tiempo sin
+  // reconstruir nada. Se le da un margen para que la arista del paso actual
+  // entre dentro y no aparezca justo después de que la cámara llegue.
+  const t = Date.parse(paso.until || paso.time);
+  if (Number.isFinite(t)) graph3d.setTimeCursor(t + 1);
+
   const link = graph3d.linkById(paso.linkId);
   if (link) {
     graph3d.highlightPair(estado.nodo.id, link);
-    graph3d.focusOnLink(link, VUELO_MS / estado.velocidad);
+    const vuelo = graph3d.focusOnLink(link, { maxMs: 1500 / estado.velocidad });
     // El destello sale cuando la cámara ya casi ha llegado: lanzarlo antes lo
     // deja ocurriendo fuera de plano y no se ve.
-    setTimeout(() => graph3d.pulse(link), (VUELO_MS / estado.velocidad) * 0.7);
+    const espera = vuelo && vuelo.movida ? vuelo.ms * 0.7 : 60;
+    setTimeout(() => graph3d.pulse(link), espera);
   }
   pintar();
 }
@@ -120,12 +142,13 @@ function programar() {
   estado.temporizador = setTimeout(() => {
     if (!estado.reproduciendo) return;
     if (estado.indice >= estado.pasos.length - 1) {
+      handlers.onFinish?.(estado.nodo);
       pausar();
       return;
     }
     irA(estado.indice + 1);
     programar();
-  }, PAUSA_MS / estado.velocidad);
+  }, pausaDe(estado.pasos[estado.indice]));
 }
 
 function reproducir() {
@@ -183,6 +206,10 @@ export async function follow(nodeId) {
   document.body.classList.add('following');
   pintar();
 
+  // Cursor justo antes del primer acto: el grafo arranca vacío y se va llenando.
+  const inicio = Date.parse(payload.steps[0].time);
+  if (Number.isFinite(inicio)) graph3d.setTimeCursor(inicio - 1);
+
   // Un encuadre general antes de empezar: primero se ve dónde estamos, y luego
   // se entra al detalle. Arrancar ya pegado a la primera arista desorienta.
   graph3d.zoomToFit(600, 110);
@@ -199,6 +226,9 @@ export function salir({ restaurar = true } = {}) {
   estado.indice = -1;
   barra.hidden = true;
   document.body.classList.remove('following');
+
+  // Sin esto, el grafo restaurado saldría recortado por el cursor del recorrido.
+  graph3d.setTimeCursor(null);
 
   if (restaurar && previo) {
     graph3d.setData(previo.doc);

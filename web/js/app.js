@@ -17,6 +17,7 @@ import * as interactions from './ui/interactions.js';
 import * as admin from './ui/admin.js';
 import * as report from './ui/report.js';
 import * as follow from './ui/follow.js';
+import * as auto from './ui/auto.js';
 
 const state = {
   window: { from: null, to: null },
@@ -453,6 +454,7 @@ function contextActions() {
     escape: () => {
       // Salir del recorrido va primero: si se sigue a alguien, escape significa
       // "sacame de aqui", no "quita la seleccion".
+      if (auto.activo()) { auto.parar(); return; }
       if (follow.activo()) { follow.salir(); return; }
       graph3d.clearSelection();
       inspector.clear();
@@ -466,6 +468,7 @@ function contextActions() {
       else if (seleccionado) follow.follow(seleccionado.id);
       else toast('Selecciona una entidad antes de seguirla.', null, 3000);
     },
+    toggleAuto: () => auto.arrancar(state.graph),
     fit: () => graph3d.zoomToFit(),
     togglePlay: () => (timeline.isPlaying() ? timeline.pause() : timeline.play()),
     setView,
@@ -577,13 +580,24 @@ async function boot() {
       toast(`Siguiendo a ${entidad.label}: ${payload.total} acciones${recortado}`, 'ok', 4500);
       selectNode(entidad.id, false);
     },
-    onExit: () => toast('Recorrido terminado', null, 2200),
+    onExit: () => { if (!auto.activo()) toast('Recorrido terminado', null, 2200); },
+    // Cuando termina el recorrido de una entidad, el modo automatico pasa a la
+    // siguiente. Sin esto el bucle se quedaria parado en la primera.
+    onFinish: () => auto.entidadTerminada(),
     // El log del paso se abre en el inspector, que es donde ya se leen los logs
     // de todo lo demas: no hace falta otro sitio distinto para lo mismo.
     onShowLogs: (paso) => {
       const link = graph3d.linkById(paso.linkId);
       if (link) selectLink(link);
     },
+  });
+
+  auto.init({
+    onStart: (total) => toast(`Recorrido automático: ${total} entidades en orden cronológico`, 'ok', 4000),
+    onStop: () => toast('Recorrido automático detenido', null, 2200),
+    onLoop: (vuelta) => toast(`Vuelta ${vuelta} completada`, null, 2600),
+    onInterrupted: () => toast('Recorrido detenido: has tomado el control', null, 2600),
+    onError: (mensaje) => toast(mensaje, 'error', 5000),
   });
   report.init({
     getSnapshot: () => graph3d.snapshot(),

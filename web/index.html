@@ -52,6 +52,7 @@
     <button class="btn" id="btn-demo-min" title="Un incidente de seis eventos: la forma del grafo sin nada encima">Demo mínima</button>
     <button class="btn" id="btn-upload" title="Subir un export del SIEM">Subir</button>
     <button class="btn" id="btn-siem" title="Consultar Splunk / Sentinel / QRadar en vivo">SIEM</button>
+    <button class="btn" id="btn-auto" title="Recorrer el incidente solo, en bucle (t)">Auto</button>
     <button class="btn" id="btn-report" title="Generar informe del incidente (r)">Informe</button>
     <button class="btn btn-icon" id="btn-admin" title="Panel de administrador (a)">⚙</button>
     <button class="btn btn-icon" id="btn-help" title="Atajos de teclado (?)">?</button>
@@ -122,6 +123,9 @@
     </div>
 
     <div class="stage-overlay stage-toast" id="toast" hidden></div>
+
+    <!-- Rotulo de quien viene ahora en el modo automatico. -->
+    <div class="auto-rotulo" id="auto-card" hidden></div>
 
     <!-- Recorrido de una entidad. Aparece sobre el lienzo, no debajo: hay que
          poder leer la frase sin apartar la vista de lo que hace la camara. -->

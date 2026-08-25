@@ -685,3 +685,39 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
 /* Mientras se sigue a alguien, el pie de cronologia estorba: el recorrido
    tiene su propio tiempo y dos lineas temporales a la vez confunden. */
 body.following .timeline-bar { opacity: 0.35; pointer-events: none; }
+
+/* ==========================================================================
+   Modo automatico (auto.js): el rotulo de quien viene ahora.
+
+   Grande y centrado, porque esto se mira desde lejos: la idea es dejarlo en una
+   pantalla del SOC o proyectarlo mientras se explica un caso.
+   ========================================================================== */
+
+.auto-rotulo {
+  position: absolute; inset: 0; z-index: 7;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
+  animation: auto-entra 0.35s ease;
+}
+@keyframes auto-entra { from { opacity: 0; } to { opacity: 1; } }
+
+.auto-card {
+  text-align: center; padding: 26px 44px;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--bg-panel) 92%, transparent);
+  border: 1px solid var(--accent-dim);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6);
+}
+.auto-kicker {
+  color: var(--text-faint); font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;
+}
+.auto-name { font-size: 28px; font-weight: 700; letter-spacing: 0.3px; }
+.auto-meta { color: var(--text-dim); font-size: 13px; margin-top: 7px; }
+
+/* Con el modo automatico corriendo, el boton avisa de que esta activo. */
+body.auto-on #btn-auto {
+  background: var(--accent-dim); color: #f0fdfa;
+  border-color: var(--accent);
+}

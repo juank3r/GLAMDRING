@@ -493,10 +493,20 @@ function wireAccessors() {
     .nodeId('id')
     .nodeLabel(nodeTooltip)
     .nodeThreeObject(buildNodeObject)
-    .nodeVisibility(visibleAt)
+    // La visibilidad por tiempo NO se delega en la libreria a proposito.
+    //
+    // Su accesor decide si el objeto 3D llega a construirse, asi que con el
+    // cursor puesto simplemente no crea nada, y despues no hay nada que
+    // revelar: el recorrido arrancaba con el grafo vacio y se quedaba vacio.
+    // Medido, `conObjeto3D: 0` con 18 nodos en el grafo.
+    //
+    // Se construyen siempre y la visibilidad la pone applyTimeVisibility()
+    // sobre los objetos ya hechos. Ademas de funcionar, es mas rapido: cambiar
+    // un `visible` no cuesta nada y delegarlo obligaba a un refresh() completo.
+    .nodeVisibility(() => true)
     .linkSource('source')
     .linkTarget('target')
-    .linkVisibility(visibleAt)
+    .linkVisibility(() => true)
     .linkColor((link) => links.colorOf(link, linkOpts, linkContext()))
     .linkWidth((link) => links.widthOf(link, linkOpts, linkContext()))
     .linkOpacity(opt('render', 'linkOpacity', 0.55))
@@ -846,6 +856,9 @@ export function setData(doc) {
   // Cambiar los datos y la fisica es justo lo que abre la ventana en la que el
   // bucle de la libreria se mata solo. Se comprueba despues, no antes.
   setTimeout(reviveAnimation, 0);
+  // Los objetos 3D se construyen en el fotograma siguiente; hasta entonces no
+  // hay nada a lo que ponerle la visibilidad.
+  if (timeCursor !== null) setTimeout(applyTimeVisibility, 0);
   return data;
 }
 
@@ -1020,7 +1033,7 @@ export function zoomToFit(ms = 700, padding = 90) {
  *
  * Devuelve el punto al que se mira, para poder resaltarlo.
  */
-export function focusOnLink(link, ms = 900) {
+export function focusOnLink(link, opciones = {}) {
   if (!graph || !link) return null;
   const from = data.nodes.find((n) => n.id === idOf(link.source));
   const to = data.nodes.find((n) => n.id === idOf(link.target));
@@ -1053,12 +1066,33 @@ export function focusOnLink(link, ms = 900) {
   // dos entidades pegadas no dejen la cámara dentro de una figura.
   const distancia = Math.max(opt('camera', 'focusDistance', 130) * 0.75, largo * 1.35);
 
-  graph.cameraPosition({
+  const destino = {
     x: mid.x + (px / norma) * distancia,
     y: mid.y + (py / norma) * distancia + largo * 0.25,
     z: mid.z + (pz / norma) * distancia,
-  }, mid, ms);
-  return mid;
+  };
+
+  // Cuánto hay que viajar. Con una duración fija, un salto al otro extremo del
+  // grafo marea y un movimiento de dos palmos se arrastra: el tiempo tiene que
+  // salir de la distancia.
+  const actual = graph.camera().position;
+  const viaje = Math.hypot(destino.x - actual.x, destino.y - actual.y, destino.z - actual.z);
+
+  // Si ya se está prácticamente ahí, no se reencuadra: mover la cámara para
+  // dejarla donde estaba es un tirón gratis, y en un recorrido de treinta pasos
+  // se nota mucho.
+  const minimo = opciones.minMs ?? 260;
+  const maximo = opciones.maxMs ?? 1500;
+  const quieto = viaje < Math.max(12, distancia * 0.12);
+  if (quieto && !opciones.forzar) return { mid, ms: 0, movida: false };
+
+  // Raíz cuadrada y no lineal: el tiempo crece con la distancia pero cada vez
+  // menos, que es como se lee natural un movimiento de cámara.
+  const ms = opciones.ms ?? Math.round(
+    Math.max(minimo, Math.min(maximo, minimo + Math.sqrt(viaje) * 34)));
+
+  graph.cameraPosition(destino, mid, ms);
+  return { mid, ms, movida: true };
 }
 
 /** Coloca el resaltado en una entidad y una arista concretas, sin mover cámara. */
