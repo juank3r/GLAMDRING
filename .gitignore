@@ -19,3 +19,8 @@ config/models/
 
 # Temporales de edicion.
 *.tmp.*
+
+# Ficheros de trabajo que dejan los agentes al reproducir un hallazgo.
+# Se quedan en disco mientras se investiga, pero no son del proyecto.
+repro*.py
+/scratch_*.py
