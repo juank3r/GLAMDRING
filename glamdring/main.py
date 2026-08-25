@@ -22,6 +22,7 @@ from .api import (
     graph_router,
     ingest_router,
     meta_router,
+    receive_router,
     report_router,
     threat_router,
 )
@@ -77,6 +78,7 @@ app.include_router(graph_router)
 app.include_router(appearance_router)
 app.include_router(report_router)
 app.include_router(threat_router)
+app.include_router(receive_router)
 
 
 @app.exception_handler(ConnectorError)

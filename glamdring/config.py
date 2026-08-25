@@ -17,6 +17,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from .receive import (ENVIOS_POR_MINUTO, MAX_BYTES_ENVIO, ReceiveConfig,
+                      parse_keys)
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 WEB_DIR = BASE_DIR / "web"
 SAMPLES_DIR = BASE_DIR / "samples"
@@ -158,6 +161,7 @@ class Settings:
     splunk: SplunkConfig = field(default_factory=SplunkConfig)
     sentinel: SentinelConfig = field(default_factory=SentinelConfig)
     qradar: QRadarConfig = field(default_factory=QRadarConfig)
+    receive: ReceiveConfig = field(default_factory=ReceiveConfig)
 
     query_timeout: int = 120       # segundos por consulta al SIEM
     max_results: int = 50_000      # tope duro de eventos por consulta
@@ -172,6 +176,9 @@ class Settings:
                          "workspace": _mask(self.sentinel.workspace_id)},
             "qradar": {"configured": self.qradar.configured, "url": _host_of(self.qradar.url)},
             "files": {"configured": True},
+            # Los NOMBRES de las fuentes que pueden empujar, nunca sus claves.
+            "receive": {"configured": self.receive.enabled,
+                        "sources": list(self.receive.sources())},
         }
 
 
@@ -210,6 +217,11 @@ def load_settings() -> Settings:
             token=_env("QRADAR_TOKEN"),
             api_version=_env("QRADAR_API_VERSION", "20.0"),
             verify_tls=_env_bool("QRADAR_VERIFY_TLS", True),
+        ),
+        receive=ReceiveConfig(
+            keys=parse_keys(_env("GLAMDRING_RECEIVE_KEYS")),
+            max_bytes=_env_int("GLAMDRING_RECEIVE_MAX_BYTES", MAX_BYTES_ENVIO),
+            per_minute=_env_int("GLAMDRING_RECEIVE_PER_MINUTE", ENVIOS_POR_MINUTO),
         ),
         query_timeout=_env_int("GLAMDRING_QUERY_TIMEOUT", 120),
         max_results=_env_int("GLAMDRING_MAX_RESULTS", 50_000),
