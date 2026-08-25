@@ -251,3 +251,41 @@ def test_frontend_is_served(client):
     response = client.get("/")
     assert response.status_code == 200
     assert "GLAMDRING" in response.text
+
+
+# ------------------------------------------------------- limite de subida
+
+
+def test_an_oversized_upload_is_rejected(client):
+    """413 al pasarse del limite, y sin habersela comido antes.
+
+    El fallo que cubre esto es de ORDEN, no de logica: antes se leia el fichero
+    entero con `await file.read()` y DESPUES se miraba el tamano. O sea, el
+    limite se comprobaba cuando el fichero ya estaba en memoria, que es justo
+    cuando ya da igual: subir diez gigas devolvia un 413 despues de habersela
+    comido. Ahora se lee a trozos y se corta en el primero que se pasa.
+    """
+    from glamdring.api.routes_ingest import MAX_UPLOAD_BYTES
+    gordo = b'[{"a":1}]' + b" " * (MAX_UPLOAD_BYTES + 2048)
+    response = client.post("/api/ingest",
+                           files={"file": ("gordo.json", gordo, "application/json")})
+    assert response.status_code == 413
+    assert "MB" in response.json()["detail"], "el mensaje tiene que decir cual es el limite"
+
+
+def test_a_normal_upload_still_works(client):
+    """La red de seguridad no puede cerrarle la puerta al caso normal.
+
+    Se sube una muestra de verdad y no un evento inventado a mano: lo que se
+    comprueba es que la lectura por trozos entrega los mismos bytes que antes,
+    no que el normalizador entienda un JSON recien fabricado.
+    """
+    from pathlib import Path
+    from glamdring.config import SAMPLES_DIR
+    muestra = Path(SAMPLES_DIR) / "minimo" / "incidente.json"
+    contenido = muestra.read_bytes()
+
+    response = client.post("/api/ingest",
+                           files={"file": (muestra.name, contenido, "application/json")})
+    assert response.status_code == 200
+    assert response.json()["added"] > 0, "una muestra valida tiene que entrar entera"

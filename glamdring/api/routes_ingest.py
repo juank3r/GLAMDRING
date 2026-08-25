@@ -18,6 +18,7 @@ from ..store import STORE
 router = APIRouter(prefix="/api", tags=["ingest"])
 
 MAX_UPLOAD_BYTES = 200 * 1024 * 1024
+TROZO_BYTES = 1024 * 1024        # cuanto se lee de golpe al comprobar el limite
 
 
 class QueryRequest(BaseModel):
@@ -49,6 +50,34 @@ def _ingest_records(records: List[Dict[str, Any]], origin: str) -> Dict[str, Any
     }
 
 
+async def _leer_acotado(file: UploadFile) -> bytes:
+    """Lee un fichero subido cortando EN CUANTO se pasa del limite.
+
+    Antes esto era ``payload = await file.read()`` y despues se miraba el
+    tamano. O sea: el limite se comprobaba cuando el fichero ya estaba entero en
+    memoria, que es justo cuando ya da igual. Subir diez gigas devolvia un 413
+    despues de habersela comido, y cualquiera con acceso a la ruta podia tumbar
+    el proceso sin necesidad de que el fichero fuera valido siquiera.
+
+    Leyendo a trozos se corta en el primero que se pasa: el pico de memoria
+    queda en el limite mas un trozo, y el 413 llega antes de que duela.
+    """
+    trozos: List[bytes] = []
+    leidos = 0
+    while True:
+        trozo = await file.read(TROZO_BYTES)
+        if not trozo:
+            break
+        leidos += len(trozo)
+        if leidos > MAX_UPLOAD_BYTES:
+            raise HTTPException(
+                status_code=413,
+                detail=f"Fichero demasiado grande: el limite son "
+                       f"{MAX_UPLOAD_BYTES // (1024 * 1024)} MB.")
+        trozos.append(trozo)
+    return b"".join(trozos)
+
+
 @router.post("/ingest")
 async def ingest(
     file: Optional[UploadFile] = File(default=None),
@@ -64,9 +93,7 @@ async def ingest(
     connector = FileConnector()
     try:
         if file is not None:
-            payload = await file.read()
-            if len(payload) > MAX_UPLOAD_BYTES:
-                raise HTTPException(status_code=413, detail="Fichero demasiado grande.")
+            payload = await _leer_acotado(file)
             content = payload.decode("utf-8", errors="replace")
             records, fmt = connector.read_text(content, hint=format_hint or "")
             origin = f"upload:{file.filename}"
