@@ -77,8 +77,12 @@ function construirCola(doc) {
 
 /* ----------------------------------------------------------------- el rótulo */
 
+/* Devuelve si el rotulo se ha llegado a enseñar.
+   En pantalla completa no se enseña: es un cartel a pantalla partida que tapa
+   justo el grafo que se ha ido a ver ahi. La misma informacion (quien es y por
+   que paso va) esta en la barra de abajo a la izquierda, que si se queda. */
 function mostrarRotulo(nodo, indice, total) {
-  if (!rotulo) return;
+  if (!rotulo || document.body.classList.contains('cine')) return false;
   const papel = (nodo.props || {}).role || '';
   rotulo.innerHTML = `
     <div class="auto-card">
@@ -87,6 +91,7 @@ function mostrarRotulo(nodo, indice, total) {
       <div class="auto-meta">${esc(papel)} · ${esc(nodo.eventCount)} apariciones</div>
     </div>`;
   rotulo.hidden = false;
+  return true;
 }
 
 const ocultarRotulo = () => { if (rotulo) rotulo.hidden = true; };
@@ -108,7 +113,10 @@ function siguienteEntidad() {
   }
 
   const nodo = estado.cola[estado.posicion];
-  mostrarRotulo(nodo, estado.posicion + 1, estado.cola.length);
+  // Sin rotulo que leer no hay nada que esperar: mantener la pausa larga seria
+  // dejar la pantalla parada dos segundos sin decir por que.
+  const espera = mostrarRotulo(nodo, estado.posicion + 1, estado.cola.length)
+    ? ENTRE_ENTIDADES_MS : 450;
 
   estado.temporizador = setTimeout(async () => {
     if (!estado.activo) return;
@@ -118,7 +126,7 @@ function siguienteEntidad() {
     await follow.follow(nodo.id);
     if (!estado.activo) return;
     if (!follow.activo()) pasarAlSiguiente();
-  }, ENTRE_ENTIDADES_MS);
+  }, espera);
 }
 
 function pasarAlSiguiente() {

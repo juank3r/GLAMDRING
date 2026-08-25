@@ -825,3 +825,20 @@ body.cine-claro .stage-legend {
   box-shadow: 0 4px 18px rgba(15, 30, 60, 0.12);
 }
 body.cine-claro .stage-legend .head { color: #5b6880; }
+
+/* En pantalla completa el rotulo del modo automatico no aparece: es un cartel
+   a pantalla partida que tapa justo el grafo al que se ha ido a mirar. Quien
+   viene ahora y por que paso va se lee en la barra de abajo a la izquierda,
+   que si se queda. Redundante en una pantalla de 1900 px, tapando en una de
+   proyeccion. */
+body.cine .auto-rotulo { display: none !important; }
+
+/* Con el recorrido en marcha, la barra de la descripcion ocupa la esquina de
+   abajo a la izquierda, que es donde vivia la leyenda: se tapaban. La leyenda
+   se va a la derecha, que esta libre en las dos situaciones (en pantalla
+   completa no hay inspector, y sin ella el borde del lienzo esta vacio).
+   Se mueve la leyenda y no la barra porque la barra es lo que se esta leyendo. */
+body.following .stage-legend {
+  left: auto;
+  right: 14px;
+}
