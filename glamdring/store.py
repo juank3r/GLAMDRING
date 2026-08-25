@@ -28,18 +28,74 @@ _SECRET_KEYS = re.compile(
 
 REDACTED = "***redactado***"
 
+# Secretos reconocibles POR SU FORMA, esten donde esten.
+#
+# Tachar solo por nombre de clave deja pasar el caso mas comun de todos: el
+# secreto dentro de una cadena. Un `curl -H "Authorization: Bearer eyJ..."` en
+# una linea de comandos, una cadena de conexion con la contrasena dentro, o un
+# token en el cuerpo de un mensaje syslog. El campo se llama `cmdline` o
+# `message`, no `password`, asi que la lista de nombres no lo veia.
+#
+# Cada patron tacha SOLO el secreto y deja el resto de la linea legible: la
+# linea de comandos es evidencia y borrarla entera seria perder el hallazgo por
+# proteger la credencial.
+_SECRET_VALUES = [
+    # Cabecera de autorizacion entera, incluido el esquema. Capturar solo hasta
+    # el primer espacio tachaba la palabra "Bearer" y dejaba el token detras,
+    # que es exactamente lo contrario de lo que hace falta.
+    re.compile(r"((?:proxy-)?authorization\s*[:=]\s*)([^\"'\r\n]{8,})", re.I),
+    # JWT suelto, sin cabecera delante.
+    re.compile(r"()(eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,})"),
+    # Esquema + credencial larga en cualquier sitio.
+    re.compile(r"\b((?:bearer|basic|splunk)\s+)([A-Za-z0-9._\-+/=]{16,})", re.I),
+    # clave=valor con nombre sospechoso, en texto libre o en linea de comandos.
+    re.compile(r"((?:password|passwd|pwd|secret|token|apikey|api[_-]key|client[_-]secret)"
+               r"\s*[:=]\s*)([^\s,;&\"']{4,})", re.I),
+    # -p contrasena / --password contrasena, tipico de clientes de linea.
+    re.compile(r"(--?(?:p|pass|password|token)[ =])([^\s]{4,})", re.I),
+    # Credenciales dentro de una URL.
+    re.compile(r"(://[^\s:/@]{1,64}:)([^\s@]{1,128})(@)"),
+]
+
 MAX_EVENTS = 500_000
+
+
+def _redact_text(text: str) -> str:
+    """Tacha los secretos que se reconocen por su forma dentro de una cadena."""
+    if len(text) < 8:
+        return text
+    # CONVENCION, y hay que respetarla al anadir patrones:
+    #   grupo 1 = prefijo, se conserva (dice QUE era: util para investigar)
+    #   grupo 2 = el secreto, se tacha
+    #   grupo 3 = cierre opcional, se conserva
+    # Un patron sin grupo 1 dejaria el secreto intacto y tacharia lo de al lado,
+    # que es como se me colo un JWT entero en la primera version.
+    for patron in _SECRET_VALUES:
+        text = patron.sub(
+            lambda m: (m.group(1) or "") + REDACTED
+                      + (m.group(3) if (m.lastindex or 0) >= 3 else ""),
+            text,
+        )
+    return text
 
 
 def redact(value: Any, depth: int = 0) -> Any:
     """Tacha secretos recursivamente dentro de un registro crudo.
 
     El log crudo se ensena tal cual en el inspector, y los logs de autenticacion
-    a veces arrastran credenciales en la linea de comandos o en cabeceras. Es mas
-    barato tacharlas siempre que confiar en que nunca aparezcan.
+    a veces arrastran credenciales. Es mas barato tacharlas siempre que confiar
+    en que nunca aparezcan.
+
+    Se tacha por DOS vias, porque una sola no basta:
+      - por nombre de clave, para los campos que se llaman lo que se llaman;
+      - por forma del valor, para el secreto que viaja dentro de una cadena, que
+        es el caso mas frecuente y el que la lista de nombres no veia.
     """
     if depth > 6:
-        return value
+        # Pasado el fondo se PODA, no se devuelve el original: devolverlo tal
+        # cual era una puerta trasera: bastaba con anidar siete niveles para que
+        # el secreto saliera entero.
+        return REDACTED if isinstance(value, (dict, list)) else _redact_text(str(value))
     if isinstance(value, dict):
         return {
             key: (REDACTED if _SECRET_KEYS.search(str(key)) else redact(item, depth + 1))
@@ -47,6 +103,8 @@ def redact(value: Any, depth: int = 0) -> Any:
         }
     if isinstance(value, list):
         return [redact(item, depth + 1) for item in value]
+    if isinstance(value, str):
+        return _redact_text(value)
     return value
 
 

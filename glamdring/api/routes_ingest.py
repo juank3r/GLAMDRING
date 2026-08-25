@@ -24,12 +24,16 @@ TROZO_BYTES = 1024 * 1024        # cuanto se lee de golpe al comprobar el limite
 class QueryRequest(BaseModel):
     """Consulta en vivo contra un SIEM."""
 
-    connector: str = Field(description="splunk | sentinel | qradar | files")
+    connector: str = Field(description="splunk | sentinel | qradar")
     query: str
     time_from: Optional[str] = Field(default=None, alias="from",
                                      description="ISO-8601 o relativo ('-24h')")
     time_to: Optional[str] = Field(default=None, alias="to")
-    limit: int = 10_000
+    # ge=1 NO es una formalidad. Sin el, limit=0 llega a Splunk como count=0,
+    # que en su API REST significa SIN LIMITE: se pide "nada" y se descarga el
+    # indice entero. Y un negativo se convierte en Range: items=0--1 en QRadar
+    # y en rows[:-n] en Sentinel, que tira las ultimas filas sin decir nada.
+    limit: int = Field(default=10_000, ge=1, le=SETTINGS.max_results)
     reset: bool = Field(default=False, description="vaciar la investigacion antes de ingestar")
 
     model_config = {"populate_by_name": True}
@@ -246,6 +250,17 @@ def load_demo(reset: bool = True, set: str = "completo") -> Dict[str, Any]:
 @router.post("/query")
 async def query_siem(request: QueryRequest) -> Dict[str, Any]:
     """Lanza una consulta al SIEM y fusiona el resultado en la investigacion."""
+    # 'files' no se acepta aqui. Esta ruta existe para consultar un SIEM en
+    # vivo; el conector de ficheros lee del disco del SERVIDOR, y exponerlo por
+    # una ruta que acepta una cadena arbitraria como "consulta" es justo por
+    # donde se colaba la lectura de ficheros. Para subir un fichero esta
+    # /api/ingest, que recibe su contenido y no una ruta.
+    if request.connector.strip().lower() == "files":
+        raise HTTPException(
+            status_code=400,
+            detail="El conector 'files' no se consulta por aqui. Sube el fichero a /api/ingest.",
+        )
+
     if request.reset:
         STORE.clear()
 

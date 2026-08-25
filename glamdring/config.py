@@ -22,7 +22,16 @@ SAMPLES_DIR = BASE_DIR / "samples"
 
 
 def load_dotenv(path: Optional[Path] = None) -> Dict[str, str]:
-    """Carga ``.env`` sin pisar lo que ya venga del entorno real."""
+    """Lee ``.env`` y devuelve lo que hay dentro. NO toca os.environ.
+
+    Antes hacia ``os.environ.setdefault(key, value)`` por cada linea, y eso
+    metia los tokens de los SIEM en el entorno del proceso: los heredaba
+    cualquier subproceso que se lanzara desde aqui, y aparecian en cualquier
+    volcado de entorno. El fichero se lee para configurar esta aplicacion, no
+    para contaminar todo lo que cuelgue de ella.
+
+    La precedencia se resuelve en ``_env``: entorno real primero, .env despues.
+    """
     env_path = path or (BASE_DIR / ".env")
     loaded: Dict[str, str] = {}
     if not env_path.exists():
@@ -35,12 +44,29 @@ def load_dotenv(path: Optional[Path] = None) -> Dict[str, str]:
         key = key.strip()
         value = value.strip().strip('"').strip("'")
         loaded[key] = value
-        os.environ.setdefault(key, value)
     return loaded
 
 
+# Lo leido del .env, sin volcarlo al entorno del proceso. Lo rellena
+# load_settings() al arrancar.
+_DOTENV: Dict[str, str] = {}
+
+
 def _env(name: str, default: str = "") -> str:
-    return os.environ.get(name, default).strip()
+    """Valor de configuracion. Entorno real primero, .env despues.
+
+    Ese orden es el que permite sobrescribir el fichero desde fuera sin
+    editarlo, que es como se despliega esto en un servidor.
+
+    Antes la precedencia se conseguia con os.environ.setdefault al leer el
+    fichero, y el efecto secundario era meter los tokens de los SIEM en el
+    entorno del proceso: los heredaba cualquier subproceso y salian en
+    cualquier volcado. Ahora el .env se queda en este diccionario.
+    """
+    valor = os.environ.get(name)
+    if valor is None:
+        valor = _DOTENV.get(name, default)
+    return (valor or "").strip()
 
 
 def _env_bool(name: str, default: bool = False) -> bool:
@@ -130,7 +156,8 @@ def _mask(value: str) -> str:
 
 
 def load_settings() -> Settings:
-    load_dotenv()
+    _DOTENV.clear()
+    _DOTENV.update(load_dotenv())
     return Settings(
         splunk=SplunkConfig(
             url=_env("SPLUNK_URL"),
