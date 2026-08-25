@@ -125,6 +125,18 @@
 
     <div class="stage-overlay stage-toast" id="toast" hidden></div>
 
+    <!-- Aviso PERSISTENTE de que lo que se ve no esta completo.
+         No es un toast a proposito: un toast se va a los cuatro segundos y el
+         analista sigue una hora trabajando sobre un grafo a medias creyendolo
+         entero. Esto se queda hasta que se cierra o hasta la siguiente
+         consulta que si venga completa. -->
+    <div class="stage-aviso" id="stage-aviso" hidden>
+      <span class="stage-aviso-icono" aria-hidden="true"></span>
+      <div class="stage-aviso-texto" id="stage-aviso-texto"></div>
+      <button class="stage-aviso-cerrar" id="stage-aviso-cerrar"
+              title="Descartar el aviso">Entendido</button>
+    </div>
+
     <!-- Rotulo de quien viene ahora en el modo automatico. -->
     <div class="auto-rotulo" id="auto-card" hidden></div>
 

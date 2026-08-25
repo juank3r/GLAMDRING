@@ -281,6 +281,40 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
 .stage-toast.error { border-color: var(--danger); color: #ffdbe3; }
 .stage-toast.ok    { border-color: var(--accent-dim); }
 
+/* Aviso de datos incompletos. Ambar y no rojo: no es un fallo, es una
+   advertencia sobre el ALCANCE de lo que se esta mirando. El rojo se reserva
+   para lo que ha ido mal. */
+.stage-aviso {
+  top: 14px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--warn, #c98a2b);
+  border-left-width: 3px;
+  border-radius: var(--radius); padding: 10px 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .65);
+  z-index: 26; max-width: 72%;
+  font-size: 12.5px; line-height: 1.45;
+}
+.stage-aviso-icono {
+  flex: 0 0 auto; width: 14px; height: 14px; margin-top: 2px;
+  border: 1.5px solid var(--warn, #c98a2b); border-radius: 50%;
+  position: relative;
+}
+.stage-aviso-icono::after {
+  content: "!"; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: var(--warn, #c98a2b);
+}
+.stage-aviso-texto { flex: 1 1 auto; color: var(--text); }
+.stage-aviso-texto strong { color: var(--warn, #c98a2b); }
+.stage-aviso-texto ul { margin: 5px 0 0; padding-left: 16px; color: var(--text-dim); }
+.stage-aviso-cerrar {
+  flex: 0 0 auto; background: none; border: 1px solid var(--border-strong);
+  color: var(--text-dim); border-radius: 3px; padding: 3px 9px;
+  font-size: 11px; cursor: pointer; font-family: inherit;
+}
+.stage-aviso-cerrar:hover { color: var(--text); border-color: var(--warn, #c98a2b); }
+
 /* Tooltips del grafo (los inyecta 3d-force-graph con nuestro HTML dentro). */
 .gd-tip {
   background: var(--bg-panel); border: 1px solid var(--border-strong);

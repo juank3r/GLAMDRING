@@ -45,6 +45,49 @@ function toast(message, kind, ms = 4200) {
   box.__timer = setTimeout(() => { box.hidden = true; }, ms);
 }
 
+/* Aviso PERSISTENTE de que el grafo no esta completo.
+ *
+ * Va aparte de toast() a proposito. Un toast se va solo a los cuatro segundos,
+ * y "el SIEM tenia mas eventos de los que se han traido" es justo el dato que
+ * no puede desaparecer: el analista se pasa la hora siguiente sacando
+ * conclusiones de un grafo a medias sin saber que lo esta.
+ *
+ * Lo que NO esta en el grafo se lee como que no paso. Por eso esto se queda
+ * hasta que alguien lo cierra a mano, o hasta que llega una consulta completa
+ * que lo sustituye.
+ */
+function avisoIncompleto(resultado) {
+  const barra = el('stage-aviso');
+  const texto = el('stage-aviso-texto');
+  if (!barra || !texto) return;
+
+  const avisos = resultado?.warnings || [];
+  if (!resultado?.truncated && !avisos.length) {
+    barra.hidden = true;            // la consulta vino entera: fuera el aviso
+    return;
+  }
+
+  const trozos = [];
+  if (resultado.truncated) {
+    const traidos = resultado.fetched ?? resultado.read ?? 0;
+    // Si el SIEM dice cuantos habia -solo QRadar lo hace- se cuenta; si no, se
+    // dice que habia mas y ya. Inventar un total seria peor que no darlo.
+    trozos.push(resultado.total
+      ? `<strong>Grafo incompleto:</strong> ${fmt(traidos)} de ${fmt(resultado.total)} eventos.`
+      : `<strong>Grafo incompleto:</strong> se han traido ${fmt(traidos)} y el SIEM tenia mas.`);
+    trozos.push('Acota la ventana temporal o sube el limite de la consulta.');
+  }
+
+  const otros = avisos.filter((a) => !/grafo esta incompleto/i.test(a));
+  const lista = otros.length
+    ? `<ul>${otros.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>` : '';
+
+  texto.innerHTML = `${trozos.join(' ')}${lista}`;
+  barra.hidden = false;
+}
+
+const fmt = (n) => Number(n || 0).toLocaleString('es-ES');
+
 /* ------------------------------------------------------------------ tema */
 
 /* El tema del perfil se vuelca a variables CSS. Así el panel del sysadmin cambia
@@ -297,6 +340,7 @@ async function openSiemModal() {
         });
         closeModal();
         toast(`${result.added} eventos nuevos desde ${result.connector}`, 'ok');
+        avisoIncompleto(result);
         state.window = { from: null, to: null };
         reload();
       } catch (error) {
@@ -313,6 +357,10 @@ async function openSiemModal() {
 /* ------------------------------------------------------------- cableado */
 
 function wireTopbar() {
+  el('stage-aviso-cerrar')?.addEventListener('click', () => {
+    el('stage-aviso').hidden = true;
+  });
+
   el('view-switch').addEventListener('click', (event) => {
     const button = event.target.closest('.view-btn');
     if (!button) return;

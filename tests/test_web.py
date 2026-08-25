@@ -185,3 +185,33 @@ def test_index_loads_the_module_entrypoint(html):
     assert 'type="module" src="js/app.js"' in html
     # El bundle UMD tiene que ir ANTES: app.js usa el global ForceGraph3D.
     assert html.index("3d-force-graph.min.js") < html.index('type="module" src="js/app.js"')
+
+
+# ------------------------------------------------- aviso de datos incompletos
+
+
+def test_el_aviso_de_grafo_incompleto_existe(html):
+    """La banda que dice que lo que se ve no esta completo.
+
+    Va aparte del toast a proposito, y por eso se comprueba aparte: el toast se
+    esconde solo a los cuatro segundos, y ese es justo el aviso que no puede
+    desaparecer. Lo que no esta en el grafo se lee como que no paso.
+    """
+    for identificador in ("stage-aviso", "stage-aviso-texto", "stage-aviso-cerrar"):
+        assert f'id="{identificador}"' in html, f"falta el elemento {identificador}"
+    assert 'id="stage-aviso" hidden' in html, "tiene que arrancar oculto"
+
+
+def test_el_aviso_tiene_estilo_propio():
+    """Sin la clase, la banda saldria sin colocar encima del grafo."""
+    css = (WEB_DIR / "css" / "glamdring.css").read_text(encoding="utf-8")
+    assert ".stage-aviso {" in css
+    assert ".stage-aviso-cerrar" in css
+
+
+def test_la_consulta_al_siem_pinta_el_aviso():
+    """De nada sirve que la API devuelva 'truncated' si nadie lo mira."""
+    app_js = (WEB_DIR / "js" / "app.js").read_text(encoding="utf-8")
+    assert "function avisoIncompleto" in app_js
+    assert "avisoIncompleto(result)" in app_js, (
+        "el resultado de /api/query tiene que pasar por el aviso")
