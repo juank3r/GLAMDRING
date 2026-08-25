@@ -37,6 +37,7 @@ ENTITIES: Dict[str, Dict[str, Any]] = {
     "account":  {"label": "Cuenta cloud", "color": "#22d3ee", "model": "cloud",       "shape": "box",         "glyph": "☁",     "rank": 2, "size": 6},
     "service":  {"label": "Servicio",     "color": "#a3e635", "model": "gear",        "shape": "cylinder",    "glyph": "⚭",     "rank": 4, "size": 4},
     "registry": {"label": "Registro",     "color": "#eab308", "model": "key",         "shape": "box",         "glyph": "\U0001F5DD", "rank": 4, "size": 4},
+    "group":    {"label": "Grupo",        "color": "#f59e0b", "model": "shield",      "shape": "box",         "glyph": "\U0001F465", "rank": 4, "size": 5},
 }
 
 UNKNOWN_ENTITY = {
@@ -140,6 +141,31 @@ RELATIONS: Dict[str, Dict[str, Any]] = {
     "downloaded":    {"label": "descarga",        "color": "#06b6d4", "dashed": False, "weight": 3},
     "sent_to":       {"label": "envia a",         "color": "#f472b6", "dashed": False, "weight": 2},
     "contains_url":  {"label": "contiene URL",    "color": "#a78bfa", "dashed": True,  "weight": 2},
+
+    # -- del vocabulario cerrado -------------------------------------------
+    # Cada una existe porque hay un hecho que antes se dibujaba con el verbo
+    # equivocado o no se dibujaba.
+    "modified":      {"label": "modifica",        "color": "#c084fc", "dashed": False, "weight": 2},
+    # Inyeccion y acceso a handle: los dos unicos casos con dos procesos en el
+    # mismo evento. Pesan como una alerta porque un volcado de LSASS lo es.
+    "injected_into": {"label": "inyecta en",      "color": "#ff2d55", "dashed": False, "weight": 5},
+    "accessed":      {"label": "abre handle en",  "color": "#f43f5e", "dashed": False, "weight": 4},
+    "loaded":        {"label": "carga",           "color": "#a3a3a3", "dashed": True,  "weight": 1},
+    # Donde vive una cosa: el fichero en su maquina, la clave en su equipo, el
+    # fichero subido en su aplicacion cloud. Es la arista que evita que el
+    # objeto quede flotando sin decir donde esta.
+    "stored_on":     {"label": "esta en",         "color": "#64748b", "dashed": True,  "weight": 1},
+    # El cortafuegos que solo mira pasar el trafico. Discontinua y ligera: no es
+    # un participante, es el testigo, y por eso no debe pesar como una conexion.
+    "observed":      {"label": "observa",         "color": "#475569", "dashed": True,  "weight": 1},
+    # Movimiento a la nube. La direccion importa: subir es exfiltracion.
+    "uploaded_to":   {"label": "sube a",          "color": "#f97316", "dashed": False, "weight": 4},
+    "downloaded_from": {"label": "descarga de",   "color": "#06b6d4", "dashed": False, "weight": 3},
+    "shared_with":   {"label": "comparte con",    "color": "#fb923c", "dashed": False, "weight": 4},
+    "tunneled_to":   {"label": "tunel hacia",     "color": "#2dd4bf", "dashed": True,  "weight": 2},
+    # Meter a alguien en Domain Admins es escalada de privilegios, no un cambio
+    # de cuenta mas, y pesa en consecuencia.
+    "member_of":     {"label": "miembro de",      "color": "#eab308", "dashed": False, "weight": 4},
 }
 
 UNKNOWN_RELATION = {"label": "relacionado", "color": "#64748b", "dashed": True, "weight": 1}

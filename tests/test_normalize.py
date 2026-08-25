@@ -99,10 +99,25 @@ def test_splunk_logon_success(splunk_records):
 
 
 def test_splunk_failed_logons(splunk_records):
+    """Un logon fallido es un logon con status de fallo, no otra actividad.
+
+    Este test afirmaba activity == "logon_failed". Ese valor ya no existe, y no
+    por gusto: era el MISMO dato en dos sitios, y dos sitios donde ponerlo son
+    dos sitios donde pueden discrepar. Medido antes de quitarlo: colapsarlo a
+    'logon' + status dejaba nodos, aristas, frase del relato e is_key_event
+    IDENTICOS en los ocho eventos que lo llevaban.
+
+    Y sobre todo rompia la correlacion entre SIEM, que es para lo que existe
+    esta herramienta: si Splunk dice 'logon_failed' y QRadar dice 'logon' con
+    status de fallo, el grafo no puede unir lo que cuentan los dos.
+    """
     events = normalize_all(splunk_records)
-    failures = [e for e in events if e.activity == "logon_failed"]
+    failures = [e for e in events if e.status == "failure"
+                and e.class_name == CLASS_AUTHENTICATION]
     assert len(failures) >= 3
-    assert all(e.status == "failure" for e in failures)
+    assert all(e.activity in ("logon", "logon_remote") for e in failures)
+    assert "logon_failed" not in {e.activity for e in events}, (
+        "logon_failed salio del vocabulario: el desenlace va en status")
 
 
 def test_splunk_process_infers_mitre(splunk_records):
@@ -132,9 +147,21 @@ def test_splunk_sysmon_network_and_file(splunk_records):
 
     connections = [e for e in events if e.class_name == CLASS_NETWORK]
     assert any(e.dst and e.dst.ip == "45.132.88.17" for e in connections)
-    # Destino publico -> severidad elevada
-    external = [e for e in connections if e.dst and e.dst.ip == "45.132.88.17"]
-    assert all(e.severity >= 3 for e in external)
+
+    # ANTES aqui se exigia que todo destino publico subiera a severidad 3, y esa
+    # regla es justo la que tenia la escala del reves: casi todo el trafico de
+    # una oficina va a una IP publica, asi que Windows Update pesaba lo mismo
+    # que una baliza de mando y control, y mas que un salto lateral.
+    #
+    # Un destino publico por si solo no es una senal. Lo que si lo es: que quien
+    # sale a Internet sea un binario corriendo desde una carpeta donde no
+    # deberia haber ejecutables.
+    externas = [e for e in connections if e.dst and e.dst.ip == "45.132.88.17"]
+    desde_temp = [e for e in externas if e.process
+                  and "temp" in str(e.process.path or "").lower()]
+    assert desde_temp, "la muestra tiene una conexion saliente desde C:\\Windows\\Temp"
+    assert all(e.severity >= 4 for e in desde_temp), (
+        "un proceso en Temp saliendo a Internet si es una senal")
 
     files = [e for e in events if e.file and e.file.sha256]
     assert files, "los Hashes de Sysmon deberian producir sha256"
