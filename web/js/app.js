@@ -295,15 +295,63 @@ function openModal(title, html) {
 
 const closeModal = () => { el('modal').hidden = true; };
 
+/* Pregunta de verdad a cada SIEM y corrige el semaforo.
+ *
+ * Antes el punto verde solo decia "hay credenciales puestas en el .env". Eso no
+ * es lo que el analista entiende al verlo: entiende que el SIEM responde. Y por
+ * eso un token caducado no se descubria hasta la primera consulta de verdad,
+ * normalmente en mitad de una investigacion y con prisa.
+ *
+ * No bloquea la apertura del dialogo: se puede escribir la consulta mientras
+ * los puntos se resuelven.
+ */
+async function comprobarConectores() {
+  let estados;
+  try {
+    estados = (await api.pingConnectors()).connectors || {};
+  } catch (error) {
+    // Que falle la comprobacion no puede impedir consultar: se quitan los
+    // puntos en marcha y se deja al analista intentarlo.
+    document.querySelectorAll('.status-line .dot.probing')
+      .forEach((punto) => punto.classList.remove('probing'));
+    return;
+  }
+
+  Object.entries(estados).forEach(([nombre, estado]) => {
+    const linea = document.querySelector(`.status-line[data-conector="${CSS.escape(nombre)}"]`);
+    if (!linea) return;
+    const punto = linea.querySelector('.dot');
+    const detalle = linea.querySelector('.detalle');
+    punto.classList.remove('probing', 'on', 'down');
+    if (!estado.probed) {
+      // Ni verde ni rojo: no se ha llegado a preguntar.
+      if (detalle) detalle.textContent = estado.detail || '';
+      return;
+    }
+    punto.classList.add(estado.ok ? 'on' : 'down');
+    if (detalle) {
+      detalle.textContent = estado.ok && estado.latencyMs != null
+        ? `${estado.latencyMs} ms` : (estado.detail || '');
+      detalle.title = estado.detail || '';
+    }
+  });
+}
+
 async function openSiemModal() {
   try {
     const payload = await api.connectors();
     const options = payload.connectors.map((connector) =>
       `<option value="${esc(connector.name)}"${connector.configured ? '' : ' disabled'}>
         ${esc(connector.name)}${connector.configured ? '' : ' (sin credenciales)'}</option>`).join('');
+    // Se pinta primero lo que se sabe sin preguntar, y despues se corrige con
+    // la comprobacion de verdad. Al reves el dialogo tardaria varios segundos
+    // en abrirse cada vez, y por un semaforo.
     const status = payload.connectors.map((connector) =>
-      `<div class="status-line"><span class="dot${connector.configured ? ' on' : ''}"></span>
-        ${esc(connector.name)} — ${esc(connector.queryLanguage)}</div>`).join('');
+      `<div class="status-line" data-conector="${esc(connector.name)}">
+        <span class="dot${connector.configured ? ' probing' : ''}"></span>
+        ${esc(connector.name)} — ${esc(connector.queryLanguage)}
+        <span class="detalle">${connector.configured ? 'comprobando…' : 'sin credenciales'}</span>
+      </div>`).join('');
     const examples = Object.fromEntries(
       payload.connectors.map((c) => [c.name, c.exampleQuery || '']));
 
@@ -319,6 +367,8 @@ async function openSiemModal() {
         <button class="btn" id="q-cancel">Cancelar</button>
         <button class="btn btn-primary" id="q-run">Ejecutar</button>
       </div>`);
+
+    comprobarConectores();
 
     const connectorSelect = el('q-connector');
     const queryText = el('q-text');

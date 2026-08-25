@@ -215,3 +215,19 @@ def test_la_consulta_al_siem_pinta_el_aviso():
     assert "function avisoIncompleto" in app_js
     assert "avisoIncompleto(result)" in app_js, (
         "el resultado de /api/query tiene que pasar por el aviso")
+
+
+def test_el_semaforo_del_siem_comprueba_de_verdad():
+    """El punto verde tiene que significar 'responde', no 'hay un token puesto'.
+
+    Es lo que hacia que un token caducado no se descubriera hasta la primera
+    consulta de verdad, normalmente en mitad de una investigacion.
+    """
+    app_js = (WEB_DIR / "js" / "app.js").read_text(encoding="utf-8")
+    api_js = (WEB_DIR / "js" / "api.js").read_text(encoding="utf-8")
+    assert "pingConnectors" in api_js, "falta la llamada a /api/connectors/ping"
+    assert "comprobarConectores()" in app_js, "el dialogo del SIEM no la usa"
+    # Tres estados: sin comprobar, responde y no responde.
+    css = (WEB_DIR / "css" / "glamdring.css").read_text(encoding="utf-8")
+    for clase in (".status-line .dot.probing", ".status-line .dot.down"):
+        assert clase in css, f"falta el estilo {clase}"

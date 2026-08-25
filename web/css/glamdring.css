@@ -476,6 +476,16 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
 .status-line { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-dim); padding: 5px 0; }
 .status-line .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-faint); }
 .status-line .dot.on { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+/* Tres estados y no dos, porque hay tres cosas distintas que decir:
+   'on'      = se ha preguntado y responde
+   'probing' = se esta preguntando ahora mismo
+   'down'    = se ha preguntado y NO responde
+   Un conector con credenciales puestas y sin comprobar se queda apagado: es lo
+   unico honesto que se puede pintar antes de haber preguntado. */
+.status-line .dot.probing { background: var(--text-dim); animation: dot-latido 1s ease-in-out infinite; }
+.status-line .dot.down { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+.status-line .detalle { color: var(--text-faint); margin-left: auto; font-size: 10.5px; }
+@keyframes dot-latido { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
 
 /* ------------------------------------------------------------------ informe */
 

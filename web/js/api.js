@@ -69,6 +69,11 @@ async function download(url, options, fallbackName) {
 export const health = () => request('api/health');
 export const ontology = () => request('api/ontology');
 export const connectors = () => request('api/connectors');
+
+/* Comprobacion REAL de que cada fuente responde. Va aparte de connectors()
+   porque aquel es instantaneo y este habla por la red: si se pidieran juntos,
+   abrir el dialogo del SIEM costaria varios segundos cada vez. */
+export const pingConnectors = () => request('api/connectors/ping');
 export const demo = (set = 'completo') =>
   request(`api/demo?set=${encodeURIComponent(set)}`, { method: 'POST' });
 
