@@ -16,3 +16,6 @@ samples/private/
 # no del proyecto. El de fabrica sale de glamdring/appearance.py.
 config/appearance.json
 config/models/
+
+# Temporales de edicion.
+*.tmp.*

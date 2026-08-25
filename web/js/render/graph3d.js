@@ -179,7 +179,7 @@ function qualityFor() {
 function applyNodeDim(group, dimmed) {
   const list = group.userData.gdMaterials;
   if (!list) return;
-  const dim = Math.max(0.04, opt('interaction', 'dimOpacity', 0.07));
+  const dim = Math.max(0.04, opt('interaction', 'dimOpacity', 0.18));
   for (let i = 0; i < list.length; i += 1) {
     const entry = list[i];
     if (dimmed) {
@@ -321,7 +321,7 @@ function linkContext() {
     hoveredLink: highlight.hoverLink,
     highlightedLinks: highlight.links,
     busyThreshold: opt('labels', 'linkBusyThreshold', 5),
-    dimOpacity: opt('interaction', 'dimOpacity', 0.07),
+    dimOpacity: opt('interaction', 'dimOpacity', 0.18),
     isDimmed: isDimmedLink,
     heavy,
   };

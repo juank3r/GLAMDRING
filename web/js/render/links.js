@@ -198,7 +198,7 @@ export function widthOf(link, options, context) {
 export function colorOf(link, options, context) {
   const meta = ont.relation(link.type);
   if (context.selectedLink === link) return '#ffffff';
-  if (context.isDimmed(link)) return hexToRgba(meta.color, context.dimOpacity ?? 0.07);
+  if (context.isDimmed(link)) return hexToRgba(meta.color, context.dimOpacity ?? 0.18);
   // Cuando la relación se dibuja discontinua, la línea propia de la librería se
   // vuelve invisible: si no, quedarían las dos superpuestas y los huecos del
   // trazo se rellenarían con la línea sólida, anulando el efecto. La geometría
@@ -275,7 +275,7 @@ export function assignCurvature(links, amount = 0.22) {
  * material, así que se tratan igual.
  */
 export function applyHighlight(links, isDimmed, options) {
-  const dim = Math.max(0.04, options.dimOpacity ?? 0.07);
+  const dim = Math.max(0.04, options.dimOpacity ?? 0.18);
   for (let i = 0; i < links.length; i += 1) {
     const link = links[i];
     const dimmed = isDimmed(link);

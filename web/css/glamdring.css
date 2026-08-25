@@ -370,7 +370,19 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
 }
 .timeline-controls { display: flex; align-items: center; gap: 6px; }
 .timeline-clock { font-family: var(--mono); font-size: 11px; color: var(--text-dim); font-variant-numeric: tabular-nums; }
-.timeline-track { position: relative; height: 100%; cursor: crosshair; }
+/* `align-self: stretch` no es decorativo: es lo que hace que esto funcione.
+   La barra usa `align-items: center`, asi que sus celdas se ajustan al
+   contenido y NO tienen altura definida. Sin altura definida en la pista, el
+   `height: 100%` del lienzo no tiene contra que resolverse y cae a su tamano
+   intrinseco. Y como draw() lee track.clientHeight y escribe
+   canvas.height = alto * devicePixelRatio, el lienzo se realimenta y crece en
+   cada redibujado: medido, llegaba a 742 px dentro de una barra de 92 y las
+   barras del histograma se salian por debajo de la ventana.
+   Estirando la pista, la altura pasa a ser la de la fila y el bucle se corta. */
+.timeline-track {
+  position: relative; height: 100%; align-self: stretch;
+  min-height: 0; cursor: crosshair;
+}
 #timeline-canvas { width: 100%; height: 100%; display: block; }
 .timeline-cursor {
   position: absolute; top: 0; bottom: 0; width: 2px;

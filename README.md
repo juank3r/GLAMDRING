@@ -2,21 +2,20 @@
 
 <div align="center">
 
-![GLAMDRING: el incidente de la demo, con las entidades como figuras y las acciones como aristas dirigidas](docs/glamdring.png)
+![Gandalf empuñando Glamdring, en arte ASCII](docs/glamdring.png)
 
 </div>
 
-**Convierte los logs planos de tu SIEM en un grafo 3D navegable del incidente.**
-Entidades (usuario, host, proceso, IP, fichero, alerta) como nodos, acciones
-(autentica, lanza, conecta, escribe, dispara) como aristas dirigidas y el tiempo como
-eje. El SIEM sigue siendo la fuente de verdad: cada nodo y cada arista abren el log
-literal que los generó.
+**Lee Splunk, Sentinel/Defender, QRadar y CEF/LEEF/syslog, y los convierte en un grafo
+3D navegable del incidente.** Entidades como nodos, acciones como aristas dirigidas y el
+tiempo como eje. El SIEM sigue siendo la fuente de verdad: cada nodo y cada arista abren
+el log literal que los generó. Corre en local, un proceso, sin autenticación.
 
 ---
 
 ## Arranque rápido
 
-Requisito: **Python 3.11+**.
+Probado con **Python 3.12**.
 
 ```powershell
 cd GLAMDRING
@@ -29,20 +28,18 @@ powershell -ExecutionPolicy Bypass -File tools\run.ps1
 - Abre <http://localhost:8000> y pulsa **Demo** (52 eventos, 38 entidades) o
   **Demo mínima** (6 eventos, 10 nodos, 16 aristas) para ver la forma del grafo sin
   nada encima.
-- Sin SIEM y sin credenciales: `samples/` trae el incidente repartido entre los
-  cuatro formatos de ingesta soportados.
+- Sin SIEM y sin credenciales: `samples/` trae el incidente repartido entre los cuatro
+  formatos de ingesta soportados.
+- Frontend sin build: no hay `npm install`.
 - `tools\run.ps1` (51 líneas) cierra lo que hubiera y arranca **siempre en :8000**.
-  Acepta `-Port 8080` y `-Reload` (la recarga levanta un proceso más, el vigilante,
-  por eso se pide a propósito y no viene puesta).
+  Acepta `-Port 8080` y `-Reload` (la recarga levanta un proceso más, el vigilante, por
+  eso se pide a propósito y no viene puesta).
 - Servidores vivos de sesiones anteriores:
-  `powershell -ExecutionPolicy Bypass -File tools\stop_servers.ps1`. Busca por línea
-  de comandos y no solo por puerto, para cazar también al vigilante de `--reload`.
-  Acepta `-Keep 8000` y `-WhatIf`.
+  `powershell -ExecutionPolicy Bypass -File tools\stop_servers.ps1`. Busca por línea de
+  comandos y no solo por puerto, para cazar también al vigilante de `--reload`. Acepta
+  `-Keep 8000` y `-WhatIf`.
 - Linux/macOS: `source .venv/bin/activate` y `uvicorn glamdring.main:app --port 8000`.
   `run.ps1` es solo para PowerShell.
-- **Sin Node y sin `npm install`**: el frontend son módulos ES servidos tal cual, con
-  las librerías vendorizadas en `web/js/vendor/`. Para volver a bajarlas:
-  `python tools/fetch_vendor.py`.
 
 ---
 
@@ -50,22 +47,19 @@ powershell -ExecutionPolicy Bypass -File tools\run.ps1
 
 ### Normaliza cuatro formatos a un modelo común
 
-| Fuente | Qué entiende |
-|---|---|
-| **Splunk** | `WinEventLog:Security` (4624, 4625, 4648, 4688, 4720), Sysmon (1, 3, 11, 22), sourcetypes de firewall/proxy/DNS y campos CIM |
-| **Sentinel / Defender** | `DeviceProcessEvents`, `DeviceNetworkEvents`, `DeviceFileEvents`, `DeviceLogonEvents`, `SigninLogs`, `EmailEvents`, `SecurityAlert`, `SecurityIncident` |
-| **QRadar** | Resultados Ariel (`starttime`, `sourceip`, `magnitude`, `categoryname`…) y ofensas |
-| **CEF / LEEF / syslog** | CEF 0.x, LEEF 1.0 y 2.0, syslog RFC5424 y RFC3164, y JSON arbitrario como red de seguridad |
+| Fuente | Qué entiende | Conector en vivo |
+|---|---|---|
+| **Splunk** | `WinEventLog:Security` (4624, 4625, 4648, 4688, 4720), Sysmon (1, 3, 11, 22), sourcetypes de firewall/proxy/DNS y campos CIM | sí, token de servicio |
+| **Sentinel / Defender** | `DeviceProcessEvents`, `DeviceNetworkEvents`, `DeviceFileEvents`, `DeviceLogonEvents`, `SigninLogs`, `EmailEvents`, `SecurityAlert`, `SecurityIncident` | sí, Service Principal con *Log Analytics Reader* |
+| **QRadar** | Resultados Ariel (`starttime`, `sourceip`, `magnitude`, `categoryname`…) y ofensas | sí, token en la cabecera `SEC` |
+| **CEF / LEEF / syslog** | CEF 0.x, LEEF 1.0 y 2.0, syslog RFC5424 y RFC3164, y JSON arbitrario como red de seguridad | — (entra por fichero, con `files`) |
 
-- El destino común es un subconjunto pragmático de [OCSF](https://schema.ocsf.io/),
-  el esquema vendor-neutral impulsado por AWS y Splunk.
-- De los cuatro, solo tres tienen conector en vivo (`glamdring/connectors/`: splunk,
-  sentinel, qradar). CEF/LEEF/syslog entra por fichero, con `files`.
+- El destino común es un subconjunto pragmático de [OCSF](https://schema.ocsf.io/), el
+  esquema vendor-neutral impulsado por AWS y Splunk (`glamdring/normalize/`).
 
-### Deduplica de verdad
+![Los cuatro SIEM y la unificación](docs/diagrams/05-siems-unificacion.svg)
 
-La pieza más importante y la menos vistosa. Sin ella, la misma cosa aparecería
-varias veces y el grafo mentiría:
+### Deduplicación
 
 - `CORP\jlopez` (Splunk), `jlopez@corp.com` (Sentinel) y `jlopez` (QRadar) → **un** usuario.
 - `SRV-DC01` y `10.4.1.5` → **una** máquina, fundiendo la IP en el host que la declara.
@@ -75,12 +69,14 @@ varias veces y el grafo mentiría:
 
 Y lo que **no** debe ser un nodo tampoco lo es:
 
-- Las cuentas de máquina (`WKS-0421$`) y las de servicio de Windows.
-- Los nombres de producto que QRadar mete en `logsourcename`: `TrendMicro-AV` no es
-  una máquina del parque.
+- Las cuentas de máquina (`WKS-0421$`) y las cuentas integradas de Windows (SYSTEM,
+  LOCAL SERVICE, NETWORK SERVICE, ANONYMOUS LOGON). Las cuentas de servicio del dominio,
+  como `svc_backup`, sí son nodos: ahí sí hay alguien detrás.
+- Los nombres de producto que QRadar mete en `logsourcename`: `TrendMicro-AV` no es una
+  máquina del parque.
 - Las aplicaciones cloud, que son servicios y no equipos.
 
-### Figuras que se reconocen de un vistazo
+### Figuras
 
 | Entidad | Figura |
 |---|---|
@@ -102,75 +98,26 @@ alertas:
 | **Activo sano** | entidad propia sin hallazgos |
 | **Contexto** | artefacto forense de apoyo |
 
-Cómo se consigue que se vean bien:
-
 - La cámara arranca en `orbit` y no en `trackball` (`appearance.py:137`): trackball no
-  fija el eje vertical y arrastrando se puede rodar el mundo hasta ver a una persona
-  boca abajo.
-- `web/js/render/orient.js` (115 líneas) gira cada fotograma las figuras que tienen
-  frente. Tres modos: `fixed`, `yaw` (por defecto, conserva la vertical) y `billboard`.
-- Solo giran las **10** figuras declaradas en `ontology.FACING_MODELS` y servidas por
-  `/api/ontology`: workstation, server, router, firewall, person, attacker, envelope,
-  alert, document, key. Las simétricas (globe, cloud, hashcube, gear, endpoint) y los
-  `.glb` subidos no se giran.
-- Se gira la figura, no el grupo del nodo, para que la etiqueta no orbite.
-- Cualquier figura se sustituye por un `.glb` propio desde el panel de administrador.
+  fija el eje vertical y arrastrando se acaba viendo a una persona boca abajo.
+- `web/js/render/orient.js` gira cada fotograma las **10** figuras con frente que
+  declara `ontology.FACING_MODELS` (workstation, server, router, firewall, person,
+  attacker, envelope, alert, document, key); las simétricas y los `.glb` subidos no.
+  Modos: `fixed`, `yaw` (por defecto, conserva la vertical) y `billboard`.
+- Se gira la figura, no el grupo del nodo, para que la etiqueta no orbite. Cualquier
+  figura se sustituye por un `.glb` propio desde el panel de administrador.
+- Detalle en [Visual-Language](wiki/Visual-Language.md).
 
 ### Cuatro vistas del mismo grafo
 
-- **Explorar** (`1`) — force-directed libre. Las partículas que recorren las aristas
-  son el volumen de eventos: el tráfico se ve fluir.
-- **Kill-chain** (`2`) — el eje X pasa a ser la táctica MITRE, de acceso inicial a
-  impacto, con la táctica dominante rotulada sobre cada capa.
-- **Cronología** (`3`) — el eje X es el tiempo del primer avistamiento.
-- **Replay** (`espacio`) — nodos y aristas aparecen según ocurrieron, sin que el
-  layout se mueva, y cada arista suelta un destello en su momento exacto.
-
-### Seguir a una entidad: el incidente contado paso a paso
-
-- Tecla `s` o menú contextual «Seguir a esta entidad» (`web/js/ui/follow.js`, 279 líneas).
-- La pantalla se queda **solo con la vecindad de esa entidad**: en la demo, de 38
-  nodos a 18. Lo que sobra desaparece, no se atenúa.
-- La cámara vuela de acto en acto. Barra con progreso, paso anterior/siguiente,
-  reproducir/pausar y velocidad (lento, normal, rápido).
-- **Revelado progresivo**: en cada paso aparece lo que acaba de ocurrir y nada de lo
-  que viene después. Medido sobre `jlopez`: 2 nodos visibles en el paso 1, 10 en el
-  15, los 18 en el 30. Reutiliza el cursor temporal del Replay.
-- Las frases **no se redactan en el front**: vienen de `report.narrative`, el mismo
-  motor que escribe la cronología de los informes, así que el recorrido en pantalla y
-  el informe dicen literalmente lo mismo.
-- Cada paso trae la arista por la que ocurrió, con quién fue, si la entidad actuó o se
-  lo hicieron, y los uids para abrir el log original.
-- Al salir se restauran grafo, cámara y selección.
-
-El motor es `GET /api/graph/story?node=<id>` (`glamdring/graph/story.py`, 122 líneas):
-
-- Devuelve en **una sola llamada** los actos en orden y el subgrafo aislado a la
-  vecindad. Van juntos a propósito: pedirlos por separado abriría la puerta a que no
-  cuadren.
-- Colapsa repeticiones consecutivas por la misma arista: catorce fallos de login
-  idénticos son un hecho, no catorce paradas de cámara.
-- Tope de **120 pasos** (`story.MAX_STEPS`). Si trunca, recorta por gravedad pero
-  devuelve en orden temporal.
-- Sobre la demo, `jlopez` da 30 pasos y aísla 18 de los 38 nodos. Cubierto por
-  `tests/test_story.py`.
-
-### Modo automático
-
-- Botón **Auto** o tecla `t` (`web/js/ui/auto.js`, 186 líneas).
-- Recorre las entidades del incidente una tras otra y al terminar vuelve a empezar.
-  Pensado para dejarlo en una pantalla del SOC y para explicar un caso sin conducir.
-- El orden lo pone `construirCola()`: por la hora de **primera aparición**, no por
-  riesgo. Ir por riesgo enseñaría el desenlace antes que el principio.
-- Salta el contexto forense de apoyo y las entidades con menos de dos acciones.
-- Se para en cuanto alguien toca el lienzo.
-
-### Siete formas de colorear el mismo grafo
-
-- El color se asigna por una de estas siete dimensiones: **tipo de entidad**,
-  **papel**, **severidad**, **riesgo**, **origen del dato**, **táctica MITRE** y
-  **comunidad**.
-- Se cambia desde la barra superior o con `c`.
+- **Explorar** (force-directed libre), **Kill-chain** (el eje X pasa a ser la táctica
+  MITRE, de acceso inicial a impacto), **Cronología** (el eje X es el tiempo del primer
+  avistamiento) y **Replay** (nodos y aristas aparecen según ocurrieron, sin que el
+  layout se mueva, y cada arista suelta un destello en su momento exacto).
+- Las partículas que recorren las aristas son el volumen de eventos.
+- Color por tipo de entidad, papel, severidad, riesgo, origen del dato, táctica MITRE o
+  comunidad.
+- Detalle en [Views-and-Interaction](wiki/Views-and-Interaction.md).
 
 ### Interacción
 
@@ -180,49 +127,68 @@ El motor es `GET /api/graph/story?node=<id>` (`glamdring/graph/story.py`, 122 l�
 | clic | selecciona y enfoca la cámara |
 | ctrl + clic | añade a la selección múltiple, para comparar entidades |
 | doble clic | trae vecinos nuevos del servidor sin mover lo ya colocado |
-| clic derecho | menú contextual: pivotar, ocultar, fijar, copiar como IOC, buscar, seguir |
+| clic derecho | menú contextual: seguir, centrar la cámara, expandir vecinos, fijar, ocultar, copiar como IOC, copiar identificador, buscar |
 | arrastrar un nodo | lo ancla en su sitio |
+| `1` · `2` · `3` | explorar · kill-chain · cronología |
 | `s` · `t` | seguir a la entidad seleccionada · recorrido automático en bucle |
 | `espacio` · `f` | reproducir/pausar la cronología · encuadrar todo el grafo |
 | `c` · `/` | cambiar el modo de color · ir al buscador |
 | `a` · `r` · `?` | panel de administrador · informe · ayuda de atajos |
 
-El inspector de un nodo o una arista da sus métricas, su papel, sus tácticas MITRE,
-sus vecinos y los **logs originales del SIEM**, tal cual llegaron.
+El inspector de un nodo o una arista da sus métricas, su papel, sus tácticas MITRE, sus
+vecinos y los registros del SIEM que lo sustentan.
+
+### Seguir a una entidad
+
+- En la demo, sobre `jlopez`: de 38 nodos a **18** y **30 pasos**. Lo que sobra
+  desaparece, no se atenúa, y en cada paso aparece lo que acaba de ocurrir y nada de lo
+  que viene después (2 nodos visibles en el paso 1, 10 en el 15, los 18 en el 30).
+- Las frases no se redactan en el front: vienen de `report.narrative`, el mismo motor
+  que escribe la cronología del informe, así que el recorrido en pantalla y el informe
+  dicen literalmente lo mismo.
+- `GET /api/graph/story?node=<id>` devuelve en una sola llamada los actos en orden y el
+  subgrafo aislado, colapsa repeticiones consecutivas por la misma arista (catorce
+  fallos de login idénticos son un hecho, no catorce paradas de cámara) y topa en 120
+  pasos (`glamdring/graph/story.py`, `tests/test_story.py`).
+- Detalle en [Demo-Incident](wiki/Demo-Incident.md).
+
+### Modo automático
+
+- Recorre las entidades del incidente una tras otra y al terminar vuelve a empezar
+  (`web/js/ui/auto.js`).
+- El orden lo pone la hora de **primera aparición**, no el riesgo: ir por riesgo
+  enseñaría el desenlace antes que el principio.
+- Salta el contexto forense de apoyo y las entidades con menos de dos acciones, y se
+  para en cuanto alguien toca el lienzo.
 
 ### Panel de administrador
 
-Diez pestañas (`web/js/ui/admin.js`):
-
-- Siete de aspecto y comportamiento: **Tema, Render, Física, Etiquetas, Aristas,
-  Cámara, Interacción** (paleta, calidad de figuras, bloom, niebla, rejilla…).
-- **Ontología**: color, figura y visibilidad de cada tipo de entidad, con subida de
-  `.glb` propios.
-- **Reglas**: los pesos de la puntuación de riesgo, que deciden el orden en que el
-  analista mira las cosas y el tamaño de cada figura.
-- **Perfil**: importar, exportar y restablecer de fábrica.
-- Los controles **no están escritos a mano**: se generan del `spec` que manda el
-  servidor con el rango real de cada campo, así que añadir un ajuste es tocar
+- Diez pestañas: siete de aspecto y comportamiento (Tema, Render, Física, Etiquetas,
+  Aristas, Cámara, Interacción), **Ontología** (color, figura y visibilidad por tipo, con
+  subida de `.glb`), **Reglas** (los pesos del riesgo, que deciden el orden en que el
+  analista mira las cosas y el tamaño de cada figura) y **Perfil** (importar, exportar,
+  restablecer).
+- Los controles no están escritos a mano: se generan del `spec` que manda el servidor
+  con el rango real de cada campo, así que añadir un ajuste es tocar
   `glamdring/appearance.py`.
-- La configuración vive en `config/appearance.json` **en el servidor**: un único
-  perfil para todo el equipo. Detalle en [docs/APPEARANCE.md](docs/APPEARANCE.md).
+- La configuración vive en `config/appearance.json` **en el servidor**: un único perfil
+  para todo el equipo.
+- Detalle en [Admin-Panel](wiki/Admin-Panel.md) y [docs/APPEARANCE.md](docs/APPEARANCE.md).
 
 ### Informes automáticos
 
-Botón **Informe** o `r`.
-
 - **Determinista y sin modelo de lenguaje: la misma evidencia produce siempre el mismo
   texto**, y cada línea se puede rastrear hasta su log.
-- Contiene: resumen ejecutivo; cronología narrada en español (*«09:15 — jlopez ejecutó
-  powershell.exe en WKS-0421 con la línea de comandos ofuscada»*); cadena de ataque
-  MITRE con evidencias; tabla de entidades por riesgo; indicadores de compromiso;
-  acciones de contención recomendadas.
+- Contiene resumen ejecutivo, cronología narrada en español, cadena de ataque MITRE con
+  evidencias, tabla de entidades por riesgo, indicadores de compromiso y acciones de
+  contención. Una línea tal cual sale: «jlopez ejecutó powershell.exe en wks-0421,
+  lanzado por explorer.exe con la línea de comandos `powershell.exe -nop -w hidden -enc ...`».
 - Cinco formatos: **HTML autocontenido** (con la captura del grafo incrustada,
   imprimible a PDF con Ctrl+P), **Markdown** (para Jira, TheHive o el wiki),
   **JSON completo**, **STIX-lite** (indicadores para un TIP) y **lista plana de IOCs**
   lista para pegar en un firewall.
-- La lista de IOCs nunca incluye direcciones RFC1918: una lista de bloqueo perimetral
-  con la propia red dentro es, en el mejor de los casos, inútil.
+- La lista de IOCs excluye RFC1918.
+- Detalle en [Reports](wiki/Reports.md).
 
 ### Detección de ransomware y atribución
 
@@ -236,50 +202,44 @@ línea de comandos por tres vías:
 | Comportamiento | 13 firmas sobre la línea de comandos, independientes del nombre del fichero | `vssadmin delete shadows` |
 | Nota de rescate | el nombre de fichero característico de cada familia | `akira_readme.txt` |
 
-- Sobre los hallazgos calcula qué **etapas del despliegue** se han alcanzado (de
-  «acceso inicial» a «cifrado») y propone una **atribución ponderada**.
+- Sobre los hallazgos calcula qué **etapas del despliegue** se han alcanzado (de «acceso
+  inicial» a «cifrado») y propone una **atribución ponderada**.
+- Los 17 están listados con su repertorio en
+  [Los 17 grupos de ransomware reconocidos](#los-17-grupos-de-ransomware-reconocidos).
 - **La atribución es una hipótesis de trabajo, nunca un veredicto**: estas herramientas
-  las usan muchos grupos y también los administradores legítimos. El aviso va impreso
-  en todos los informes.
+  las usan muchos grupos y también los administradores legítimos. El aviso va impreso en
+  los informes narrativos (HTML, Markdown y JSON); STIX-lite y la lista plana de IOCs no
+  llevan sección de atribución y por tanto tampoco el aviso.
 
 ```powershell
-# Un incidente de ejemplo por cada grupo (17 ficheros en samples/apt/)
-python tools/make_apt_samples.py
+python tools/make_apt_samples.py    # escribe 17 incidentes de ejemplo en samples/apt/
+curl -F "file=@samples/apt/Akira.json" http://localhost:8000/api/ingest
 curl http://localhost:8000/api/threat
 ```
 
+![Cadena de ransomware](docs/diagrams/06-cadena-ransomware.svg)
+
 ### Rendimiento
 
-- **Cache del grafo construido.** `build_graph()` solo depende de los filtros de
-  evento (ventana, severidad, fuente, táctica, clase, texto); los de tipo de entidad,
-  tipo de relación, foco, saltos y tope actúan sobre el grafo ya construido, son
-  baratos y son los que más se tocan en la interfaz.
-- Se cachea por clave (versión del almacén + filtros de evento), LRU de **6 entradas**
-  (`_CACHE_MAX`, `glamdring/graph/query.py`). `EventStore` lleva contador de versión
-  que solo sube cuando entra algo de verdad: una reingesta de puros duplicados no
-  invalida la cache. Cubierto por `tests/test_cache.py`.
-- Medido: `/api/graph` de **9,5 s a 0,11 s**, un chip de filtro a **0,07 s**,
-  `/api/graph/story` a **0,03 s**.
-- **El resaltado ya no reconstruye la escena.** `refresh()` de 3d-force-graph no
-  repinta: tira todos los objetos 3D y vuelve a llamar a `nodeThreeObject` por nodo
-  (138 ms de hilo bloqueado con 228 nodos y 692 aristas, y se llamaba al pasar el
-  ratón, al seleccionar, al deseleccionar y en cada fotograma del replay).
-- Ahora los materiales se clonan una vez por nodo (`userData.gdMaterials`) y las
-  etiquetas se crean perezosamente: resaltar **de 138 ms a 0,43 ms**, y el peor
-  fotograma del replay **de 253 ms a 38 ms**.
-
----
-
+- `/api/graph`: **9,5 s → 0,11 s**, con cache LRU de 6 entradas (`_CACHE_MAX`,
+  `glamdring/graph/query.py`) por versión del almacén y filtros de evento.
+- Chip de filtro: **0,07 s**; `/api/graph/story`: **0,03 s**. Los filtros de tipo de
+  entidad, de relación, foco, saltos y tope actúan sobre el grafo ya construido.
+- `EventStore` sube de versión solo cuando entra algo de verdad: una reingesta de puros
+  duplicados no invalida la cache (`tests/test_cache.py`).
+- Resaltar: **138 ms → 0,43 ms**, clonando los materiales una vez por nodo
+  (`userData.gdMaterials`) en vez de dejar que `refresh()` tire todos los objetos 3D y
+  vuelva a llamar a `nodeThreeObject`.
+- Peor fotograma del replay: **253 ms → 38 ms**.
+- Las dos últimas son medidas de navegador sobre 228 nodos y 692 aristas; no hay banco
+  de pruebas en el repo que las reproduzca, así que valen como orden de magnitud.
 ## Consultar el SIEM en vivo
 
 Copia `.env.example` a `.env` y rellena solo el SIEM que uses. Luego, botón **SIEM**:
 
-| Conector | Autenticación | Ejemplo |
-|---|---|---|
-| Splunk | token de servicio (`Authorization: Splunk <token>`) | `index=wineventlog EventCode IN (4624,4625,4688)` |
-| Sentinel | Service Principal con *Log Analytics Reader* | `DeviceProcessEvents \| where Timestamp > ago(24h)` |
-| QRadar | token en la cabecera `SEC` | `SELECT starttime, sourceip, destinationip, username, qidname(qid), magnitude, categoryname(category) FROM events LAST 24 HOURS` |
-
+- Splunk: `index=wineventlog EventCode IN (4624,4625,4688)`
+- Sentinel: `DeviceProcessEvents | where Timestamp > ago(24h)`
+- QRadar: `SELECT starttime, sourceip, destinationip, username, qidname(qid), magnitude, categoryname(category) FROM events LAST 24 HOURS`
 - En AQL, `categoryname` y `qidname` son **funciones** sobre las columnas numéricas
   `category` y `qid`: con `SELECT *` llegan los enteros crudos y el normalizador de
   QRadar, que lee esos dos campos, clasifica peor.
@@ -290,23 +250,30 @@ Copia `.env.example` a `.env` y rellena solo el SIEM que uses. Luego, botón **S
 
 ## Arquitectura
 
+No instala agentes, no responde a incidentes y no sustituye al SIEM: lee lo que el SIEM
+ya recogió y lo pinta.
+
+![Arquitectura de red](docs/diagrams/01-arquitectura-red.svg)
+
 ```
 CONNECTORS  →  NORMALIZE  →  EXTRACT/BUILD  →  ENRICH  →  QUERY/API  →  RENDER
 SPL/KQL/AQL    OCSF-lite     grafo tipado     roles     filtros      three.js
 ```
 
-- Seis etapas desacopladas con contratos explícitos.
-- El frontend solo conoce `GraphDoc` (JSON): da igual si viene de Splunk en vivo, de
-  un CEF pegado a mano o de un fixture de test.
+- Cada etapa entrega un tipo: `dict` crudo → evento OCSF-lite → `GraphDoc`.
+- El frontend solo conoce `GraphDoc` (JSON): da igual si viene de Splunk en vivo, de un
+  CEF pegado a mano o de un fixture de test.
 - Diseño en [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); entidades y relaciones en
   [docs/ONTOLOGY.md](docs/ONTOLOGY.md).
+
+![Arquitectura de datos](docs/diagrams/02-arquitectura-datos.svg)
 
 ---
 
 ## Sin build de JavaScript
 
-- Módulos ES con un `importmap`, servidos por el propio FastAPI. Sin `npm install`,
-  sin empaquetador, sin paso de compilación.
+Módulos ES con un `importmap`, servidos por el propio FastAPI. Las librerías van
+vendorizadas en `web/js/vendor/`; para volver a bajarlas, `python tools/fetch_vendor.py`.
 
 | Librería | Versión | Por qué esa |
 |---|---|---|
@@ -318,8 +285,10 @@ SPL/KQL/AQL    OCSF-lite     grafo tipado     roles     filtros      three.js
 - Hay dos copias de three en la página (la nuestra y la interna del bundle). Con
   revisiones distintas el post-procesado revienta con errores de shader; lo comprueba
   `tests/test_web.py::test_three_revisions_match`.
-- Los iconos de calidad baja se dibujan con `CanvasTexture`: cero ficheros de assets,
-  nítidos a cualquier zoom, y funcionan en un portátil sin red.
+- Los iconos de calidad baja se dibujan con `CanvasTexture`: cero ficheros de assets y
+  nítidos a cualquier zoom.
+
+![Arquitectura visual](docs/diagrams/03-arquitectura-visual.svg)
 
 ---
 
@@ -330,27 +299,25 @@ pip install -r requirements-dev.txt
 pytest -q
 ```
 
-- **295 tests** recolectados. Ninguno necesita red ni credenciales: todo corre contra
-  `samples/`.
+- ~300 tests, sin red ni credenciales.
 - Además de la lógica, se comprueba la integridad del frontend: que todo import y todo
-  asset resuelva, que los `id` que busca el JavaScript existan en el HTML, y que las
-  dos copias de three coincidan.
+  asset resuelva y que los `id` que busca el JavaScript existan en el HTML.
 
 ---
 
 ## Documentación
 
 > **La documentación completa está en el directorio [`wiki/`](wiki/) de este repositorio.**
-> Empieza por [Getting Started](wiki/Getting-Started.md)
-> o por el [recorrido guiado del incidente de ejemplo](wiki/Demo-Incident.md).
+> Empieza por [Getting Started](wiki/Getting-Started.md) o por el
+> [recorrido guiado del incidente de ejemplo](wiki/Demo-Incident.md).
 
 | Dónde | Qué hay |
 |---|---|
-| `wiki/` (16 páginas) | manual de uso: Getting-Started, Demo-Incident, Views-and-Interaction, Visual-Language, Reports, Admin-Panel, Normalizers, Connectors, Ontology, Architecture, API-Reference, Extending, Troubleshooting |
+| `wiki/` (14 páginas, más `_Sidebar` y `_Footer`) | manual de uso: Home, Getting-Started, Demo-Incident, Views-and-Interaction, Visual-Language, Reports, Admin-Panel, Normalizers, Connectors, Ontology, Architecture, API-Reference, Extending, Troubleshooting |
 | `docs/` | diseño interno: `ARCHITECTURE.md`, `ONTOLOGY.md`, `APPEARANCE.md`, `CONNECTORS.md`, `PENDIENTE.md` |
-| `docs/diagrams/` | los seis SVG de «De un vistazo» |
+| `docs/diagrams/` | los ocho SVG del documento: 01-07 hechos a mano, 08 generado por `tools/make_group_table.py` |
 
-- La pestaña Wiki de GitHub **está vacía**: las 16 páginas no se han podido empujar
+- La pestaña Wiki de GitHub **está vacía**: las 14 páginas no se han podido empujar
   todavía (`docs/PENDIENTE.md`). Los enlaces de arriba apuntan al repo, que sí existe.
 
 ---
@@ -360,16 +327,15 @@ pytest -q
 - Los secretos solo viajan por variables de entorno. `.env` está en `.gitignore`.
 - `/api/health` informa de qué conectores hay configurados, **nunca con qué**.
 - Los campos tipo `password`, `token`, `api_key` o `authorization` se tachan del log
-  crudo antes de guardarlo: el inspector enseña el registro entero, y los logs de
-  autenticación a veces arrastran credenciales.
+  crudo antes de guardarlo: los logs de autenticación a veces arrastran credenciales.
 - Todo lo que entra al perfil visual se sanea clave a clave contra un `spec`: lo
   desconocido se descarta y lo fuera de rango se recorta.
 - Los `.glb` que se suben se validan por la **cabecera** del fichero, no por la
   extensión: acaban sirviéndose como estáticos al navegador de todo el equipo.
 - La lectura de rutas del disco del servidor está desactivada por defecto
   (`GLAMDRING_ALLOW_FILE_PATHS=0`).
-- No hay autenticación de usuarios. Pensado para correr en local o detrás de un
-  proxy que la ponga.
+- No hay autenticación de usuarios. Pensado para correr en local o detrás de un proxy
+  que la ponga.
 
 ---
 
@@ -378,15 +344,14 @@ pytest -q
 - **Un proceso, una investigación.** El almacén es en memoria (`glamdring/store.py`).
   Es lo correcto para un analista triando en su portátil; para multiusuario hay que
   sustituir esa clase por un backend con clave de sesión.
-- Por encima de ~350 nodos la calidad de las figuras baja sola, y por encima de
-  ~1.500 el backend recorta a los de mayor riesgo y lo avisa en la barra de estado.
-- El scoring de riesgo y la deducción del papel son heurísticas de priorización, no
-  veredictos.
-- La clase de equipo (puesto / servidor / router / cortafuegos) se deduce del
-  hostname. Acierta en un parque con nomenclatura corporativa; en uno sin ella, hay
-  que corregirla desde el panel.
-- Las consultas a Splunk usan modo export; para búsquedas de horas haría falta pasar
-  a modo job con polling.
+- Por encima de ~350 nodos la calidad de las figuras baja sola, y por encima de ~1.500
+  el backend recorta a los de mayor riesgo y lo avisa en la barra de estado.
+- Riesgo, papel y atribución: heurísticas de priorización (ver arriba).
+- La clase de equipo (puesto / servidor / router / cortafuegos) se deduce del hostname.
+  Acierta en un parque con nomenclatura corporativa; en uno sin ella, hay que corregirla
+  desde el panel.
+- Las consultas a Splunk usan modo export; para búsquedas de horas haría falta pasar a
+  modo job con polling.
 - **STIX-lite no es STIX 2.1.** Los objetos tienen la forma correcta y sirven para
   alimentar un TIP, pero no es un bundle completo ni pretende serlo.
 - La valoración de amenaza solo sale por `GET /api/threat` y en los informes: no hay
@@ -396,61 +361,12 @@ pytest -q
 
 ## Licencia y datos de terceros
 
-- **No hay fichero `LICENSE` en el repo todavía**, así que el código no lleva licencia
-  de uso explícita.
+- **No hay fichero `LICENSE` en el repo todavía**, así que el código no lleva licencia de
+  uso explícita.
 - Los datos de amenaza se vendorizan con `python tools/fetch_threat_intel.py` desde
   [Ransomware Tool Matrix](https://github.com/BushidoUK/Ransomware-Tool-Matrix)
   (BushidoUK, **CC BY 4.0**) y [ransomware.live](https://ransomware.live)
   (Julien Mousqueton), cada uno bajo su propia licencia.
-
----
-
-## De un vistazo
-
-Seis SVG hechos a mano en [docs/diagrams/](docs/diagrams/): se leen en cualquier
-navegador, se editan con un editor de texto y no dependen de ninguna herramienta.
-
-### 1. Dónde encaja en la red
-
-No instala agentes, no responde a incidentes y no sustituye al SIEM: lee lo que el
-SIEM ya recogió y lo pinta.
-
-![Arquitectura de red](docs/diagrams/01-arquitectura-red.svg)
-
-### 2. Qué le pasa a un log desde que entra
-
-Seis etapas, cada una con su contrato de entrada y salida. Abajo, el mismo registro
-de Splunk atravesándolas todas.
-
-![Arquitectura de datos](docs/diagrams/02-arquitectura-datos.svg)
-
-### 3. Cómo se dibuja el grafo
-
-Módulos ES con `importmap` y three.js r168, con la revisión fijada para que coincida
-con la que trae `3d-force-graph`.
-
-![Arquitectura visual](docs/diagrams/03-arquitectura-visual.svg)
-
-### 4. Lo que aporta el perímetro
-
-Un log de cortafuegos no dice qué proceso abrió la conexión, pero dice cuándo, cuánto
-y hacia dónde. Cruzado con el endpoint, cierra el caso.
-
-![Perímetro y cortafuegos](docs/diagrams/04-perimetro-firewall.svg)
-
-### 5. Por qué hacen falta los cuatro SIEM
-
-Cada uno ve bien una parte y mal las demás, y cada uno llama de una manera distinta a
-la misma persona. La canonización es lo que los une.
-
-![Los cuatro SIEM y la unificación](docs/diagrams/05-siems-unificacion.svg)
-
-### 6. Cómo se detecta un despliegue de ransomware
-
-Ocho etapas. Cuando se ve la octava ya es tarde, así que lo que se busca es el rastro
-de las siete anteriores.
-
-![Cadena de ransomware](docs/diagrams/06-cadena-ransomware.svg)
 
 ---
 
@@ -470,14 +386,12 @@ hay dos y nadie los cruza**.
 
 `●●●` fuente principal · `●●○` aporta, con lagunas · `●○○` testimonial o ausente
 
-| SIEM | Consulta | Su punto fuerte | Su punto ciego |
-|---|---|---|---|
-| **Splunk** | SPL, REST `:8089` | Línea de comandos completa, árbol de procesos, Sysmon y 4688 | Identidad cloud |
-| **Sentinel / Defender** | KQL, Log Analytics | Inicios de sesión, phishing entregado, alertas del EDR ya correladas | Todo lo que no es Microsoft |
-| **IBM QRadar** | AQL, Ariel | Quién habló con quién y cuántos bytes; ofensas ya agrupadas | Identifica por IP, no por nombre |
-| **CEF / LEEF / syslog** | fichero o syslog crudo | El comodín: cortafuegos, proxy, antivirus, VPN, cabinas | Cada fabricante lo estira a su gusto |
-
-### Por qué esto importa
+| SIEM | Su punto fuerte | Su punto ciego |
+|---|---|---|
+| **Splunk** | Línea de comandos completa, árbol de procesos, Sysmon y 4688 | Identidad cloud |
+| **Sentinel / Defender** | Inicios de sesión, phishing entregado, alertas del EDR ya correladas | Todo lo que no es Microsoft |
+| **IBM QRadar** | Quién habló con quién y cuántos bytes; ofensas ya agrupadas | Identifica por IP, no por nombre |
+| **CEF / LEEF / syslog** | El comodín: cortafuegos, proxy, antivirus, VPN, cabinas | Cada fabricante lo estira a su gusto |
 
 Dos SIEM no son el doble de visibilidad, son **dos mitades que nadie junta**. Pasa en
 dos escenarios muy corrientes:
@@ -487,8 +401,6 @@ dos escenarios muy corrientes:
 - **Dos empresas que se fusionan.** Datos parecidos, herramientas distintas y una
   migración que dura años. Mientras tanto hay que investigar incidentes que atraviesan
   las dos redes.
-
-GLAMDRING no sustituye a ninguno: los lee y los cose por las entidades comunes.
 
 | Solo el SIEM A (Splunk) | Solo el SIEM B (QRadar) | Cosidos por equipo y hora |
 |---|---|---|
@@ -502,6 +414,11 @@ Lo que lo hace posible:
 - **La identidad se unifica.** `CORP\jlopez`, `jlopez@corp.com` y `jlopez` son un nodo,
   no tres. Y `10.4.1.5` se funde en `srv-dc01`.
 - **Cada arista recuerda su origen**, así que siempre se vuelve al log del SIEM que lo tiene.
+
+Un log de cortafuegos no dice qué proceso abrió la conexión, pero dice cuándo, cuánto y
+hacia dónde. Cruzado con el endpoint, cierra el caso:
+
+![Perímetro y cortafuegos](docs/diagrams/04-perimetro-firewall.svg)
 
 ---
 
@@ -534,14 +451,13 @@ Ordenados por tamaño del repertorio. Las ocho categorías van en orden de intru
 | **Yurei** | 9 | 1 | 2 | — | 4 | — | — | — | 2 | — |
 | **SafePay** | 8 | 1 | 1 | — | — | — | 3 | — | 3 | `readme_safepay.txt` |
 
-Cómo leer la tabla:
-
 - **El perfil pesa más que el total.** ScatteredSpider tiene 26 herramientas de control
-  remoto y 17 de red: entra y se queda. INC Ransom tiene 5 de 9 en exfiltración: viene
-  a llevarse datos.
+  remoto y 17 de red: entra y se queda. INC Ransom tiene 5 de 9 en exfiltración: viene a
+  llevarse datos.
 - **La nota que distingue** es la única que no comparte con ningún otro grupo del
   catálogo. Los que ponen «—» solo usan nombres genéricos como `README.txt`, que no
-  identifican nada: el motor los pondera con 0,1 frente al 10 de una nota propia.
+  identifican nada: el motor los pondera con 0,1 frente al 10 de una nota propia
+  (`glamdring/threat/attribution.py:88` y `:93`).
 - **Los emblemas del esquema son monogramas, no logotipos.** Estos grupos no tienen una
   marca redistribuible, y ponerles una inventada sería afirmar algo falso.
 
@@ -556,5 +472,4 @@ python tools/fetch_threat_intel.py   # actualiza el catálogo desde las fuentes
 python tools/make_group_table.py     # regenera docs/diagrams/08-grupos-ransomware.svg
 ```
 
-Datos: [Ransomware Tool Matrix](https://github.com/BushidoUK/Ransomware-Tool-Matrix)
-(BushidoUK, CC BY 4.0) y [ransomware.live](https://ransomware.live) (Julien Mousqueton).
+---

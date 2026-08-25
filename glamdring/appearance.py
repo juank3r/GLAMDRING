@@ -150,7 +150,12 @@ def _default_camera() -> Dict[str, Any]:
 def _default_interaction() -> Dict[str, Any]:
     return {
         "dimOnSelect": True,
-        "dimOpacity": 0.07,
+        # 0.18 y no 0.07. Atenuar sirve para que destaque lo seleccionado, no
+        # para borrar lo demas: al 7% sobre un fondo casi negro un nodo queda en
+        # luminancia ~22, que en una sala con luz no se ve. Y entonces al
+        # seleccionar algo la pantalla parece apagarse, que es justo lo que se
+        # queria evitar: el contexto es lo que dice DONDE esta lo importante.
+        "dimOpacity": 0.18,
         "hoverHighlight": True,
         "fixOnDrag": True,
         "expandOnDoubleClick": True,
