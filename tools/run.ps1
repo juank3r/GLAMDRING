@@ -35,9 +35,27 @@ Write-Host "Cerrando lo que hubiera..." -ForegroundColor Cyan
 # Si el puerto sigue ocupado por algo que no es nuestro, mejor avisar que pelear.
 $ocupa = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
 if ($ocupa) {
+    $duenyo = $ocupa[0].OwningProcess
+    # Buscar el primer puerto libre a partir del pedido, para no dejar al que
+    # ejecuta esto buscandolo a mano. Es el momento en que mas estorba tener que
+    # ponerse a investigar.
+    $libre = $null
+    foreach ($p in ($Port + 1)..($Port + 20)) {
+        if (-not (Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue)) {
+            $libre = $p; break
+        }
+    }
+
     Write-Host ""
-    Write-Host "El puerto $Port sigue ocupado por el PID $($ocupa[0].OwningProcess)." -ForegroundColor Red
-    Write-Host "Cierralo a mano, o elige otro con -Port." -ForegroundColor Yellow
+    Write-Host "El puerto $Port sigue ocupado por el PID $duenyo." -ForegroundColor Red
+    Write-Host ""
+    Write-Host "Para liberarlo, en PowerShell COMO ADMINISTRADOR:" -ForegroundColor Yellow
+    Write-Host "    Stop-Process -Id $duenyo -Force" -ForegroundColor White
+    if ($libre) {
+        Write-Host ""
+        Write-Host "O para seguir ahora mismo en otro puerto:" -ForegroundColor Yellow
+        Write-Host "    powershell -ExecutionPolicy Bypass -File tools\run.ps1 -Port $libre" -ForegroundColor White
+    }
     exit 1
 }
 
