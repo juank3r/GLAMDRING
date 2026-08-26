@@ -23,12 +23,14 @@ from ..models import (
     CLASS_FINDING,
     CLASS_NETWORK,
     CLASS_PROCESS,
+    CLASS_REGISTRY,
     ActorRef,
     EmailRef,
     FileRef,
     HostRef,
     NormalizedEvent,
     ProcRef,
+    RegistryRef,
     make_uid,
 )
 from .base import (
@@ -60,26 +62,62 @@ def matches(record: Dict[str, Any]) -> bool:
 
 
 def _guess_table(record: Dict[str, Any]) -> str:
-    """Deduce la tabla por la huella de campos cuando no viene ``Type``."""
+    """Deduce la tabla por la huella de campos cuando no viene ``Type``.
+
+    EL ORDEN ES LO DELICADO AQUI. `RemoteIP` se comprobaba antes que
+    `LogonType`, y las tablas de logon de Defender traen LAS DOS COSAS: un
+    inicio de sesion de red lleva la IP desde la que se conecta el usuario. Con
+    ese orden, un logon al que le faltara `Type` -que es justo cuando se usa
+    esta funcion- se convertia en una conexion de red y perdia la cuenta que
+    inicio sesion, que es el dato del evento.
+
+    Ahora se mira primero lo que solo existe en una tabla. `LogonType` y
+    `AccountName` juntos no aparecen en DeviceNetworkEvents.
+    """
     if "AlertName" in record or "AlertSeverity" in record:
         return "SecurityAlert"
+    if "LogonType" in record or "AccountName" in record and "ActionType" in record \
+            and "logon" in str(record.get("ActionType") or "").lower():
+        return "DeviceLogonEvents"
+    if "RegistryKey" in record or "RegistryValueName" in record:
+        return "DeviceRegistryEvents"
     if "ProcessCommandLine" in record or "FolderPath" in record:
         return "DeviceProcessEvents"
-    if "RemoteUrl" in record or "RemoteIP" in record:
-        return "DeviceNetworkEvents"
     if "UserPrincipalName" in record and "ResultType" in record:
         return "SigninLogs"
     if "SenderFromAddress" in record or "RecipientEmailAddress" in record:
         return "EmailEvents"
     if "SHA256" in record and "FileName" in record:
         return "DeviceFileEvents"
-    if "LogonType" in record:
-        return "DeviceLogonEvents"
+    if "RemoteUrl" in record or "RemoteIP" in record:
+        return "DeviceNetworkEvents"
     return ""
+
+
+_MENSAJES_POR_TABLA = {
+    "SigninLogs": "Inicio de sesion en Entra ID",
+    "AADNonInteractiveUserSignInLogs": "Inicio de sesion no interactivo",
+    "DeviceLogonEvents": "Inicio de sesion en el equipo",
+    "EmailEvents": "Correo entregado",
+    "DeviceNetworkEvents": "Conexion de red",
+    "DeviceFileEvents": "Actividad de fichero",
+    "DeviceProcessEvents": "Creacion de proceso",
+    "DeviceRegistryEvents": "Cambio en el registro",
+    "IdentityLogonEvents": "Autenticacion de identidad",
+    "CloudAppEvents": "Actividad en aplicacion cloud",
+}
 
 
 def _base(record: Dict[str, Any], table: str, class_name: str, activity: str, severity: int) -> NormalizedEvent:
     device = canon_host(first(record, "DeviceName", "Computer", "HostName"))
+    # UN EVENTO SIN MENSAJE ES UN NODO QUE NO SE PUEDE INTERPRETAR. Varias
+    # tablas de Defender no traen AlertName ni ActionType -SigninLogs,
+    # DeviceLogonEvents, EmailEvents- y salian con el mensaje en blanco: en el
+    # inspector aparecia un evento sin una sola linea que dijera que era.
+    # Se cae al nombre de la tabla, que al menos lo situa.
+    mensaje = str(first(record, "AlertName", "Description", "ActionType", "Title") or "")[:400]
+    if not mensaje:
+        mensaje = _MENSAJES_POR_TABLA.get(table, table or "Evento de Microsoft")
     return NormalizedEvent(
         uid=make_uid("sentinel", record),
         time=parse_time(first(record, "TimeGenerated", "Timestamp", "EventTime")),
@@ -89,7 +127,7 @@ def _base(record: Dict[str, Any], table: str, class_name: str, activity: str, se
         activity=activity,
         severity=severity,
         status="unknown",
-        message=str(first(record, "AlertName", "Description", "ActionType", "Title") or "")[:400],
+        message=mensaje,
         device=HostRef(hostname=device) if device else None,
         raw=record,
     )
@@ -117,7 +155,7 @@ def _initiating_process(record: Dict[str, Any]) -> Optional[ProcRef]:
 
 
 def _device_process(record: Dict[str, Any]) -> NormalizedEvent:
-    event = _base(record, "DeviceProcessEvents", CLASS_PROCESS, "launch", 2)
+    event = _base(record, "DeviceProcessEvents", CLASS_PROCESS, "process_launch", 2)
     event.status = "success"
 
     name = first(record, "FileName", "ProcessName")
@@ -147,11 +185,10 @@ def _device_process(record: Dict[str, Any]) -> NormalizedEvent:
 
 
 def _device_network(record: Dict[str, Any]) -> NormalizedEvent:
-    event = _base(record, "DeviceNetworkEvents", CLASS_NETWORK, "connect", 2)
+    event = _base(record, "DeviceNetworkEvents", CLASS_NETWORK, "network_connect", 2)
     action = str(first(record, "ActionType") or "").lower()
+    # El desenlace va en status y solo ahi: 'blocked' salio del vocabulario.
     event.status = "failure" if "fail" in action or "block" in action else "success"
-    if "block" in action:
-        event.activity = "blocked"
 
     remote_ip = first(record, "RemoteIP")
     remote_url = first(record, "RemoteUrl")
@@ -186,8 +223,13 @@ def _device_network(record: Dict[str, Any]) -> NormalizedEvent:
 
 
 def _device_file(record: Dict[str, Any]) -> NormalizedEvent:
-    action = str(first(record, "ActionType") or "FileCreated")
-    activity = "delete" if "delete" in action.lower() else ("modify" if "modif" in action.lower() else "create")
+    action = str(first(record, "ActionType") or "FileCreated").lower()
+    if "delete" in action:
+        activity = "file_delete"
+    elif "modif" in action or "rename" in action:
+        activity = "file_modify"
+    else:
+        activity = "file_create"
     event = _base(record, "DeviceFileEvents", CLASS_FILE, activity, 2)
     event.status = "success"
     event.file = FileRef(
@@ -206,10 +248,22 @@ def _device_file(record: Dict[str, Any]) -> NormalizedEvent:
 
 def _device_logon(record: Dict[str, Any]) -> NormalizedEvent:
     action = str(first(record, "ActionType") or "").lower()
-    success = "success" in action or action == "logonsuccess"
-    event = _base(record, "DeviceLogonEvents", CLASS_AUTHENTICATION,
-                  "logon" if success else "logon_failed", 2 if success else 3)
-    event.status = "success" if success else "failure"
+
+    # TRES DESENLACES, NO DOS. Defender emite 'LogonSuccess', 'LogonFailed' y
+    # tambien 'LogonAttempted', que significa que vio el intento y no sabe como
+    # acabo. Antes cualquier cosa que no dijera "success" caia en el else y
+    # salia con status de FALLO, exactamente igual que un LogonFailed
+    # confirmado: la herramienta afirmaba un fallo de autenticacion que Defender
+    # no habia afirmado.
+    if "success" in action:
+        estado, severidad = "success", 2
+    elif "fail" in action:
+        estado, severidad = "failure", 3
+    else:
+        estado, severidad = "unknown", 2
+
+    event = _base(record, "DeviceLogonEvents", CLASS_AUTHENTICATION, "logon", severidad)
+    event.status = estado
     user = first(record, "AccountName", "AccountUpn")
     event.actor = ActorRef(user=str(user) if user else None,
                            domain=str(first(record, "AccountDomain") or "") or None)
@@ -218,10 +272,18 @@ def _device_logon(record: Dict[str, Any]) -> NormalizedEvent:
     if remote_ip or remote_device:
         event.src = HostRef(ip=str(remote_ip) if remote_ip and is_ip(str(remote_ip)) else None,
                             hostname=canon_host(remote_device) if remote_device else None)
+
+    # 'CachedRemoteInteractive' es un RDP con credenciales cacheadas: viene de
+    # otra maquina igual que un RemoteInteractive, y se quedaba fuera de la
+    # lista por no estar escrito exactamente asi.
     logon_type = str(first(record, "LogonType") or "").lower()
-    if success and logon_type in ("network", "remoteinteractive"):
+    remotos = ("network", "remoteinteractive", "cachedremoteinteractive",
+               "networkcleartext", "newcredentials")
+    if estado == "success" and logon_type in remotos:
         event.activity = "logon_remote"
-        event.mitre = techniques("T1021.001" if logon_type == "remoteinteractive" else "T1021.002")
+        event.severity = max(event.severity, 3)
+        event.mitre = techniques("T1021.001" if "remoteinteractive" in logon_type
+                                 else "T1021.002")
     return event
 
 
@@ -229,7 +291,7 @@ def _signin(record: Dict[str, Any]) -> NormalizedEvent:
     result = to_int(first(record, "ResultType"))
     success = result == 0
     event = _base(record, "SigninLogs", CLASS_AUTHENTICATION,
-                  "logon" if success else "logon_failed", 2 if success else 3)
+                  "logon", 2 if success else 3)
     event.status = "success" if success else "failure"
     upn = first(record, "UserPrincipalName", "UserDisplayName", "Identity")
     event.actor = ActorRef(user=str(upn) if upn else None)
@@ -245,11 +307,18 @@ def _signin(record: Dict[str, Any]) -> NormalizedEvent:
 
 
 def _email(record: Dict[str, Any]) -> NormalizedEvent:
-    event = _base(record, "EmailEvents", CLASS_EMAIL, "deliver", 3)
+    event = _base(record, "EmailEvents", CLASS_EMAIL, "email_deliver", 3)
     # Los dos campos a la vez: un correo con DeliveryAction=Delivered y
     # ThreatTypes=Phish es justo el caso peligroso, porque llego a la bandeja.
     verdict = " ".join(str(record.get(k) or "") for k in ("DeliveryAction", "ThreatTypes")).lower()
     event.status = "failure" if "block" in verdict else "success"
+    # 'Junked' y 'Replaced' son un TERCER desenlace: el correo llego, pero
+    # neutralizado. No es exito ni fallo, y meterlo en cualquiera de los dos
+    # cubos miente en un sentido o en el otro.
+    if "junk" in verdict or "replaced" in verdict:
+        event.activity = "email_quarantine"
+        event.status = "unknown"
+        event.severity = max(1, event.severity - 1)
     event.email = EmailRef(
         sender=str(first(record, "SenderFromAddress", "SenderMailFromAddress") or "") or None,
         recipient=str(first(record, "RecipientEmailAddress") or "") or None,
@@ -276,8 +345,13 @@ def _parse_entities(value: Any) -> List[Dict[str, Any]]:
 
 
 def _alert(record: Dict[str, Any]) -> NormalizedEvent:
+    # La tabla de verdad, no siempre 'SecurityAlert': un SecurityIncident se
+    # etiquetaba como si fuera una alerta suelta, y son cosas distintas -uno
+    # agrupa a los otros-. El origen es lo que el analista mira para saber de
+    # donde vino cada nodo.
     """SecurityAlert / SecurityIncident: la alerta y todo lo que toca."""
-    event = _base(record, "SecurityAlert", CLASS_FINDING, "alert",
+    tabla = str(record.get("Type") or record.get("TableName") or "SecurityAlert")
+    event = _base(record, tabla, CLASS_FINDING, "alert",
                   parse_severity(first(record, "AlertSeverity", "Severity"), scale_max=5))
     event.status = "unknown"
     event.message = str(first(record, "AlertName", "DisplayName", "Title") or "Alerta")[:400]
@@ -328,10 +402,175 @@ def _alert(record: Dict[str, Any]) -> NormalizedEvent:
     return event
 
 
-def _dns(record: Dict[str, Any]) -> NormalizedEvent:
-    event = _base(record, "DeviceEvents", CLASS_DNS, "query", 1)
-    event.domain = canon_domain(first(record, "RemoteUrl", "AdditionalFields"))
+# DeviceEvents es el cajon de sastre de Defender: ahi cae todo lo que no tiene
+# tabla propia. Estaba mapeada ENTERA a "consulta DNS con severidad 1", asi que
+# una deteccion de antivirus, un borrado del registro de auditoria o una
+# modificacion de token salian como una peticion de DNS informativa y se caian
+# de la cronologia del informe al primer filtro por severidad.
+#
+# La tabla no es un tipo de evento: lo que dice que paso es ActionType.
+_ACCIONES_DEVICE_EVENTS = {
+    "dnsqueryresponse": (CLASS_DNS, "dns_query", 2),
+    "antivirusdetection": (CLASS_FINDING, "malware_detect", 5),
+    "antivirusreport": (CLASS_FINDING, "malware_detect", 4),
+    "antivirusdetectionfailed": (CLASS_FINDING, "malware_detect", 5),
+    "securitylogcleared": (CLASS_FINDING, "log_clear", 5),
+    "auditpolicychanged": (CLASS_FINDING, "alert", 4),
+    "processprimarytokenmodified": (CLASS_PROCESS, "process_inject", 4),
+    "createremotethreadapicall": (CLASS_PROCESS, "process_inject", 4),
+    "readprocessmemoryapicall": (CLASS_PROCESS, "process_access", 4),
+    "openprocessapicall": (CLASS_PROCESS, "process_access", 3),
+    "shelllinkcreatefileevent": (CLASS_FILE, "file_create", 3),
+    "namedpipeevent": (CLASS_PROCESS, "process_launch", 2),
+    "servicesinstalled": (CLASS_REGISTRY, "registry_set", 4),
+    "scheduledtaskcreated": (CLASS_REGISTRY, "registry_set", 4),
+    "usbdrivemounted": (CLASS_FILE, "file_read", 3),
+    "powershellcommand": (CLASS_PROCESS, "process_launch", 3),
+}
+
+
+def _device_events(record: Dict[str, Any]) -> NormalizedEvent:
+    """La tabla cajon de sastre. Lo que paso lo dice ActionType, no la tabla."""
+    accion = str(first(record, "ActionType") or "").strip().lower()
+    clase, actividad, severidad = _ACCIONES_DEVICE_EVENTS.get(
+        accion, (CLASS_FINDING, "alert", 3))
+
+    event = _base(record, "DeviceEvents", clase, actividad, severidad)
+    event.status = "success"
     event.process = _initiating_process(record)
+    usuario = first(record, "InitiatingProcessAccountName", "AccountName")
+    if usuario:
+        event.actor = ActorRef(user=str(usuario))
+
+    if clase == CLASS_DNS:
+        event.domain = canon_domain(first(record, "RemoteUrl", "AdditionalFields"))
+    elif actividad == "malware_detect":
+        nombre = first(record, "FileName")
+        if nombre:
+            event.file = FileRef(
+                name=basename(nombre),
+                path=str(first(record, "FolderPath") or nombre),
+                sha256=str(first(record, "SHA256") or "").lower() or None,
+            )
+        # Una deteccion que no se pudo contener sigue siendo un fichero vivo.
+        if "failed" in accion:
+            event.status = "failure"
+    elif actividad == "log_clear":
+        event.message = event.message or "Se vacio el registro de auditoria"
+        event.mitre = techniques("T1070.001")
+    elif clase == CLASS_REGISTRY:
+        clave = first(record, "RegistryKey", "AdditionalFields")
+        event.registry = RegistryRef(key=str(clave) if clave else None,
+                                     value=str(first(record, "RegistryValueName") or "") or None,
+                                     data=str(first(record, "RegistryValueData") or "") or None)
+        if not event.registry.key:
+            # Sin la clave no hay nada que dibujar: se cuenta como alerta antes
+            # que emitir un evento de registro vacio.
+            event.class_name = CLASS_FINDING
+            event.activity = "alert"
+
+    # El mensaje NO puede quedarse vacio: un nodo sin texto en el inspector es
+    # un nodo que el analista no puede interpretar.
+    if not event.message:
+        event.message = accion or "Evento de dispositivo"
+    return event
+
+
+def _device_registry(record: Dict[str, Any]) -> NormalizedEvent:
+    """DeviceRegistryEvents: la persistencia por claves de arranque."""
+    accion = str(first(record, "ActionType") or "").lower()
+    borrado = "delete" in accion or "remove" in accion
+    event = _base(record, "DeviceRegistryEvents", CLASS_REGISTRY,
+                  "registry_delete" if borrado else "registry_set", 3)
+    event.status = "success"
+    clave = first(record, "RegistryKey", "PreviousRegistryKey")
+    event.registry = RegistryRef(
+        key=str(clave) if clave else None,
+        value=str(first(record, "RegistryValueName") or "") or None,
+        data=str(first(record, "RegistryValueData") or "") or None,
+    )
+    event.process = _initiating_process(record)
+    usuario = first(record, "InitiatingProcessAccountName")
+    if usuario:
+        event.actor = ActorRef(user=str(usuario))
+    bajo = str(clave or "").lower()
+    if "currentversion\\run" in bajo or "currentcontrolset\\services" in bajo:
+        event.severity = max(event.severity, 4)
+        event.mitre = techniques("T1547.001")
+    if not event.message:
+        event.message = accion or "Cambio en el registro"
+    return event
+
+
+def _image_load(record: Dict[str, Any]) -> NormalizedEvent:
+    """DeviceImageLoadEvents: carga de DLL."""
+    event = _base(record, "DeviceImageLoadEvents", CLASS_PROCESS, "module_load", 1)
+    event.status = "success"
+    event.process = _initiating_process(record)
+    nombre = first(record, "FileName")
+    if nombre:
+        event.file = FileRef(name=basename(nombre),
+                             path=str(first(record, "FolderPath") or nombre),
+                             sha256=str(first(record, "SHA256") or "").lower() or None)
+    if not event.message:
+        event.message = f"Carga de {basename(nombre) or 'modulo'}"
+    return event
+
+
+def _identity_logon(record: Dict[str, Any]) -> NormalizedEvent:
+    """IdentityLogonEvents: autenticacion vista desde Defender for Identity."""
+    accion = str(first(record, "ActionType") or "").lower()
+    correcto = "success" in accion
+    event = _base(record, "IdentityLogonEvents", CLASS_AUTHENTICATION,
+                  "auth_ticket" if "kerberos" in str(first(record, "Protocol") or "").lower()
+                  else "logon", 2 if correcto else 3)
+    event.status = "success" if correcto else ("failure" if "fail" in accion else "unknown")
+    usuario = first(record, "AccountName", "AccountUpn")
+    if usuario:
+        event.actor = ActorRef(user=str(usuario),
+                               domain=str(first(record, "AccountDomain") or "") or None)
+    ip = first(record, "IPAddress", "DeviceName")
+    if ip and is_ip(str(ip)):
+        event.src = HostRef(ip=str(ip))
+    if not event.message:
+        event.message = accion or "Autenticacion de identidad"
+    return event
+
+
+def _cloud_app(record: Dict[str, Any]) -> NormalizedEvent:
+    """CloudAppEvents: lo que se hace dentro de una aplicacion cloud.
+
+    Es la tabla que mas se parece a lo que traeran Netskope y Zscaler, asi que
+    ya usa el vocabulario de la fase 3: subir, descargar y compartir.
+    """
+    accion = str(first(record, "ActionType") or "").lower()
+    if "upload" in accion:
+        clase, actividad, severidad = CLASS_FILE, "file_upload", 3
+    elif "download" in accion:
+        clase, actividad, severidad = CLASS_FILE, "file_download", 2
+    elif "share" in accion or "anonymouslink" in accion:
+        clase, actividad, severidad = CLASS_FILE, "file_share", 4
+    elif "mailitemsaccessed" in accion:
+        clase, actividad, severidad = CLASS_EMAIL, "email_access", 4
+    else:
+        clase, actividad, severidad = CLASS_FINDING, "alert", 2
+
+    event = _base(record, "CloudAppEvents", clase, actividad, severidad)
+    event.status = "success"
+    app = first(record, "Application", "AppName")
+    if app:
+        event.app = str(app)
+    usuario = first(record, "AccountDisplayName", "AccountId", "UserPrincipalName")
+    if usuario:
+        event.actor = ActorRef(user=str(usuario))
+    nombre = first(record, "ObjectName", "FileName")
+    if nombre and clase == CLASS_FILE:
+        event.file = FileRef(name=basename(nombre), path=str(nombre))
+    ip = first(record, "IPAddress")
+    if ip and is_ip(str(ip)):
+        event.src = HostRef(ip=str(ip))
+    if not event.message:
+        event.message = accion or "Actividad en aplicacion cloud"
     return event
 
 
@@ -345,7 +584,17 @@ _TABLES = {
     "EmailEvents": _email,
     "SecurityAlert": _alert,
     "SecurityIncident": _alert,
-    "DeviceEvents": _dns,
+    "DeviceEvents": _device_events,
+    # Tablas que matches() ya reclamaba y no tenian handler: acababan devolviendo
+    # None, se las quedaba el normalizador generico y salian como "alerta con
+    # status de exito", sin mensaje y sin equipo. Seis tablas de Defender
+    # entrando al grafo como ruido indistinguible.
+    "DeviceRegistryEvents": _device_registry,
+    "DeviceImageLoadEvents": _image_load,
+    "IdentityLogonEvents": _identity_logon,
+    "IdentityDirectoryEvents": _identity_logon,
+    "CloudAppEvents": _cloud_app,
+    "OfficeActivity": _cloud_app,
 }
 
 
