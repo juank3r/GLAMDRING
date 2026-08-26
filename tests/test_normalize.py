@@ -311,12 +311,29 @@ def test_cef_sample_normalizes(cef_records):
     assert len(events) == len(cef_records), "el generico no debe descartar nada"
     assert all(e.source == "generic" for e in events)
 
-    blocked = [e for e in events if e.activity == "blocked"]
-    assert blocked, "act=blocked / act=deny deben marcarse como bloqueo"
+    # 'blocked' salio del vocabulario: un bloqueo es una conexion con status de
+    # fallo. Este test exigia la actividad, que era el mismo dato en dos sitios;
+    # medido antes de quitarla, colapsarla dejaba nodos, aristas y frase
+    # identicos en los tres eventos que la llevaban.
+    bloqueos = [e for e in events
+                if e.class_name == CLASS_NETWORK and e.status == "failure"]
+    assert bloqueos, "act=blocked / act=deny siguen siendo un fallo"
+    assert all(e.activity == "network_connect" for e in bloqueos)
+    assert "blocked" not in {e.activity for e in events}
 
     ssh_failures = [e for e in events
                     if e.class_name == CLASS_AUTHENTICATION and e.status == "failure"]
     assert len(ssh_failures) >= 2
+    # Y con el usuario y la IP SACADOS DE LA FRASE. Antes se quedaban dentro de
+    # la cadena del mensaje y el evento llegaba al grafo sin nadie y sin origen:
+    # una fuerza bruta SSH no dibujaba una sola arista.
+    assert all(e.actor and e.actor.user for e in ssh_failures)
+    assert all(e.src and e.src.ip == "10.4.2.11" for e in ssh_failures)
+
+    # El acceso que SI entra viene de otra maquina: es un logon remoto, y esa
+    # diferencia es la que dibuja la arista de movimiento lateral.
+    remotos = [e for e in events if e.activity == "logon_remote"]
+    assert remotos and remotos[0].actor.user == "jlopez"
 
 
 # ------------------------------------------------------------------- conjunto

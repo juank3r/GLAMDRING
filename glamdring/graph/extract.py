@@ -242,6 +242,36 @@ def _add_file(collector: _Collector, event: NormalizedEvent) -> Tuple[Optional[s
     return file_key, hash_key
 
 
+def _add_hash(collector: _Collector, event: NormalizedEvent) -> Optional[str]:
+    """Solo el hash, sin nodo de fichero."""
+    if not event.file:
+        return None
+    digest = event.file.sha256 or event.file.md5
+    if not digest:
+        return None
+    return collector.add("hash", str(digest).lower(),
+                         label=f"{str(digest)[:12]}...",
+                         algo="sha256" if event.file.sha256 else "md5",
+                         full=str(digest).lower())
+
+
+def _fichero_es_el_ejecutable(event: NormalizedEvent) -> bool:
+    """True si ``event.file`` es la imagen del propio proceso.
+
+    En un Sysmon 1 el bloque Hashes es el hash del binario que arranca, asi que
+    el normalizador rellena ``file`` con el mismo Image. Crear ademas un nodo
+    'file' para eso duplica el proceso: sale
+    'file:c:\\windows\\...\\powershell.exe' al lado de
+    'process:wks-0421|c:\\windows\\...\\powershell.exe', y el de fichero se
+    quedaba con CERO aristas porque solo se enlazaba el hash. Un nodo suelto en
+    el grafo 3D es ruido.
+    """
+    if not (event.file and event.process):
+        return False
+    return (canon_path(event.file.path or event.file.name) ==
+            canon_path(event.process.path or event.process.name))
+
+
 def _add_app(collector: _Collector, event: NormalizedEvent) -> Optional[str]:
     """La aplicacion cloud contra la que se actua (Office 365, Mega, Dropbox)."""
     if not event.app:
@@ -317,7 +347,13 @@ def _process_activity(collector: _Collector, event: NormalizedEvent) -> None:
     host_key = _anchor(collector, event)
     user_key = _add_user(collector, event)
     process_key = _add_process(collector, event, host_key)
-    file_key, hash_key = _add_file(collector, event)
+    # Si el fichero del evento es el binario del propio proceso, se toma solo su
+    # hash: crear ademas un nodo 'file' duplicaria el proceso y ese nodo se
+    # quedaba sin ninguna arista.
+    if _fichero_es_el_ejecutable(event):
+        file_key, hash_key = None, _add_hash(collector, event)
+    else:
+        file_key, hash_key = _add_file(collector, event)
 
     # Inyeccion y acceso a handle son los dos unicos hechos con DOS procesos en
     # el mismo evento: quien inyecta y en quien. Sin el segundo nodo, un volcado
@@ -350,6 +386,11 @@ def _process_activity(collector: _Collector, event: NormalizedEvent) -> None:
         collector.link(user_key, host_key, "authenticated")
     if hash_key and process_key:
         collector.link(process_key, hash_key, "has_hash")
+    # Un fichero distinto del ejecutable (el que el proceso solto) si es otra
+    # cosa y se enlaza en vez de dejarlo colgando.
+    if file_key:
+        collector.link(process_key or user_key or host_key, file_key, "wrote")
+        collector.link(file_key, host_key, "stored_on")
 
 
 def _network_activity(collector: _Collector, event: NormalizedEvent) -> None:
