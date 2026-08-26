@@ -45,7 +45,14 @@ def test_ontology_is_served(client):
 def test_connectors_listed(client):
     payload = client.get("/api/connectors").json()
     names = {c["name"] for c in payload["connectors"]}
-    assert names == {"splunk", "sentinel", "qradar", "files"}
+    # La lista se compara con el REGISTRO, no con una copia escrita a mano:
+    # clavarla aqui obliga a tocar el test cada vez que se anade una fuente, y
+    # eso no es un fallo. Lo que si importa es que la API publique todo lo que
+    # hay registrado y nada mas.
+    from glamdring.connectors import _FACTORIES
+    assert names == set(_FACTORIES)
+    # Y las cuatro de siempre tienen que seguir estando.
+    assert {"splunk", "sentinel", "qradar", "files"} <= names
     # El conector de ficheros siempre esta disponible.
     files = [c for c in payload["connectors"] if c["name"] == "files"][0]
     assert files["configured"] is True

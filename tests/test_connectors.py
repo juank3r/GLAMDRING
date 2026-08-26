@@ -493,11 +493,17 @@ async def test_files_ping_comprueba_de_verdad():
 # ------------------------------------------------------------------ registro
 
 @pytest.mark.asyncio
-async def test_ping_all_devuelve_los_cuatro_y_no_revienta():
-    """Un SIEM caido no puede tumbar el semaforo de los demas."""
+async def test_ping_all_los_comprueba_todos_y_no_revienta():
+    """Un SIEM caido no puede tumbar el semaforo de los demas.
+
+    La lista sale del registro y no de una copia a mano: si se anade una fuente
+    y su ping revienta, este test tiene que enterarse solo.
+    """
+    from glamdring.connectors import _FACTORIES
+
     reset_cache()
     salida = await ping_all()
-    assert set(salida) == {"splunk", "sentinel", "qradar", "files"}
+    assert set(salida) == set(_FACTORIES)
     assert salida["files"]["ok"] is True
     for nombre, estado in salida.items():
         assert "probed" in estado, f"{nombre} no dice si se ha comprobado"

@@ -17,9 +17,11 @@ from typing import Dict, List
 
 from .base import Connector, ConnectorError, FetchResult, Health, HttpConnector
 from .files import FileConnector
+from .netskope import NetskopeConnector
 from .qradar import QRadarConnector
 from .sentinel import SentinelConnector
 from .splunk import SplunkConnector
+from .zscaler_zpa import ZscalerZpaConnector
 
 log = logging.getLogger("glamdring.connectors")
 
@@ -27,6 +29,10 @@ _FACTORIES = {
     "splunk": SplunkConnector,
     "sentinel": SentinelConnector,
     "qradar": QRadarConnector,
+    "netskope": NetskopeConnector,
+    # ZIA no esta y no va a estar: sus logs web no salen por API, los empuja NSS
+    # al receptor. Aqui solo cabe lo que se deja CONSULTAR.
+    "zscaler_zpa": ZscalerZpaConnector,
     "files": FileConnector,
 }
 
@@ -103,6 +109,8 @@ __all__ = [
     "SplunkConnector",
     "SentinelConnector",
     "QRadarConnector",
+    "NetskopeConnector",
+    "ZscalerZpaConnector",
     "get_connector",
     "describe_all",
     "ping_all",

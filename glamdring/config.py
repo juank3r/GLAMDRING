@@ -157,10 +157,42 @@ class QRadarConfig:
 
 
 @dataclass
+class NetskopeConfig:
+    url: str = ""            # https://<tenant>.goskope.com
+    token: str = ""          # cabecera Netskope-Api-Token
+    # El nombre del iterador. Netskope lleva LA CUENTA por este nombre, asi que
+    # dos herramientas con el mismo nombre se pisan el puntero: cada una recibe
+    # los eventos que la otra no ha visto y ninguna los ve todos. Por eso el
+    # valor por defecto es propio y no algo generico.
+    iterator: str = "glamdring"
+
+    @property
+    def configured(self) -> bool:
+        return bool(self.url and self.token)
+
+
+@dataclass
+class ZscalerZpaConfig:
+    """Solo ZPA. Los logs web de ZIA no salen por API: los empuja NSS al
+    receptor, que es el motivo por el que existe POST /api/receive/{fuente}."""
+
+    url: str = ""            # https://config.private.zscaler.com
+    client_id: str = ""
+    client_secret: str = ""
+    customer_id: str = ""
+
+    @property
+    def configured(self) -> bool:
+        return bool(self.url and self.client_id and self.client_secret and self.customer_id)
+
+
+@dataclass
 class Settings:
     splunk: SplunkConfig = field(default_factory=SplunkConfig)
     sentinel: SentinelConfig = field(default_factory=SentinelConfig)
     qradar: QRadarConfig = field(default_factory=QRadarConfig)
+    netskope: NetskopeConfig = field(default_factory=NetskopeConfig)
+    zscaler_zpa: ZscalerZpaConfig = field(default_factory=ZscalerZpaConfig)
     receive: ReceiveConfig = field(default_factory=ReceiveConfig)
 
     query_timeout: int = 120       # segundos por consulta al SIEM
@@ -176,6 +208,10 @@ class Settings:
                          "workspace": _mask(self.sentinel.workspace_id)},
             "qradar": {"configured": self.qradar.configured, "url": _host_of(self.qradar.url)},
             "files": {"configured": True},
+            "netskope": {"configured": self.netskope.configured,
+                         "url": _host_of(self.netskope.url)},
+            "zscaler_zpa": {"configured": self.zscaler_zpa.configured,
+                            "url": _host_of(self.zscaler_zpa.url)},
             # Los NOMBRES de las fuentes que pueden empujar, nunca sus claves.
             "receive": {"configured": self.receive.enabled,
                         "sources": list(self.receive.sources())},
@@ -217,6 +253,17 @@ def load_settings() -> Settings:
             token=_env("QRADAR_TOKEN"),
             api_version=_env("QRADAR_API_VERSION", "20.0"),
             verify_tls=_env_bool("QRADAR_VERIFY_TLS", True),
+        ),
+        netskope=NetskopeConfig(
+            url=_env("NETSKOPE_URL"),
+            token=_env("NETSKOPE_TOKEN"),
+            iterator=_env("NETSKOPE_ITERATOR", "glamdring"),
+        ),
+        zscaler_zpa=ZscalerZpaConfig(
+            url=_env("ZPA_URL", "https://config.private.zscaler.com"),
+            client_id=_env("ZPA_CLIENT_ID"),
+            client_secret=_env("ZPA_CLIENT_SECRET"),
+            customer_id=_env("ZPA_CUSTOMER_ID"),
         ),
         receive=ReceiveConfig(
             keys=parse_keys(_env("GLAMDRING_RECEIVE_KEYS")),
