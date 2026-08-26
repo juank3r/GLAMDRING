@@ -280,6 +280,25 @@ def _add_app(collector: _Collector, event: NormalizedEvent) -> Optional[str]:
                          label=str(event.app), cloud=True)
 
 
+def _add_tunnel(collector: _Collector, event: NormalizedEvent) -> Optional[str]:
+    """La sesion del cliente SASE, como nodo.
+
+    Se identifica por el id de sesion, y si no lo hay por la IP que el tunel
+    asigna. Sin nodo propio, la relacion entre la persona, su equipo y la IP
+    publica desde la que sale queda repartida entre varios eventos y no se ve.
+    """
+    if not event.session or event.session.is_empty():
+        return None
+    valor = str(event.session.id or event.session.assigned_ip)
+    return collector.add(
+        "tunnel", valor.lower(),
+        label=f"sesion {valor[:16]}",
+        assignedIp=event.session.assigned_ip,
+        client=event.session.client,
+        location=event.session.location,
+    )
+
+
 def _add_network_target(collector: _Collector, event: NormalizedEvent) -> Optional[str]:
     """Destino de una conexion: dominio si lo hay, si no la IP."""
     domain = canon_domain(event.domain)
@@ -402,8 +421,15 @@ def _network_activity(collector: _Collector, event: NormalizedEvent) -> None:
 
     origin = process_key or src_key or device_key
     if event.activity in ("tunnel_open", "tunnel_close"):
-        collector.link(user_key or origin, target_key or _add_app(collector, event),
-                       "tunneled_to", **_net_props(event))
+        # La sesion se pone EN MEDIO a proposito: usuario -> tunel -> salida.
+        # Es lo que permite mirar un nodo de tunel y ver de golpe quien esta
+        # detras de esa IP publica, que es la pregunta que se hace un analista
+        # cuando le llega una alerta de un proveedor externo con una IP.
+        tunnel_key = _add_tunnel(collector, event)
+        collector.link(user_key or origin, tunnel_key or target_key, "tunneled_to",
+                       **_net_props(event))
+        collector.link(tunnel_key, src_key, "stored_on")
+        collector.link(tunnel_key, target_key, "connected", **_net_props(event))
     else:
         rel = "blocked" if _failed(event) else "connected"
         collector.link(origin, target_key, rel, **_net_props(event))
@@ -457,6 +483,10 @@ def _file_activity(collector: _Collector, event: NormalizedEvent) -> None:
 
     rel = _FILE_REL.get(event.activity, "wrote")
     quien = process_key or user_key or host_key
+
+    tunnel_key = _add_tunnel(collector, event)
+    if tunnel_key:
+        collector.link(user_key or host_key, tunnel_key, "tunneled_to")
 
     if event.activity in ("file_upload", "file_download", "file_share") and app_key:
         # En un movimiento a la nube el destino es la aplicacion, no el disco.

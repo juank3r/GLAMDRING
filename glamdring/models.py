@@ -219,6 +219,29 @@ class NetRef(BaseModel):
                         self.rule, self.category))
 
 
+class SessionRef(BaseModel):
+    """La sesion de un cliente SASE, VPN o ZTNA.
+
+    Existe porque es LO QUE FALTA para entender el trafico de un portatil fuera
+    de la oficina. Con el cliente puesto, ese equipo no pasa por el cortafuegos
+    corporativo: en el grafo actual ese trafico simplemente no existe, y el
+    hueco no se nota, que es lo peor que puede tener un hueco.
+
+    La sesion ata las tres cosas que de otro modo van sueltas: quien es la
+    persona, que equipo es, y con que IP sale a Internet.
+    """
+
+    id: Optional[str] = None
+    assigned_ip: Optional[str] = None   # la IP que el tunel le da al equipo
+    start: Optional[datetime] = None
+    end: Optional[datetime] = None
+    client: Optional[str] = None        # version o tipo de cliente
+    location: Optional[str] = None      # desde donde se conecta
+
+    def is_empty(self) -> bool:
+        return not (self.id or self.assigned_ip)
+
+
 class RegistryRef(BaseModel):
     """Una clave de registro de Windows."""
 
@@ -299,6 +322,7 @@ class NormalizedEvent(BaseModel):
     # es la firma de la exfiltracion.
     net: Optional[NetRef] = None
     registry: Optional[RegistryRef] = None
+    session: Optional[SessionRef] = None
     # Proceso DESTINO. Solo lo llevan process_inject y process_access, que son
     # los dos unicos hechos con dos procesos en un mismo evento: quien inyecta y
     # en quien, quien abre el handle y sobre quien.

@@ -38,6 +38,9 @@ ENTITIES: Dict[str, Dict[str, Any]] = {
     "service":  {"label": "Servicio",     "color": "#a3e635", "model": "gear",        "shape": "cylinder",    "glyph": "⚭",     "rank": 4, "size": 4},
     "registry": {"label": "Registro",     "color": "#eab308", "model": "key",         "shape": "box",         "glyph": "\U0001F5DD", "rank": 4, "size": 4},
     "group":    {"label": "Grupo",        "color": "#f59e0b", "model": "shield",      "shape": "box",         "glyph": "\U0001F465", "rank": 4, "size": 5},
+    # La sesion del cliente SASE. Es lo que explica por que el trafico de un
+    # portatil fuera de la oficina no aparece en el cortafuegos corporativo.
+    "tunnel":   {"label": "Tunel",        "color": "#2dd4bf", "model": "pipe",        "shape": "cylinder",    "glyph": "\U0001F517", "rank": 3, "size": 5},
 }
 
 UNKNOWN_ENTITY = {

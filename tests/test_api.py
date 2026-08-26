@@ -7,6 +7,7 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
+from glamdring.config import SAMPLES_DIR
 from glamdring.main import app
 from glamdring.store import STORE
 
@@ -62,7 +63,14 @@ def test_health_never_leaks_secrets(client):
 def test_demo_loads_all_samples(client):
     payload = client.post("/api/demo").json()
     assert payload["events"] > 40
-    assert len(payload["files"]) == 4
+    # El numero exacto se cuenta, no se fija a mano: cada fuente nueva anade su
+    # muestra y clavarlo aqui obliga a tocar el test por algo que no es un
+    # fallo. Lo que si importa es que TODAS entren y ninguna se quede fuera.
+    esperadas = sorted(f.name for f in SAMPLES_DIR.iterdir()
+                       if f.is_file() and f.suffix.lower() in
+                       (".json", ".ndjson", ".csv", ".cef", ".log", ".txt"))
+    assert sorted(f["file"] for f in payload["files"]) == esperadas
+    assert not [f for f in payload["files"] if f.get("error")], "alguna muestra no se pudo leer"
     assert payload["totals"]["unmatched"] == 0
     assert all("error" not in item for item in payload["files"])
 
