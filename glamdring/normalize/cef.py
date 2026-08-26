@@ -605,7 +605,9 @@ def _afinar(event: NormalizedEvent, record: Dict[str, Any], blob: str, failure: 
             event.severity = max(event.severity, 4)
         if event.net and event.net.bytes_out and event.net.bytes_out > 100 * 1024 * 1024:
             event.severity = max(event.severity, 4)
-            tech = technique("T1041")
+            # T1048 y no T1041: el segundo afirmaria que el canal es de
+            # mando y control, y eso el evento no lo dice.
+            tech = technique("T1048")
             if tech and not event.mitre:
                 event.mitre = [tech]
 

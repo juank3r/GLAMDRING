@@ -20,6 +20,7 @@ from typing import Any, Dict, Optional
 from ..mitre import infer_from_cmdline, techniques
 from ..models import (
     CLASS_AUTHENTICATION,
+    CLASS_DNS,
     CLASS_FILE,
     CLASS_FINDING,
     CLASS_NETWORK,
@@ -27,6 +28,7 @@ from ..models import (
     ActorRef,
     FileRef,
     HostRef,
+    NetRef,
     NormalizedEvent,
     ProcRef,
     make_uid,
@@ -80,9 +82,27 @@ def _decode_payload(value: Any) -> str:
 
 
 # Palabras de la taxonomia de QRadar que nos dicen la clase de evento.
-_AUTH_WORDS = ("authentication", "logon", "login", "session opened", "credential")
-_NET_WORDS = ("firewall", "flow", "network", "traffic", "proxy", "session", "vpn", "dns")
-_FILE_WORDS = ("file", "malware", "virus", "antivirus")
+#
+# EL ORDEN Y EL REPARTO IMPORTAN, y estaban mal las dos cosas:
+#
+# - _FILE_WORDS llevaba "malware", "virus" y "antivirus", y se comprobaba antes
+#   que la red. Con eso, 'Malware Detected Not Cleaned' (categoria 'Virus
+#   Detected', magnitud 9, log source TrendMicro-AV) salia como CREACION DE
+#   FICHERO CON EXITO, y el relato lo redactaba como "jlopez creo m.exe". El
+#   antivirus estaba diciendo que no habia podido limpiarlo.
+#
+# - 'dns' estaba dentro de _NET_WORDS, asi que una resolucion salia como
+#   conexion. La misma resolucion del mismo dominio se clasificaba de tres
+#   formas distintas segun quien la contara: 'query' en Splunk, 'connect' aqui y
+#   'create' en CEF. Eso es literalmente lo que impide correlacionar dos SIEM.
+_AUTH_WORDS = ("authentication", "logon", "login", "session opened", "credential",
+               "kerberos", "password")
+_DNS_WORDS = ("dns", "domain name", "name resolution")
+_DETECT_WORDS = ("malware", "virus", "antivirus", "trojan", "ransomware",
+                 "spyware", "infected", "quarantine")
+_NET_WORDS = ("firewall", "flow", "network", "traffic", "proxy", "session", "vpn",
+              "web session", "transfer")
+_FILE_WORDS = ("file", "attachment")
 _PROC_WORDS = ("process", "exploit", "application")
 
 
@@ -106,21 +126,30 @@ def looks_like_product(name: str) -> bool:
     return any(marker in lowered for marker in _PRODUCT_MARKERS)
 
 
-def _classify(record: Dict[str, Any]) -> str:
+def _classify(record: Dict[str, Any]):
+    """Devuelve (clase OCSF, actividad del vocabulario cerrado)."""
     category = str(first(record, "categoryname", "highlevelcategory", "category") or "").lower()
     name = str(first(record, "qidname", "eventname", "qid_name") or "").lower()
     blob = f"{category} {name}"
+
+    # La deteccion PRIMERO. Un antivirus diciendo que encontro algo no es una
+    # operacion de fichero por mucho que mencione un fichero.
+    if any(word in blob for word in _DETECT_WORDS):
+        return CLASS_FINDING, "malware_detect"
+    # Y el DNS antes que la red, porque una resolucion no es una conexion.
+    if any(word in blob for word in _DNS_WORDS) or first(record, "domainname", "dnsquery"):
+        return CLASS_DNS, "dns_query"
     if any(word in blob for word in _AUTH_WORDS):
-        return CLASS_AUTHENTICATION
-    if any(word in blob for word in _FILE_WORDS):
-        return CLASS_FILE
+        return CLASS_AUTHENTICATION, "logon"
     if any(word in blob for word in _PROC_WORDS):
-        return CLASS_PROCESS
+        return CLASS_PROCESS, "process_launch"
+    if any(word in blob for word in _FILE_WORDS):
+        return CLASS_FILE, "file_create"
     if any(word in blob for word in _NET_WORDS):
-        return CLASS_NETWORK
+        return CLASS_NETWORK, "network_connect"
     if first(record, "sourceip", "destinationip"):
-        return CLASS_NETWORK
-    return CLASS_FINDING
+        return CLASS_NETWORK, "network_connect"
+    return CLASS_FINDING, "alert"
 
 
 def _is_failure(record: Dict[str, Any]) -> bool:
@@ -135,7 +164,7 @@ def normalize(record: Dict[str, Any]) -> Optional[NormalizedEvent]:
     if "offense_type" in data or "offense_source" in data:
         return _offense(record, data)
 
-    class_name = _classify(data)
+    class_name, activity = _classify(data)
     failure = _is_failure(data)
     magnitude = first(data, "magnitude", "severity")
     severity = parse_severity(magnitude, scale_max=10) if magnitude is not None else 2
@@ -146,7 +175,7 @@ def normalize(record: Dict[str, Any]) -> Optional[NormalizedEvent]:
         source="qradar",
         origin=str(first(data, "logsourcename", "devicetype", "qid") or "qradar"),
         class_name=class_name,
-        activity="unknown",
+        activity=activity,
         severity=severity,
         status="failure" if failure else "success",
         message=str(first(data, "qidname", "eventname", "message") or "")[:400],
@@ -172,6 +201,22 @@ def normalize(record: Dict[str, Any]) -> Optional[NormalizedEvent]:
             device_name = canon_host(candidate)
     if device_name:
         event.device = HostRef(hostname=device_name)
+        # LA IP DEL EQUIPO QUE REPORTA, cuando se puede saber. Un evento de
+        # autenticacion lo registra la maquina CONTRA la que se autentica, asi
+        # que en 'Successful Network Logon' reportado por SRV-DC01 el
+        # destinationip es la IP de ese mismo SRV-DC01.
+        #
+        # Sin este dato, el grafo tenia 'host:srv-dc01' y 'ip:10.4.1.5' como dos
+        # nodos distintos para la misma maquina, y el del nombre se quedaba
+        # SUELTO, sin una sola arista: build.py solo funde una IP en un host que
+        # declare esa IP en sus propiedades, y aqui se construia el HostRef sin
+        # ella.
+        #
+        # Se limita a autenticacion y a IP privada a proposito: para un log
+        # source de perimetro el destino es otra maquina, no el propio
+        # dispositivo, y ahi la fusion seria falsa.
+        if class_name == CLASS_AUTHENTICATION and event.dst and event.dst.ip                 and is_private_ip(event.dst.ip):
+            event.device.ip = event.dst.ip
 
     user = first(data, "username", "user", "identityusername")
     if user:
@@ -182,23 +227,60 @@ def normalize(record: Dict[str, Any]) -> Optional[NormalizedEvent]:
         event.raw = dict(record)
         event.raw["_payload_decoded"] = payload[:2000]
 
+    # Los bytes que se movieron. Se tiraban, y son el dato que separa una
+    # exfiltracion de abrir una pagina: 'Large Outbound Transfer' con 734 MB
+    # salientes quedaba byte a byte identico a una navegacion normal.
+    enviados = to_int(first(data, "bytessent", "bytes_sent", "sentbytes"))
+    recibidos = to_int(first(data, "bytesreceived", "bytes_received", "receivedbytes"))
+    protocolo = first(data, "protocolname", "protocol")
+    if enviados or recibidos or protocolo:
+        event.net = NetRef(bytes_in=recibidos, bytes_out=enviados,
+                           protocol=str(protocolo).lower() if protocolo else None)
+
     if class_name == CLASS_AUTHENTICATION:
-        event.activity = "logon_failed" if failure else "logon"
+        # El desenlace va en status, no en el nombre de la actividad.
         if failure:
             event.mitre = techniques("T1110")
+        elif event.src and event.dst and event.src.ip != event.dst.ip:
+            # 'Successful Network Logon' con origen y destino distintos es un
+            # inicio de sesion desde otra maquina, que es lo que dibuja la
+            # arista de movimiento lateral.
+            event.activity = "logon_remote"
+            event.severity = max(event.severity, 3)
+            event.mitre = techniques("T1021.002")
+
+    elif class_name == CLASS_DNS:
+        event.domain = canon_domain(first(data, "domainname", "dnsquery", "url", "hostname"))
+        # EL RESOLUTOR NO ES LA RESPUESTA. En un evento DNS el destinationip es
+        # el servidor que resuelve -aqui el InfoBlox interno-, no la IP a la que
+        # apunta el dominio. Dejarlo en `dst` hacia que el grafo dibujara
+        # "cdn-update-svc.com resuelve a 10.4.0.10": el dominio malicioso
+        # apuntando al DNS de la propia empresa. Una arista falsa en un grafo
+        # forense es peor que una arista de menos.
+        if event.dst and event.dst.ip:
+            event.raw = dict(record)
+            event.raw["_dns_resolver"] = event.dst.ip
+            event.dst = None
+        respuesta = first(data, "dnsanswer", "answer", "resolvedip")
+        if respuesta and is_ip(str(respuesta)):
+            event.dst = HostRef(ip=str(respuesta))
+
     elif class_name == CLASS_NETWORK:
-        event.activity = "blocked" if failure else "connect"
         domain = canon_domain(first(data, "url", "domainname", "hostname"))
         if domain:
             event.domain = domain
-        # Salida a Internet desde una IP interna: candidato a C2/exfiltracion.
-        if event.dst and event.dst.ip and not is_private_ip(event.dst.ip):
-            if event.src and event.src.ip and is_private_ip(event.src.ip):
-                event.severity = max(event.severity, 3)
-                if not failure:
-                    event.mitre = techniques("T1071.001")
+        # ANTES: cualquier salida a Internet desde una IP interna subia a
+        # severidad 3 y se le colgaba T1071.001. Eso es casi todo el trafico de
+        # una oficina, asi que el trafico normal pesaba lo mismo que una baliza
+        # de mando y control. Lo que si es senal es el VOLUMEN.
+        if event.net and event.net.bytes_out and event.net.bytes_out > 100 * 1024 * 1024:
+            event.severity = max(event.severity, 4)
+            # T1041 afirmaria que el canal es de mando y control, y de un
+            # volumen grande saliendo no se deduce eso. T1048 se queda en
+            # lo que el evento si demuestra: salida masiva de datos.
+            event.mitre = techniques("T1048")
+
     elif class_name == CLASS_PROCESS:
-        event.activity = "launch"
         cmdline = first(data, "commandline", "process_command_line") or payload
         image = first(data, "processname", "process", "image")
         event.process = ProcRef(
@@ -207,8 +289,8 @@ def normalize(record: Dict[str, Any]) -> Optional[NormalizedEvent]:
             cmdline=str(cmdline)[:2000] if cmdline else None,
         )
         event.mitre = infer_from_cmdline(event.process.cmdline)
+
     elif class_name == CLASS_FILE:
-        event.activity = "create"
         filename = first(data, "filename", "file", "filepath")
         event.file = FileRef(
             name=basename(filename) if filename else None,
@@ -216,6 +298,25 @@ def normalize(record: Dict[str, Any]) -> Optional[NormalizedEvent]:
             sha256=str(first(data, "sha256", "filehash") or "").lower() or None,
             md5=str(first(data, "md5") or "").lower() or None,
         )
+
+    elif activity == "malware_detect":
+        # El fichero encontrado se conserva, pero como algo que la alerta
+        # NOMBRA, no como algo que alguien escribio.
+        filename = first(data, "filename", "file", "filepath")
+        if filename:
+            event.file = FileRef(
+                name=basename(filename), path=str(filename),
+                sha256=str(first(data, "sha256", "filehash") or "").lower() or None,
+                md5=str(first(data, "md5") or "").lower() or None,
+            )
+        # 'Not Cleaned' significa que el fichero sigue ahi. Es lo mas grave que
+        # puede contar un antivirus y no puede salir como exito.
+        nombre = str(first(data, "qidname", "eventname") or "").lower()
+        if "not cleaned" in nombre or "failed" in nombre or failure:
+            event.status = "failure"
+            event.severity = max(event.severity, 5)
+        else:
+            event.severity = max(event.severity, 4)
 
     return event
 
@@ -241,9 +342,21 @@ def _offense(record: Dict[str, Any], data: Dict[str, Any]) -> NormalizedEvent:
             event.src = HostRef(ip=text)
         else:
             event.device = HostRef(hostname=canon_host(text))
+    # Las categorias de una ofensa son texto de la taxonomia de QRadar
+    # ("Malware Detected", "Suspicious Activity"), NO identificadores de ATT&CK.
+    # Pasarlas por techniques() producia Technique(id='MALWARE DETECTED'), que
+    # llegaba al grafo y al informe. Una tecnica inventada en un informe que
+    # alguien firma es peor que ninguna: quien lo lea la buscara en el catalogo
+    # de MITRE, no la encontrara, y a partir de ahi no se fia de las demas.
+    #
+    # techniques() ya solo acepta lo que tenga forma de id, asi que aqui se
+    # conservan como lo que son: el texto de la categoria.
     categories = first(data, "categories")
     if categories:
-        event.mitre = techniques(str(categories))
+        event.raw = dict(record)
+        event.raw["_offense_categories"] = categories
+        # Si la ofensa trae ids de verdad en su descripcion, esos si valen.
+        event.mitre = techniques(str(first(data, "description") or ""))
     return event
 
 

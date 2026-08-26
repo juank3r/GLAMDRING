@@ -252,12 +252,34 @@ def test_qradar_epoch_millis(qradar_records):
 
 
 def test_qradar_egress_flagged_as_c2(qradar_records):
+    """Salir a Internet no es una senal. Sacar 700 MB si.
+
+    Este test exigia T1071.001 -mando y control- en CUALQUIER conexion de una
+    IP interna a una publica. Eso es casi todo el trafico de una oficina: con
+    esa regla, abrir el correo quedaba etiquetado como command-and-control y
+    pesaba igual que una baliza de verdad. Y el informe exportado lo afirmaba.
+
+    Lo que el evento SI demuestra es el volumen. Se marca la transferencia
+    grande, y con T1048 y no T1041, porque el segundo afirmaria ademas que el
+    canal es de mando y control y eso no consta.
+    """
     events = normalize_all(qradar_records)
-    egress = [e for e in events
-              if e.src and e.src.ip and e.src.ip.startswith("10.")
-              and e.dst and e.dst.ip == "45.132.88.17"]
-    assert egress
-    assert any(t.id == "T1071.001" for e in egress for t in e.mitre)
+    salidas = [e for e in events
+               if e.src and e.src.ip and e.src.ip.startswith("10.")
+               and e.dst and e.dst.ip == "45.132.88.17"]
+    assert salidas
+
+    grandes = [e for e in salidas if e.net and e.net.bytes_out
+               and e.net.bytes_out > 100 * 1024 * 1024]
+    assert grandes, "la muestra tiene una transferencia de 734 MB salientes"
+    assert grandes[0].net.bytes_out == 734003200, "los bytes ya no se tiran"
+    assert any(t.id == "T1048" for t in grandes[0].mitre)
+    assert grandes[0].severity >= 4
+
+    # Y la navegacion normal al mismo destino NO se marca como nada.
+    normales = [e for e in salidas if e not in grandes]
+    assert normales
+    assert not any(t.id == "T1071.001" for e in normales for t in e.mitre)
 
 
 # ------------------------------------------------------------- CEF/LEEF/syslog

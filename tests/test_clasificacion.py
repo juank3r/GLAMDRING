@@ -51,11 +51,12 @@ def perimetro():
 # El vocabulario es cerrado, y eso hay que comprobarlo
 # ---------------------------------------------------------------------------
 
-# QRadar y Sentinel todavia emiten el vocabulario antiguo: son las dos tandas
-# que quedan de la fase 2. Se marcan como fallo ESPERADO y en modo estricto, de
-# forma que en cuanto se arreglen el test pase a XPASS y obligue a quitar la
-# marca. Un pendiente que se limpia solo es mejor que un pendiente en una lista.
-_PENDIENTES = ("qradar_ariel.json", "sentinel_defender.json")
+# Sentinel es la ultima tanda de la fase 2 y todavia emite el vocabulario
+# antiguo. Se marca como fallo ESPERADO y en modo ESTRICTO, de forma que en
+# cuanto se arregle el test pase a XPASS y obligue a quitar la marca. Un
+# pendiente que se limpia solo es mejor que un pendiente en una lista: QRadar
+# salio de aqui asi, porque el test se puso rojo al arreglarlo.
+_PENDIENTES = ("sentinel_defender.json",)
 
 
 def _muestra(nombre: str, *, motivo: str):
@@ -69,8 +70,7 @@ MUESTRAS = ("splunk_windows.json", "perimeter.cef", "qradar_ariel.json",
 
 VOCABULARIO = [_muestra(n, motivo="pendiente de migrar al vocabulario cerrado")
                for n in MUESTRAS]
-SIN_SUELTOS = [_muestra(n, motivo="pendiente: deja nodos sin aristas")
-               if n == "qradar_ariel.json" else n for n in MUESTRAS]
+SIN_SUELTOS = list(MUESTRAS)
 
 
 @pytest.mark.parametrize("muestra", VOCABULARIO)

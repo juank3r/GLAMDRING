@@ -75,12 +75,24 @@ _TECHNIQUE_RE = re.compile(r"\bT\d{4}(?:\.\d{3})?\b")
 def technique(technique_id: str) -> Optional[Technique]:
     """Construye una Technique completa a partir del id.
 
-    Si el id es un subtecnica desconocida (T1059.999) cae a la tecnica padre,
+    Si el id es una subtecnica desconocida (T1059.999) cae a la tecnica padre,
     que es lo unico que hace falta para colocar el nodo en su capa.
+
+    Lo que NO se acepta es cualquier cosa que no tenga forma de identificador de
+    ATT&CK. Antes se devolvia ``Technique(id=<lo que fuera>, name="")``, y por
+    ahi se colaban al grafo y al informe cosas como
+    ``Technique(id='MALWARE DETECTED')``: las categorias de una ofensa de QRadar
+    convertidas en tecnicas que no existen.
+
+    En un informe que alguien va a firmar, una tecnica inventada es peor que
+    ninguna: quien lo lea la va a buscar en el catalogo de MITRE y no la va a
+    encontrar, y a partir de ahi ya no se fia de las demas.
     """
     if not technique_id:
         return None
     tid = str(technique_id).strip().upper()
+    if not _TECHNIQUE_RE.fullmatch(tid):
+        return None
     if tid in TECHNIQUES:
         name, tactic = TECHNIQUES[tid]
         return Technique(id=tid, name=name, tactic=tactic)
@@ -88,6 +100,8 @@ def technique(technique_id: str) -> Optional[Technique]:
     if parent in TECHNIQUES:
         name, tactic = TECHNIQUES[parent]
         return Technique(id=tid, name=name, tactic=tactic)
+    # Forma valida pero fuera de nuestro catalogo: se conserva el id, que es
+    # comprobable, y se deja claro que no sabemos ponerle nombre ni tactica.
     return Technique(id=tid, name="", tactic="")
 
 
@@ -96,8 +110,10 @@ def techniques(ids: object) -> List[Technique]:
     if not ids:
         return []
     if isinstance(ids, str):
-        found = _TECHNIQUE_RE.findall(ids.upper())
-        raw_ids = found if found else [part.strip() for part in ids.split(",")]
+        # SOLO lo que tenga forma de id. Antes, si el texto no traia ninguno, se
+        # partia por comas y se aceptaba lo que saliera: pasarle "Malware
+        # Detected, Suspicious Activity" devolvia dos tecnicas inventadas.
+        raw_ids = _TECHNIQUE_RE.findall(ids.upper())
     elif isinstance(ids, (list, tuple, set)):
         raw_ids = [str(i) for i in ids]
     else:
