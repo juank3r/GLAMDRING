@@ -28,6 +28,22 @@ para todo el equipo a la vez.
 | `service` | Servicio | `#a3e635` | engranaje | `service:<nombre>` |
 | `registry` | Registro | `#eab308` | llave | `registry:<clave>` |
 | `url` | URL | `#a78bfa` | globo terráqueo | `url:<url>` |
+| `group` | Grupo | `#f59e0b` | escudo | `group:<nombre en minúsculas>` |
+| `tunnel` | Túnel | `#2dd4bf` | cilindro | `tunnel:<id de sesión o IP asignada>` |
+
+Los dos últimos son de la fase de proxies SASE:
+
+- **`group`** existe porque meter a alguien en *Domain Admins* no es «un cambio de
+  cuenta más»: es escalada de privilegios, y merece verse de un vistazo quién acabó
+  dentro.
+- **`tunnel`** es la sesión del cliente SASE, y se pone **en medio**
+  (`usuario → túnel → salida`) a propósito. Es lo que permite mirar un nodo de túnel
+  y ver quién hay detrás de una IP pública, que es justo la pregunta que se hace un
+  analista cuando le llega una alerta de un proveedor externo con una IP y nada más.
+
+> La aplicación cloud **no** es un `host`. Va a `service`, porque Dropbox no es una
+> máquina: meterla como equipo llenaba el grafo de servidores llamados «Microsoft
+> Office 365 Portal» que no existen en ninguna parte.
 
 Los colores están separados en matiz **y** en luminancia: la paleta anterior se
 eligió a ojo y varios tonos se confundían a distancia, que es justo cuando hay que
@@ -67,6 +83,18 @@ router y cortafuegos: `srv`, `dc0`, `sql`, `exch` → servidor; `fw`, `asa`, `pa
 Es una heurística de nomenclatura corporativa, no un inventario. Acierta en un parque
 con convenciones y falla del lado seguro (puesto de trabajo) cuando no las hay; se
 corrige desde el panel de administrador.
+
+### Un nodo sin aristas es un fallo
+
+No es un detalle estético. En el grafo 3D flota suelto, ocupa sitio, se confunde
+con una máquina aislada y no cuenta nada. **Si se crea, se conecta; y si no se
+puede conectar, no se crea.**
+
+Hay un test que lo comprueba sobre cada muestra
+(`tests/test_clasificacion.py::test_ninguna_muestra_deja_nodos_sueltos`), y no es
+teórico: encontró cuatro casos reales, entre ellos el nodo `file:` del propio
+ejecutable de un proceso, que duplicaba al nodo `process:` y se quedaba sin una
+sola arista porque solo se enlazaba el hash.
 
 ### Qué NO es un nodo
 
@@ -113,6 +141,33 @@ documentación solo garantiza que un día dejen de coincidir.
 | `wrote` | escribe | 2 | sólido | process → file |
 | `deleted` | borra | 2 | sólido | process → file |
 | `sent_to` | envía a | 2 | sólido | mailbox → mailbox |
+| `injected_into` | inyecta en | 5 | sólido | process → process |
+| `accessed` | abre handle en | 4 | sólido | process → process |
+| `uploaded_to` | sube a | 4 | sólido | user\|process → service |
+| `shared_with` | comparte con | 4 | sólido | user → service |
+| `member_of` | miembro de | 4 | sólido | user → group |
+| `downloaded_from` | descarga de | 3 | sólido | user\|process → service |
+| `modified` | modifica | 2 | sólido | process → file |
+| `tunneled_to` | túnel hacia | 2 | **discontinuo** | user → tunnel |
+| `loaded` | carga | 1 | **discontinuo** | process → file |
+| `stored_on` | está en | 1 | **discontinuo** | file\|registry → host |
+| `observed` | observa | 1 | **discontinuo** | host → host\|ip |
+
+Tres de estas merecen explicación, porque no son obvias:
+
+- **`injected_into` y `accessed`** son los dos únicos casos con **dos nodos de
+  proceso en el mismo evento**: quién inyecta y en quién, quién abre el handle y
+  sobre quién. Antes Sysmon 8 y 10 se reclamaban y devolvían `None`: mimikatz
+  abriendo un handle sobre `lsass.exe` —la firma más reconocible que existe de un
+  volcado de credenciales— **no aparecía en el grafo**.
+- **`stored_on`** es la que evita que un objeto quede flotando sin decir dónde está.
+  Una detección de antivirus con la cuarentena fallida en el controlador de dominio
+  dejaba `host:srv-dc01` con **grado 0**: quien pinchaba el fichero no veía en qué
+  máquina estaba.
+- **`observed`** es el cortafuegos que solo mira pasar el tráfico. Discontinua y
+  ligera a propósito: no es un participante, es el testigo. Sin ella, en telemetría
+  de perímetro el FortiGate salía como nodo suelto en el grafo 3D, con pinta de
+  equipo aislado y sin aportar nada.
 | `contains_url` | contiene URL | 2 | **discontinuo** | mailbox → domain |
 | `ran_on` | corre en | 1 | **discontinuo** | process → host |
 | `read` | lee | 1 | **discontinuo** | process → file |

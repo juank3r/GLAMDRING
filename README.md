@@ -2,18 +2,20 @@
 
 <div align="center">
 
-![Gandalf empuñando Glamdring, en arte ASCII](docs/glamdring.png)
+![Gandalf holding Glamdring, in ASCII art](docs/glamdring.png)
 
 </div>
 
-**Lee Splunk, Sentinel/Defender, QRadar y CEF/LEEF/syslog, y los convierte en un grafo
-3D navegable del incidente.** Entidades como nodos, acciones como aristas dirigidas y el
-tiempo como eje. El SIEM sigue siendo la fuente de verdad: cada nodo y cada arista abren
-el log literal que los generó. Corre en local, un proceso, sin autenticación.
+**Reads Splunk, Sentinel/Defender, QRadar, CEF/LEEF/syslog, Netskope and Zscaler, and turns
+them into a navigable 3D incident graph.** Entities as nodes, actions as directed edges,
+time as an axis. The SIEM stays the source of truth: every node and every edge opens the
+literal log that produced it. Runs locally, one process, no authentication.
+
+> Documentation is in Spanish, under [`docs/`](docs/). This README is the English entry point.
 
 ---
 
-## Arranque rápido
+## Quick start
 
 ```powershell
 cd GLAMDRING
@@ -23,132 +25,222 @@ pip install -r requirements.txt
 powershell -ExecutionPolicy Bypass -File tools\run.ps1
 ```
 
-Abre <http://localhost:8000> y pulsa **Demo**.
+Open <http://localhost:8000> and press **Demo**.
 
 ---
 
-## Qué hace
+## What it does
 
-### Normaliza cuatro formatos a un modelo común
+### Six sources, one vocabulary
 
-| Fuente | Qué entiende | Conector en vivo |
+| Source | What it understands | How it gets in |
 |---|---|---|
-| **Splunk** | `WinEventLog:Security` (4624, 4625, 4648, 4688, 4720), Sysmon (1, 3, 11, 22), sourcetypes de firewall/proxy/DNS y campos CIM | sí, token de servicio |
-| **Sentinel / Defender** | `DeviceProcessEvents`, `DeviceNetworkEvents`, `DeviceFileEvents`, `DeviceLogonEvents`, `SigninLogs`, `EmailEvents`, `SecurityAlert`, `SecurityIncident` | sí, Service Principal con *Log Analytics Reader* |
-| **QRadar** | Resultados Ariel (`starttime`, `sourceip`, `magnitude`, `categoryname`…) y ofensas | sí, token en la cabecera `SEC` |
-| **CEF / LEEF / syslog** | CEF 0.x, LEEF 1.0 y 2.0, syslog RFC5424 y RFC3164, y JSON arbitrario como red de seguridad | — (entra por fichero, con `files`) |
+| **Splunk** | `WinEventLog:Security` (4624, 4625, 4634, 4648, 4720, 4728, 1102, 7045, 4104), Sysmon (1, 2, 3, 5, 7, 8, 10, 11, 12, 13, 15, 22, 23), firewall/proxy/DNS sourcetypes and CIM fields | pull, service token |
+| **Sentinel / Defender** | `DeviceProcessEvents`, `DeviceNetworkEvents`, `DeviceFileEvents`, `DeviceLogonEvents`, `DeviceRegistryEvents`, `DeviceEvents`, `IdentityLogonEvents`, `CloudAppEvents`, `SigninLogs`, `EmailEvents`, `SecurityAlert` | pull, Service Principal with *Log Analytics Reader* |
+| **IBM QRadar** | Ariel results (`starttime`, `sourceip`, `magnitude`, `categoryname`…) and offenses | pull, token in the `SEC` header |
+| **CEF / LEEF / syslog** | CEF 0.x, LEEF 1.0 and 2.0, syslog RFC5424 and RFC3164, and arbitrary JSON as a safety net | file, or pushed to the receiver |
+| **Netskope** | Application events: the cloud app, the action inside it, the policy verdict and bytes each way | pull, stateful iterator |
+| **Zscaler** | ZIA web and tunnel logs, ZPA private-app access | **ZIA pushes** via NSS · ZPA pulls |
 
-- El destino común es un subconjunto pragmático de [OCSF](https://schema.ocsf.io/), el
-  esquema vendor-neutral impulsado por AWS y Splunk (`glamdring/normalize/`).
+The common target is a pragmatic subset of [OCSF](https://schema.ocsf.io/), the
+vendor-neutral schema backed by AWS and Splunk (`glamdring/normalize/`).
 
----
+### A closed activity vocabulary
 
-## De un vistazo
+Not a style preference — it is what makes cross-SIEM correlation possible at all.
 
-Seis esquemas que explican el sistema entero sin leer una línea de código.
+Before, each normalizer emitted whatever string seemed reasonable. Measured result: **14
+values with no definition, and the same fact under three different names.** A DNS
+resolution of the same domain came out as `query` from Splunk, `connect` from QRadar and
+`create` from CEF. If the same fact does not produce the same value, the graph cannot join
+what one tool says with what another says — which is the entire point of the tool.
 
-### Dónde encaja en la red
+Now: **34 activities**, each with a definition, an OCSF class and the node it produces
+([`docs/VOCABULARIO.md`](docs/VOCABULARIO.md)). Three rules, each backed by a measurement:
 
-No instala agentes, no responde a incidentes y no sustituye al SIEM: lee lo que el SIEM
-ya recogió y lo pinta.
-
-![Arquitectura de red](docs/diagrams/01-arquitectura-red.svg)
-
-### Qué le pasa a un log desde que entra
-
-Seis etapas, cada una con su contrato. Abajo, el mismo registro de Splunk atravesándolas
-todas: crudo, normalizado, grafo, con criterio.
-
-![Arquitectura de datos](docs/diagrams/02-arquitectura-datos.svg)
-
-### Cómo se dibuja el grafo
-
-Sin npm y sin compilación: módulos ES con `importmap` y three.js r168, con la revisión
-fijada a la que trae `3d-force-graph`. Al pie, las tres trampas que no lanzan ningún
-error y costaron caro.
-
-![Arquitectura visual](docs/diagrams/03-arquitectura-visual.svg)
-
-### Lo que aporta el perímetro
-
-Un log de cortafuegos no dice qué proceso abrió la conexión, pero dice cuándo, cuánto y
-hacia dónde. Cruzado con el endpoint, cierra el caso.
-
-![Perímetro y cortafuegos](docs/diagrams/04-perimetro-firewall.svg)
-
-### Por qué hacen falta los cuatro SIEM
-
-Cada uno ve bien una parte y mal las demás, y cada uno llama de una manera distinta a la
-misma persona. La canonización es lo que los une.
-
-![Los cuatro SIEM y la unificación](docs/diagrams/05-siems-unificacion.svg)
-
-### Cómo se detecta un despliegue de ransomware
-
-Ocho etapas. Cuando se ve la octava ya es tarde, así que lo que se busca es el rastro de
-las siete anteriores.
-
-![Cadena de ransomware](docs/diagrams/06-cadena-ransomware.svg)
+- **The outcome is not an activity — it lives in `status`.** `blocked` and `logon_failed`
+  are gone. Measured by collapsing them: nodes, edges, narrative sentence and
+  `is_key_event` came out **identical across all 11 events** that carried them.
+- **A value exists only if it changes something.** The counter-proof: `logon_remote`
+  stays, because collapsing it into `logon` changes the edge from `lateral` to `connected`.
+- **Values are unique across the whole vocabulary,** not within their class. `create` used
+  to mean file created, DNS query *and* antivirus detection at the same time.
 
 ---
 
-## Capacidades de cada SIEM, y qué pasa cuando hay dos
+## At a glance
 
-Ninguno lo ve todo. La pregunta útil no es cuál es mejor, sino **qué se pierde cuando
-hay dos y nadie los cruza**.
+Nine diagrams that explain the whole system without reading a line of code.
 
-![Capacidades comparadas de los cuatro SIEM](docs/diagrams/07-capacidades-siem.svg)
+### Where it sits on the network
 
-| | Endpoint | Identidad | Correo | Red y flujos | Perímetro | Cloud |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Splunk** | ●●● | ●○○ | ●○○ | ●●○ | ●●○ | ●○○ |
-| **Sentinel / Defender** | ●●○ | ●●● | ●●● | ●○○ | ●○○ | ●●● |
-| **IBM QRadar** | ●○○ | ●●○ | ●○○ | ●●● | ●●● | ●○○ |
-| **CEF / LEEF / syslog** | ●○○ | ●○○ | ●○○ | ●●○ | ●●● | ●○○ |
+It installs no agents and responds to nothing: it reads what the tools already collected.
+The one exception is the receiver, which does listen — and that is why it carries a
+per-source key and a rate limit.
 
-`●●●` fuente principal · `●●○` aporta, con lagunas · `●○○` testimonial o ausente
+![Network architecture](docs/diagrams/01-arquitectura-red.svg)
 
-| SIEM | Su punto fuerte | Su punto ciego |
+### Two intake paths, because some sources cannot be queried
+
+Zscaler ZIA web logs **do not come out of its API** — NSS pushes them. That is not a vendor
+quirk: it is how syslog, webhooks and Splunk's HEC all work. Designing for it is why
+`POST /api/receive/{source}` exists.
+
+![Pull and push intake](docs/diagrams/09-ingesta-pull-push.svg)
+
+### What happens to a log once it enters
+
+Six stages, each with its own contract. At the bottom, the same Splunk record crossing all
+of them: raw, normalized, graph, with judgement.
+
+![Data architecture](docs/diagrams/02-arquitectura-datos.svg)
+
+### How the graph is drawn
+
+No npm and no build step: ES modules with an `importmap` and three.js r168, pinned to the
+revision `3d-force-graph` ships. At the foot, the three traps that raise no error and cost
+the most time.
+
+![Visual architecture](docs/diagrams/03-arquitectura-visual.svg)
+
+### What the perimeter adds
+
+A firewall log does not say which process opened the connection, but it says when, how much
+and where to. Crossed with the endpoint, it closes the case.
+
+![Perimeter and firewall](docs/diagrams/04-perimetro-firewall.svg)
+
+### Why six sources are needed
+
+Each one sees one part well and the rest badly, and each calls the same person something
+different. Canonicalisation is what joins them.
+
+![The six sources and unification](docs/diagrams/05-siems-unificacion.svg)
+
+### How a ransomware deployment is detected
+
+Eight stages. By the time you see the eighth it is too late, so what you look for is the
+trail of the previous seven.
+
+![Ransomware chain](docs/diagrams/06-cadena-ransomware.svg)
+
+---
+
+## What each source sees, and what happens when there are two
+
+None of them sees everything. The useful question is not which is best, but **what gets
+lost when there are two and nobody crosses them**.
+
+![Capability matrix across the six sources](docs/diagrams/07-capacidades-siem.svg)
+
+| | Endpoint | Identity | Email | Network | Perimeter | Cloud | Cloud app |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Splunk** | ●●● | ●○○ | ●○○ | ●●○ | ●●○ | ●○○ | ●○○ |
+| **Sentinel / Defender** | ●●○ | ●●● | ●●● | ●○○ | ●○○ | ●●● | ●●○ |
+| **IBM QRadar** | ●○○ | ●●○ | ●○○ | ●●● | ●●● | ●○○ | ●○○ |
+| **CEF / LEEF / syslog** | ●○○ | ●○○ | ●○○ | ●●○ | ●●● | ●○○ | ●○○ |
+| **Netskope** | ●○○ | ●●○ | ●○○ | ●●○ | ●●○ | ●●● | ●●● |
+| **Zscaler** | ●○○ | ●●○ | ●○○ | ●●● | ●●● | ●●○ | ●●● |
+
+`●●●` primary source · `●●○` contributes, with gaps · `●○○` token or absent
+
+**The cloud-app column is the one no SIEM covers**, and it is why the proxies are here.
+
+| Source | Its strength | Its blind spot |
 |---|---|---|
-| **Splunk** | Línea de comandos completa, árbol de procesos, Sysmon y 4688 | Identidad cloud |
-| **Sentinel / Defender** | Inicios de sesión, phishing entregado, alertas del EDR ya correladas | Todo lo que no es Microsoft |
-| **IBM QRadar** | Quién habló con quién y cuántos bytes; ofensas ya agrupadas | Identifica por IP, no por nombre |
-| **CEF / LEEF / syslog** | El comodín: cortafuegos, proxy, antivirus, VPN, cabinas | Cada fabricante lo estira a su gusto |
+| **Splunk** | Full command lines, process tree, Sysmon and 4688 | Cloud identity |
+| **Sentinel / Defender** | Sign-ins, delivered phishing, EDR alerts already correlated | Everything that is not Microsoft |
+| **IBM QRadar** | Who talked to whom and how many bytes; offenses already grouped | Identifies by IP, not by name |
+| **CEF / LEEF / syslog** | The wildcard: firewall, proxy, antivirus, VPN, storage arrays | Every vendor stretches it their own way |
+| **Netskope** | The action *inside* the cloud app: upload, download, share, and which file | Sees nothing inside the machine |
+| **Zscaler** | The perimeter of the machine that has no perimeter: the laptop outside the office | Web logs do not come out of the API |
 
-Dos SIEM no son el doble de visibilidad, son **dos mitades que nadie junta**. Pasa en
-dos escenarios muy corrientes:
+Two SIEMs are not twice the visibility, they are **two halves nobody joins**. It happens in
+two very ordinary situations:
 
-- **Una empresa con dos SIEM.** Uno heredado y otro nuevo, o uno de TI y otro de OT. El
-  ataque cruza los dos y cada analista mira solo el suyo.
-- **Dos empresas que se fusionan.** Datos parecidos, herramientas distintas y una
-  migración que dura años. Mientras tanto hay que investigar incidentes que atraviesan
-  las dos redes.
+- **One company with two SIEMs.** One inherited and one new, or one for IT and one for OT.
+  The attack crosses both and each analyst only looks at their own.
+- **Two companies merging.** Similar data, different tools, and a migration that takes
+  years. Meanwhile you have to investigate incidents that cross both networks.
 
-| Solo el SIEM A (Splunk) | Solo el SIEM B (QRadar) | Cosidos por equipo y hora |
-|---|---|---|
-| «jlopez ejecutó `powershell.exe` con la línea ofuscada en WKS-0421» | «10.4.2.11 sacó 4,2 GB hacia 45.132.88.17 en 40 minutos» | «jlopez ejecutó `powershell.exe` en WKS-0421 y doce minutos después ese mismo equipo sacó 4,2 GB» |
-| No sabes si llegó a salir de la red | No sabes qué proceso fue ni quién | El caso, entero |
+| Only Splunk | Only QRadar | Only Netskope | Stitched by host, person and time |
+|---|---|---|---|
+| "jlopez ran `powershell.exe` with an obfuscated command line on WKS-0421" | "10.4.1.5 pushed 734 MB to 45.132.88.17" | "svc_backup uploaded `backup-dc01.7z` to Dropbox — blocked" | The whole case, with what the file was and where it went |
+| You do not know if it ever left the network | You do not know which process, or what the data was | You do not know how the file got there | |
 
-Lo que lo hace posible:
+What makes it possible:
 
-- **Un solo modelo.** Los cuatro caen a OCSF-lite, así que un proceso de Splunk y un
-  flujo de QRadar se comparan.
-- **La identidad se unifica.** `CORP\jlopez`, `jlopez@corp.com` y `jlopez` son un nodo,
-  no tres. Y `10.4.1.5` se funde en `srv-dc01`.
-- **Cada arista recuerda su origen**, así que siempre se vuelve al log del SIEM que lo tiene.
+- **One vocabulary.** All six land on OCSF-lite with the same 34 activities, so a Splunk
+  process and a QRadar flow can be compared.
+- **Identity is unified.** `CORP\jlopez`, `jlopez@corp.com` and `jlopez` are one node, not
+  three. And `10.4.1.5` merges into `srv-dc01`.
+- **Every edge remembers where it came from**, so you can always return to the original log.
+
+Measured over the sample set: 64 events from six products produce **58 nodes and 118 edges
+with zero orphans**, and `user:jlopez` is a single node with degree 27 seen by four
+products at once.
 
 ---
 
-## Los 17 grupos de ransomware reconocidos
+## Connecting it to real sources
 
-![Los 17 grupos de ransomware, sus herramientas por categoría y su nota característica](docs/diagrams/08-grupos-ransomware.svg)
+Everything that can be queried goes in `.env` (see [`.env.example`](.env.example)):
 
-Ordenados por tamaño del repertorio. Las ocho categorías van en orden de intrusión:
-**RMM** control remoto · **Desc** reconocimiento · **Cred** robo de credenciales ·
-**OffS** utillaje ofensivo · **Red** túneles · **Exfi** exfiltración ·
-**Evas** evasión de defensas · **LOL** binarios del sistema.
+```
+SPLUNK_URL=            SPLUNK_TOKEN=
+SENTINEL_WORKSPACE_ID= AZURE_TENANT_ID=   AZURE_CLIENT_ID=  AZURE_CLIENT_SECRET=
+QRADAR_URL=            QRADAR_TOKEN=
+NETSKOPE_URL=          NETSKOPE_TOKEN=
+ZPA_URL=               ZPA_CLIENT_ID=     ZPA_CLIENT_SECRET=  ZPA_CUSTOMER_ID=
+```
 
-| Grupo | Total | RMM | Desc | Cred | OffS | Red | Exfi | Evas | LOL | Nota que lo distingue |
+`GET /api/connectors/ping` checks them for real and returns latency or the reason it failed.
+
+**Zscaler ZIA is the exception** — it pushes. In the ZIA portal, under *Administration →
+Nanolog Streaming Service → Cloud NSS Feed*:
+
+```
+API URL:   https://YOUR-GLAMDRING/api/receive/zscaler
+Header:    X-Glamdring-Key = <the key>
+```
+
+and declare that key in `.env`:
+
+```
+GLAMDRING_RECEIVE_KEYS=zscaler:<key>
+```
+
+Generate it with `python -c "import secrets; print(secrets.token_urlsafe(32))"`. Keys under
+24 characters are rejected with a warning: a short key leaves an endpoint that *looks*
+protected, which is worse than no protection at all.
+
+> Cloud NSS ships **disabled** in ZIA. If the option is not there, you need to open a case
+> with Zscaler support. Worth knowing before promising dates.
+
+And with no credentials at all: export the search from your SIEM and drag the file in. That
+is how it gets used most in practice, because the analyst rarely has the API token.
+
+### Before you expose it
+
+**The API has no authentication.** Ten write routes, and only `POST /api/receive/{source}`
+is protected. Anyone who can reach the port can wipe the running investigation, run queries
+against your SIEM with the credentials in your `.env`, or download the report.
+
+Locally that does not matter. On a network it does. Run it on your own machine, or behind a
+proxy that authenticates.
+
+---
+
+## The 17 recognised ransomware groups
+
+![The 17 ransomware groups, their tools by category and their distinctive note](docs/diagrams/08-grupos-ransomware.svg)
+
+Ordered by repertoire size. The eight categories follow the order of an intrusion:
+**RMM** remote control · **Desc** reconnaissance · **Cred** credential theft ·
+**OffS** offensive tooling · **Red** tunnelling · **Exfi** exfiltration ·
+**Evas** defence evasion · **LOL** living-off-the-land binaries.
+
+| Group | Total | RMM | Desc | Cred | OffS | Red | Exfi | Evas | LOL | Distinctive note |
 |---|--:|--:|--:|--:|--:|--:|--:|--:|--:|---|
 | **ScatteredSpider** | 78 | 26 | 11 | 10 | 6 | 17 | 6 | 1 | 1 | — |
 | **TheGentlemen** | 41 | 3 | 12 | 3 | 8 | 8 | 1 | 5 | 1 | `README-GENTLEMEN.txt` |
@@ -168,25 +260,57 @@ Ordenados por tamaño del repertorio. Las ocho categorías van en orden de intru
 | **Yurei** | 9 | 1 | 2 | — | 4 | — | — | — | 2 | — |
 | **SafePay** | 8 | 1 | 1 | — | — | — | 3 | — | 3 | `readme_safepay.txt` |
 
-- **El perfil pesa más que el total.** ScatteredSpider tiene 26 herramientas de control
-  remoto y 17 de red: entra y se queda. INC Ransom tiene 5 de 9 en exfiltración: viene a
-  llevarse datos.
-- **La nota que distingue** es la única que no comparte con ningún otro grupo del
-  catálogo. Los que ponen «—» solo usan nombres genéricos como `README.txt`, que no
-  identifican nada: el motor los pondera con 0,1 frente al 10 de una nota propia
-  (`glamdring/threat/attribution.py:88` y `:93`).
-- **Los emblemas del esquema son monogramas, no logotipos.** Estos grupos no tienen una
-  marca redistribuible, y ponerles una inventada sería afirmar algo falso.
+- **The profile matters more than the total.** ScatteredSpider has 26 remote-control tools
+  and 17 networking ones: it gets in and stays. INC Ransom has 5 of 9 in exfiltration: it
+  comes to take data.
+- **The distinctive note** is the only one it shares with no other group in the catalogue.
+  Those showing "—" only use generic names like `README.txt`, which identify nothing: the
+  engine weights them 0.1 against the 10 of a group-specific note
+  (`glamdring/threat/attribution.py:88` and `:93`).
+- **The emblems in the diagram are monograms, not logos.** These groups have no
+  redistributable brand, and inventing one would be asserting something false.
 
-> **Esto no sirve para señalar a nadie.** Comparten afiliados y casi todos usan las
-> mismas utilidades, que además usan los administradores legítimos. El solape orienta la
-> búsqueda —dice qué mirar a continuación—, no dice quién fue.
+> **This does not point at anyone.** They share affiliates and nearly all of them use the
+> same utilities, which legitimate administrators also use. Overlap directs the search — it
+> says what to look at next — it does not say who did it.
 
-El cuadro se genera desde el catálogo, no se escribe a mano:
+The table is generated from the catalogue, not written by hand:
 
 ```powershell
-python tools/fetch_threat_intel.py   # actualiza el catálogo desde las fuentes
-python tools/make_group_table.py     # regenera docs/diagrams/08-grupos-ransomware.svg
+python tools/fetch_threat_intel.py   # refresh the catalogue from its sources
+python tools/make_group_table.py     # regenerate docs/diagrams/08-grupos-ransomware.svg
 ```
 
 ---
+
+## Tests
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+python tools/check_diagrams.py        # the SVGs are valid and nothing overflows
+```
+
+456 tests. The ones worth knowing about are the ones that fail when the fix is reverted:
+
+- Sentinel's synchronous SDK call must run in a thread. Verified by removing
+  `asyncio.to_thread` on purpose: the event loop goes from ~50 heartbeats to **1** while a
+  query is in flight, and the test goes red.
+- ZPA's `expires_in` is in **milliseconds**. Verified the same way: treating it as seconds
+  gives a token "valid" for 41 days and then an inexplicable run of 401s.
+- Every line of every sample lands in its own class, fixed line by line
+  (`tests/test_clasificacion.py`), and no sample leaves an orphan node.
+
+---
+
+## Documentation
+
+| | |
+|---|---|
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | How the pieces fit together |
+| [`docs/VOCABULARIO.md`](docs/VOCABULARIO.md) | The 34 activities, with the measurements behind each rule |
+| [`docs/HALLAZGOS-CLASIFICACION.md`](docs/HALLAZGOS-CLASIFICACION.md) | 39 confirmed classification defects, each reproduced by running code |
+| [`docs/PROXIES-SASE.md`](docs/PROXIES-SASE.md) | Netskope and Zscaler, with what is verified marked as such |
+| [`docs/CONNECTORS.md`](docs/CONNECTORS.md) | The connector contract and how to add a source |
+| [`docs/ONTOLOGY.md`](docs/ONTOLOGY.md) | Entity and relation types |
+| [`docs/INGESTA-Y-SEGURIDAD.md`](docs/INGESTA-Y-SEGURIDAD.md) | Ingest and channel security review |
+| [`docs/PENDIENTE.md`](docs/PENDIENTE.md) | What is left, and where to pick it up |
