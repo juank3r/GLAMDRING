@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Gandalf holding Glamdring, in ASCII art](docs/glamdring.png)
+<img src="docs/glamdring.png" alt="Gandalf holding Glamdring, in ASCII art" width="380">
 
 </div>
 

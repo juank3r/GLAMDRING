@@ -24,3 +24,8 @@ config/models/
 # Se quedan en disco mientras se investiga, pero no son del proyecto.
 repro*.py
 /scratch_*.py
+
+# El PNG original de la portada, del que se genera docs/glamdring.png.
+# Se conserva en local para poder regenerarla, pero al repositorio solo va la
+# version final: subir las dos es subir 190 KB que nadie mira.
+docs/glamdring-original.png
