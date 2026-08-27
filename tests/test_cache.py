@@ -146,3 +146,81 @@ def test_the_cache_does_not_grow_without_limit(store):
     for texto in ("powershell", "certutil", "mimikatz", "rclone"):
         _consulta(store, text=texto)
     assert cache_info()["entries"] <= cache_info()["max"]
+
+
+# --------------------------------------------- lo que faltaba en la clave
+
+
+def test_cambiar_los_pesos_de_riesgo_invalida_lo_cacheado(all_events):
+    """EL RIESGO SE CALCULA DENTRO DE LO QUE SE CACHEA.
+
+    build_graph llama a enrich.score(), que lee el global _risk_weights, y ese
+    global lo cambia el panel de administrador. Sin los pesos en la clave,
+    cambiarlos no invalidaba nada: el panel confirmaba el cambio y el grafo
+    seguia enseñando la puntuacion vieja.
+
+    Medido antes del arreglo, dividiendo los pesos entre cuatro sobre el
+    incidente minimo: el mismo nodo salia con riesgo 79 desde la cache y con 18
+    al vaciarla a mano. Es peor que un fallo visible porque el numero que se
+    queda en pantalla es plausible, y nadie sospecha de un riesgo 79.
+    """
+    from glamdring.graph.enrich import risk_weights, set_risk_weights
+
+    cache_clear()
+    almacen = EventStore()
+    almacen.add(list(all_events), "test")
+
+    def riesgos():
+        grafo = build_filtered(almacen.events, version=almacen.version,
+                               store_id=almacen.store_id)
+        return {n.id: n.risk for n in grafo.nodes}
+
+    originales = dict(risk_weights())
+    try:
+        antes = riesgos()
+        assert antes, "hacen falta nodos para que la prueba diga algo"
+
+        set_risk_weights({k: max(0, int(v) // 4) for k, v in originales.items()})
+        despues = riesgos()
+
+        cambiados = [k for k in antes if antes[k] != despues.get(k)]
+        assert cambiados, (
+            "los pesos cambiaron y el grafo cacheado sigue con la puntuacion vieja")
+    finally:
+        set_risk_weights(originales)
+        cache_clear()
+
+
+def test_dos_almacenes_distintos_no_se_pisan_en_la_cache(all_events):
+    """`version` empieza en 0 en CADA almacen.
+
+    Asi que dos incidentes recien cargados estan los dos en la version 1 y, sin
+    filtros, producian la MISMA clave: se devolvia el grafo del otro incidente.
+    No fallaba y no avisaba, y ademas era verosimil, que es lo peor que puede
+    pasarle a una herramienta forense.
+
+    Este test no existia, y por eso la suite no habria detectado la regresion:
+    los tests que ya habia crean varios EventStore pero los cargan todos con los
+    MISMOS eventos, asi que el grafo cacheado coincidia por casualidad.
+    """
+    cache_clear()
+
+    uno = EventStore()
+    uno.add(list(all_events), "uno")
+
+    otro = EventStore()
+    otro.add(list(all_events)[:3], "otro")
+
+    assert uno.version == otro.version, "la premisa del fallo: misma version"
+    assert uno.store_id != otro.store_id
+
+    grafo_uno = build_filtered(uno.events, version=uno.version, store_id=uno.store_id)
+    grafo_otro = build_filtered(otro.events, version=otro.version, store_id=otro.store_id)
+
+    assert len(grafo_uno.nodes) != len(grafo_otro.nodes), (
+        "el segundo almacen recibio el grafo del primero")
+
+    # Y volver a pedir el primero sigue dando el primero.
+    otra_vez = build_filtered(uno.events, version=uno.version, store_id=uno.store_id)
+    assert len(otra_vez.nodes) == len(grafo_uno.nodes)
+    cache_clear()

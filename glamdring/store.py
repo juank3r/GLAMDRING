@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import re
 import threading
+import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, Iterable, List, Optional, Sequence
 
@@ -121,6 +122,20 @@ class EventStore:
         # grafo construido sin miedo: mientras no suba, lo cacheado sigue
         # valiendo, y cuando sube todo lo anterior caduca de golpe.
         self._version = 0
+        # QUIEN es este almacen, no solo cuantas veces ha cambiado.
+        #
+        # `version` empieza en 0 en CADA instancia, asi que dos almacenes recien
+        # cargados estan los dos en la version 1. La cache de grafos usa la
+        # version como parte de su clave, y con dos incidentes cargados a la vez
+        # eso colisiona: se devuelve el grafo del otro. No falla y no avisa, y
+        # ademas es verosimil, que es lo peor que puede pasarle a una
+        # herramienta forense.
+        self._id = uuid.uuid4().hex[:12]
+
+    @property
+    def store_id(self) -> str:
+        """Identidad estable de este almacen, para no confundirlo con otro."""
+        return self._id
 
     @property
     def version(self) -> int:

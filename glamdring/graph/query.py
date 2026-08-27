@@ -24,7 +24,7 @@ from ..models import (
 )
 from . import ontology
 from .build import build_graph
-from .enrich import enrich
+from .enrich import enrich, risk_weights
 
 
 # ---------------------------------------------------------------------------
@@ -347,7 +347,26 @@ def cache_info() -> Dict[str, Any]:
     return {"entries": len(_CACHE), "max": _CACHE_MAX}
 
 
+def _huella_de_pesos() -> tuple:
+    """Los pesos de riesgo con los que se puntuo lo cacheado.
+
+    EL RIESGO SE CALCULA DENTRO DE LO QUE SE CACHEA. `build_graph` llama a
+    `enrich.score()`, que lee el global `_risk_weights`, y ese global lo cambia
+    el panel de administrador (`appearance.update()` -> `set_risk_weights()`).
+
+    Sin esto, cambiar los pesos no invalidaba nada: el panel confirmaba el
+    cambio y el grafo seguia enseñando la puntuacion vieja. Medido sobre el
+    incidente minimo, dividiendo los pesos entre cuatro: el mismo nodo salia con
+    riesgo 79 desde la cache y con 18 al vaciarla a mano.
+
+    Es peor que un fallo visible, porque el numero que se queda en pantalla es
+    plausible: nadie sospecha de un riesgo 79.
+    """
+    return tuple(sorted(risk_weights().items()))
+
+
 def _event_key(
+    store_id: Optional[str],
     version: int,
     time_from: Optional[datetime],
     time_to: Optional[datetime],
@@ -358,7 +377,13 @@ def _event_key(
     text: Optional[str],
 ) -> tuple:
     return (
+        # QUIEN, no solo cuantas veces ha cambiado. `version` empieza en 0 en
+        # cada almacen, asi que dos incidentes recien cargados estan los dos en
+        # la version 1 y, sin filtros, producian la MISMA clave: se devolvia el
+        # grafo del otro incidente, en silencio y verosimil.
+        store_id,
         version,
+        _huella_de_pesos(),
         time_from.isoformat() if time_from else None,
         time_to.isoformat() if time_to else None,
         min_severity,
@@ -386,6 +411,7 @@ def build_filtered(
     events: Sequence[NormalizedEvent],
     *,
     version: Optional[int] = None,
+    store_id: Optional[str] = None,
     time_from: Optional[datetime] = None,
     time_to: Optional[datetime] = None,
     min_severity: int = 0,
@@ -408,7 +434,7 @@ def build_filtered(
     key = None
     graph = None
     if version is not None:
-        key = _event_key(version, time_from, time_to, min_severity,
+        key = _event_key(store_id, version, time_from, time_to, min_severity,
                          sources, tactics, classes, text)
         cached = _CACHE.get(key)
         if cached is not None:
