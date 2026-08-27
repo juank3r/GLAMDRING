@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 900" width="1360" height="900" font-family="Segoe UI, Inter, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg9" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/><stop offset="1" stop-color="#070a10"/>
+    </linearGradient>
+    <marker id="pull9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4ea8ff"/>
+    </marker>
+    <marker id="push9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f97316"/>
+    </marker>
+    <marker id="com9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2dd4bf"/>
+    </marker>
+    <filter id="glow9" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1360" height="900" fill="url(#bg9)"/>
+
+  <text x="48" y="52" fill="#dce4f0" font-size="26" font-weight="700" letter-spacing="1">Dos vias de entrada, porque hay fuentes que no se dejan consultar</text>
+  <text x="48" y="78" fill="#8b98ad" font-size="14">Los logs web de Zscaler ZIA no salen por su API: los empuja NSS. No es un capricho del fabricante, es como funcionan syslog, los webhooks y el HEC de Splunk.</text>
+
+  <!-- ============================================================ IZQUIERDA: PULL -->
+  <g transform="translate(48,116)">
+    <rect width="600" height="452" rx="14" fill="#0d121c" stroke="#4ea8ff" stroke-opacity="0.30"/>
+    <rect x="0" y="0" width="600" height="46" rx="14" fill="#4ea8ff" fill-opacity="0.10"/>
+    <text x="24" y="30" fill="#4ea8ff" font-size="15" font-weight="700" letter-spacing="1">SE DEJA CONSULTAR</text>
+    <text x="214" y="30" fill="#5b6880" font-size="12.5">nosotros preguntamos, cuando queremos</text>
+
+    <text x="24" y="76" fill="#5b6880" font-size="10.5" letter-spacing="1.5">QUIEN</text>
+
+    <g transform="translate(24,88)">
+      <rect width="264" height="52" rx="8" fill="#121927" stroke="#2a3547"/>
+      <circle cx="24" cy="26" r="9" fill="#65a637"/>
+      <text x="44" y="24" fill="#dce4f0" font-size="13.5" font-weight="600">Splunk</text>
+      <text x="44" y="41" fill="#7d8ba1" font-size="11" font-family="Consolas, monospace">SPL / REST :8089</text>
+    </g>
+    <g transform="translate(304,88)">
+      <rect width="264" height="52" rx="8" fill="#121927" stroke="#2a3547"/>
+      <circle cx="24" cy="26" r="9" fill="#0078d4"/>
+      <text x="44" y="24" fill="#dce4f0" font-size="13.5" font-weight="600">Microsoft Sentinel</text>
+      <text x="44" y="41" fill="#7d8ba1" font-size="11" font-family="Consolas, monospace">KQL / Log Analytics</text>
+    </g>
+    <g transform="translate(24,150)">
+      <rect width="264" height="52" rx="8" fill="#121927" stroke="#2a3547"/>
+      <circle cx="24" cy="26" r="9" fill="#0f62fe"/>
+      <text x="44" y="24" fill="#dce4f0" font-size="13.5" font-weight="600">IBM QRadar</text>
+      <text x="44" y="41" fill="#7d8ba1" font-size="11" font-family="Consolas, monospace">AQL / Ariel</text>
+    </g>
+    <g transform="translate(304,150)">
+      <rect width="264" height="52" rx="8" fill="#121927" stroke="#ff6600" stroke-opacity="0.5"/>
+      <circle cx="24" cy="26" r="9" fill="#ff6600"/>
+      <text x="44" y="24" fill="#dce4f0" font-size="13.5" font-weight="600">Netskope</text>
+      <text x="44" y="41" fill="#7d8ba1" font-size="11" font-family="Consolas, monospace">API v2 / iterador con estado</text>
+    </g>
+    <g transform="translate(24,212)">
+      <rect width="264" height="52" rx="8" fill="#121927" stroke="#0093d0" stroke-opacity="0.5"/>
+      <circle cx="24" cy="26" r="9" fill="#0093d0"/>
+      <text x="44" y="24" fill="#dce4f0" font-size="13.5" font-weight="600">Zscaler ZPA</text>
+      <text x="44" y="41" fill="#7d8ba1" font-size="11" font-family="Consolas, monospace">REST / apps privadas</text>
+    </g>
+    <g transform="translate(304,212)">
+      <rect width="264" height="52" rx="8" fill="#121927" stroke="#2a3547" stroke-dasharray="4 3"/>
+      <circle cx="24" cy="26" r="9" fill="#94a3b8"/>
+      <text x="44" y="24" fill="#dce4f0" font-size="13.5" font-weight="600">Fichero exportado</text>
+      <text x="44" y="41" fill="#7d8ba1" font-size="11">el caso mas habitual en la practica</text>
+    </g>
+
+    <text x="24" y="298" fill="#5b6880" font-size="10.5" letter-spacing="1.5">EL CONTRATO</text>
+    <rect x="24" y="310" width="544" height="118" rx="8" fill="#0a0f18" stroke="#2a3547"/>
+    <text x="40" y="334" fill="#4ea8ff" font-size="12" font-family="Consolas, monospace">fetch(consulta, desde, hasta, limite, cursor)</text>
+    <text x="40" y="356" fill="#5b6880" font-size="12">devuelve</text>
+    <text x="100" y="356" fill="#dce4f0" font-size="12" font-family="Consolas, monospace">FetchResult</text>
+    <text x="40" y="380" fill="#94a3b8" font-size="11.5">truncated  se corto? Sin esto, "habia justo 10.000" y "habia dos</text>
+    <text x="40" y="396" fill="#94a3b8" font-size="11.5">millones" llegaban identicos y el grafo mentia por omision.</text>
+    <text x="40" y="416" fill="#94a3b8" font-size="11.5">cursor  por donde seguir. total, warnings.</text>
+  </g>
+
+  <!-- ============================================================ DERECHA: PUSH -->
+  <g transform="translate(712,116)">
+    <rect width="600" height="452" rx="14" fill="#0d121c" stroke="#f97316" stroke-opacity="0.30"/>
+    <rect x="0" y="0" width="600" height="46" rx="14" fill="#f97316" fill-opacity="0.10"/>
+    <text x="24" y="30" fill="#f97316" font-size="15" font-weight="700" letter-spacing="1">EMPUJA</text>
+    <text x="128" y="30" fill="#5b6880" font-size="12.5">llega cuando llega, y hay que estar escuchando</text>
+
+    <text x="24" y="76" fill="#5b6880" font-size="10.5" letter-spacing="1.5">QUIEN</text>
+
+    <g transform="translate(24,88)">
+      <rect width="264" height="52" rx="8" fill="#121927" stroke="#0093d0" stroke-opacity="0.6"/>
+      <circle cx="24" cy="26" r="9" fill="#0093d0"/>
+      <text x="44" y="24" fill="#dce4f0" font-size="13.5" font-weight="600">Zscaler ZIA</text>
+      <text x="44" y="41" fill="#7d8ba1" font-size="11" font-family="Consolas, monospace">Cloud NSS / logs web</text>
+    </g>
+    <g transform="translate(304,88)">
+      <rect width="264" height="52" rx="8" fill="#121927" stroke="#2a3547"/>
+      <circle cx="24" cy="26" r="9" fill="#94a3b8"/>
+      <text x="44" y="24" fill="#dce4f0" font-size="13.5" font-weight="600">Reenviadores syslog</text>
+      <text x="44" y="41" fill="#7d8ba1" font-size="11">cortafuegos, cabinas, appliances</text>
+    </g>
+    <g transform="translate(24,150)">
+      <rect width="264" height="52" rx="8" fill="#121927" stroke="#2a3547"/>
+      <circle cx="24" cy="26" r="9" fill="#94a3b8"/>
+      <text x="44" y="24" fill="#dce4f0" font-size="13.5" font-weight="600">Webhooks</text>
+      <text x="44" y="41" fill="#7d8ba1" font-size="11">EDR y SaaS que avisan al ocurrir</text>
+    </g>
+    <g transform="translate(304,150)">
+      <rect width="264" height="52" rx="8" fill="#121927" stroke="#2a3547"/>
+      <circle cx="24" cy="26" r="9" fill="#65a637"/>
+      <text x="44" y="24" fill="#dce4f0" font-size="13.5" font-weight="600">HEC de Splunk</text>
+      <text x="44" y="41" fill="#7d8ba1" font-size="11">el mismo patron, otro fabricante</text>
+    </g>
+
+    <rect x="24" y="212" width="544" height="52" rx="8" fill="#1a1206" stroke="#c98a2b" stroke-opacity="0.55"/>
+    <circle cx="46" cy="238" r="10" fill="none" stroke="#c98a2b" stroke-width="1.6"/>
+    <text x="46" y="243" fill="#c98a2b" font-size="13" font-weight="700" text-anchor="middle">!</text>
+    <text x="68" y="233" fill="#e8d5b0" font-size="12">Cloud NSS viene DESACTIVADO en ZIA. Si no aparece la opcion,</text>
+    <text x="68" y="251" fill="#e8d5b0" font-size="12">hay que abrir un caso con el soporte de Zscaler.</text>
+
+    <text x="24" y="298" fill="#5b6880" font-size="10.5" letter-spacing="1.5">LA PUERTA, Y LO QUE RECHAZA</text>
+    <rect x="24" y="310" width="544" height="118" rx="8" fill="#0a0f18" stroke="#2a3547"/>
+    <text x="40" y="334" fill="#f97316" font-size="12" font-family="Consolas, monospace">POST /api/receive/{fuente}</text>
+    <text x="40" y="356" fill="#94a3b8" font-size="11.5">Clave POR FUENTE, no global: se revoca una sin tocar las demas.</text>
+    <text x="40" y="374" fill="#94a3b8" font-size="11.5">Comparacion en tiempo constante, o la clave se saca byte a byte.</text>
+    <text x="40" y="392" fill="#94a3b8" font-size="11.5">Fuente que no existe: 401, nunca 404, y el MISMO mensaje.</text>
+    <text x="40" y="410" fill="#94a3b8" font-size="11.5">Se autoriza ANTES de leer el cuerpo. Limite de tamano y de ritmo.</text>
+  </g>
+
+  <!-- ============================================================ flechas al centro -->
+  <path d="M348,568 L348,614 L672,614 L672,646" fill="none" stroke="#4ea8ff" stroke-width="2" marker-end="url(#pull9)"/>
+  <path d="M1012,568 L1012,614 L688,614 L688,646" fill="none" stroke="#f97316" stroke-width="2" marker-end="url(#push9)"/>
+
+  <!-- ============================================================ el punto de encuentro -->
+  <g transform="translate(212,650)">
+    <rect width="936" height="196" rx="14" fill="#0d121c" stroke="#2dd4bf" stroke-opacity="0.35" filter="url(#glow9)"/>
+    <text x="28" y="34" fill="#2dd4bf" font-size="15" font-weight="700" letter-spacing="1">A PARTIR DE AQUI DA IGUAL POR DONDE ENTRARON</text>
+    <text x="28" y="58" fill="#94a3b8" font-size="12.5">Las dos vias desembocan en el mismo sitio: por eso una fuente nueva no obliga a tocar nada mas.</text>
+
+    <g transform="translate(28,78)">
+      <rect width="272" height="94" rx="9" fill="#121927" stroke="#2a3547"/>
+      <text x="18" y="26" fill="#dce4f0" font-size="13" font-weight="600">Normalizacion</text>
+      <text x="18" y="48" fill="#7d8ba1" font-size="11.5">Un vocabulario CERRADO de 34</text>
+      <text x="18" y="64" fill="#7d8ba1" font-size="11.5">actividades. Seis productos que</text>
+      <text x="18" y="80" fill="#7d8ba1" font-size="11.5">dicen lo mismo con el mismo nombre.</text>
+    </g>
+    <path d="M308,125 L336,125" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#com9)"/>
+    <g transform="translate(340,78)">
+      <rect width="272" height="94" rx="9" fill="#121927" stroke="#2a3547"/>
+      <text x="18" y="26" fill="#dce4f0" font-size="13" font-weight="600">Canonizacion</text>
+      <text x="18" y="48" fill="#7d8ba1" font-size="11.5">CORP\jlopez, jlopez@corp.com y</text>
+      <text x="18" y="64" fill="#7d8ba1" font-size="11.5">jlopez son UN nodo. Y 10.4.1.5 se</text>
+      <text x="18" y="80" fill="#7d8ba1" font-size="11.5">funde en srv-dc01.</text>
+    </g>
+    <path d="M620,125 L648,125" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#com9)"/>
+    <g transform="translate(652,78)">
+      <rect width="256" height="94" rx="9" fill="#121927" stroke="#2a3547"/>
+      <text x="18" y="26" fill="#dce4f0" font-size="13" font-weight="600">Grafo</text>
+      <text x="18" y="48" fill="#7d8ba1" font-size="11.5">Entidades y relaciones, con el log</text>
+      <text x="18" y="64" fill="#7d8ba1" font-size="11.5">literal detras de cada nodo y de</text>
+      <text x="18" y="80" fill="#7d8ba1" font-size="11.5">cada arista.</text>
+    </g>
+  </g>
+
+  <text x="48" y="878" fill="#5b6880" font-size="11.5">El contrato de conector solo sabia tirar de datos. Sin la segunda via no entraba la mitad de Zscaler, ni syslog, ni ningun webhook.</text>
+</svg>

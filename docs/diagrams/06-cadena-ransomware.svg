@@ -145,7 +145,7 @@
     <line x1="12" y1="0" x2="12" y2="-198" stroke="#ff2d55" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.5"/>
     <circle cx="12" cy="12" r="7" fill="#ff2d55" filter="url(#glow6)"/>
     <text x="30" y="17" fill="#ff2d55" font-size="12.5" font-weight="600">Punto de no retorno</text>
-    <text x="30" y="35" fill="#8b98ad" font-size="11.5">Pasada la etapa 6, los datos ya están fuera: pagar o no pagar</text>
+    <text x="30" y="35" fill="#8b98ad" font-size="11.5">Pasada la etapa 6 los datos ya están fuera, y pagar o no</text>
     <text x="30" y="52" fill="#8b98ad" font-size="11.5">deja de decidirse solo por las copias de seguridad.</text>
   </g>
 
