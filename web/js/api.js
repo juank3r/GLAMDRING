@@ -68,6 +68,11 @@ async function download(url, options, fallbackName) {
 
 export const health = () => request('api/health');
 export const ontology = () => request('api/ontology');
+
+/* Valoracion de amenaza del incidente cargado: comportamientos reconocidos,
+   herramientas del catalogo y atribucion (que es una hipotesis, no un veredicto,
+   y el propio payload lo dice). */
+export const threat = () => request('api/threat');
 export const connectors = () => request('api/connectors');
 
 /* Comprobacion REAL de que cada fuente responde. Va aparte de connectors()

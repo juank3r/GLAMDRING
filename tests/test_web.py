@@ -231,3 +231,41 @@ def test_el_semaforo_del_siem_comprueba_de_verdad():
     css = (WEB_DIR / "css" / "glamdring.css").read_text(encoding="utf-8")
     for clase in (".status-line .dot.probing", ".status-line .dot.down"):
         assert clase in css, f"falta el estilo {clase}"
+
+
+# ------------------------------------------------------ panel de amenaza
+
+
+def test_la_deteccion_de_amenazas_llega_a_la_pantalla():
+    """El motor de amenazas funcionaba y NADIE lo veia.
+
+    Detecta comportamientos, reconoce herramientas de 17 grupos de ransomware y
+    calcula atribucion, todo por /api/threat. La interfaz no llamaba a esa ruta
+    ni una vez: un analista podia tener delante un volcado de credenciales
+    detectado y no enterarse salvo que consultara la API a mano.
+    """
+    api_js = (WEB_DIR / "js" / "api.js").read_text(encoding="utf-8")
+    app_js = (WEB_DIR / "js" / "app.js").read_text(encoding="utf-8")
+    assert "api/threat" in api_js, "falta la llamada a /api/threat"
+    assert "amenaza.refrescar()" in app_js, "nadie pinta la valoracion"
+
+
+def test_el_panel_de_amenaza_no_encabeza_con_la_puntuacion():
+    """La atribucion es una HIPOTESIS y presentarla como un veredicto hace dano.
+
+    Sobre la demo, SafePay puntua 0,705 por haber usado 7zip, que esta en el
+    maletin de todo el mundo. Un panel que dijera 'SafePay 70%' seria una mentira
+    con aplomo, y el que la lea va a actuar sobre ella.
+
+    Lo que manda es la explicacion del motor -que ahi dice literalmente 'no
+    permite atribuir nada'- y el aviso de que esto orienta la busqueda, no cierra
+    un caso.
+    """
+    modulo = (WEB_DIR / "js" / "ui" / "amenaza.js").read_text(encoding="utf-8")
+    assert "a.explanation" in modulo, "la explicacion del motor tiene que salir"
+    assert "a.caveat" in modulo, "el aviso tiene que salir"
+    assert "am-generalizada" in modulo, (
+        "una herramienta de uso generalizado tiene que verse marcada como tal")
+    # El score no se pinta: no aporta y da una precision que no existe.
+    assert "c.score" not in modulo, (
+        "la puntuacion numerica no se enseña: sugiere una precision que no hay")

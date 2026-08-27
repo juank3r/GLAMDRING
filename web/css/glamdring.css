@@ -1000,3 +1000,93 @@ body.cine .stage-legend {
    de taparla. El alto de la descripcion cambia con lo larga que sea la frase,
    asi que se ancla al hueco de arriba y no a una distancia fija del suelo. */
 body.cine-claro .incidente-bar { background: rgba(255, 255, 255, 0.94); }
+
+/* ---------------------------------------------------------------------------
+   Panel de amenaza (inspector sin seleccion)
+   ---------------------------------------------------------------------------
+   Densidad alta a proposito: es un resumen que se lee de un vistazo, no un
+   documento. Lo que manda visualmente es la severidad, porque es lo que decide
+   por donde empieza el analista. */
+
+.am-resumen { color: var(--text-dim); font-size: 12px; margin: 2px 0 12px; }
+.am-resumen strong { color: var(--text); }
+
+.am-bloque { margin-bottom: 16px; }
+.am-bloque h4 {
+  font-size: 10.5px; letter-spacing: 1.5px; color: var(--text-faint);
+  text-transform: uppercase; margin: 0 0 8px; font-weight: 600;
+}
+
+.am-comportamiento {
+  border-left: 2px solid var(--border-strong);
+  padding: 7px 0 8px 10px; margin-bottom: 9px;
+}
+/* El borde izquierdo es la unica pista de color, y basta: en una lista ordenada
+   por severidad, el ojo baja por esa columna sin leer nada. */
+.am-comportamiento.sev-critica { border-left-color: var(--danger); }
+.am-comportamiento.sev-alta    { border-left-color: #f97316; }
+.am-comportamiento.sev-media   { border-left-color: #fbbf24; }
+.am-comportamiento.sev-baja    { border-left-color: var(--border-strong); }
+
+.am-cab { display: flex; align-items: center; gap: 7px; }
+.am-cab strong { font-size: 12.5px; color: var(--text); }
+.am-sev {
+  flex: none; width: 17px; height: 17px; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10.5px; font-weight: 700; background: var(--bg-panel-alt);
+  color: var(--text-dim);
+}
+.sev-critica .am-sev { background: var(--danger); color: #fff; }
+.sev-alta .am-sev    { background: #f97316; color: #1a1206; }
+.sev-media .am-sev   { background: #fbbf24; color: #1a1206; }
+
+.am-donde {
+  margin-left: auto; font-size: 10.5px; color: var(--text-dim);
+  font-family: var(--mono, Consolas, monospace);
+}
+.am-meta { font-size: 10.5px; color: var(--text-faint); margin: 3px 0 0; }
+
+/* El "por que importa" es lo que separa este panel de una lista de alertas.
+   Sin el, "Volcado de credenciales" solo significa algo para quien ya lo sabe. */
+.am-porque { font-size: 11.5px; color: var(--text-dim); margin: 5px 0 0; line-height: 1.45; }
+
+.am-evidencia {
+  display: block; margin-top: 6px; padding: 5px 7px;
+  background: var(--bg-panel-alt); border-radius: 3px;
+  font-size: 10.5px; color: var(--text-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  cursor: help;
+}
+
+.am-herramienta { display: flex; gap: 8px; font-size: 11.5px; margin-bottom: 5px; }
+.am-cat { color: var(--text-faint); flex: 0 0 42%; }
+.am-herramienta code, .am-solape code {
+  background: var(--bg-panel-alt); border-radius: 3px; padding: 1px 5px;
+  font-size: 10.5px; color: var(--text);
+}
+
+/* ATRIBUCION. Manda la explicacion, no la puntuacion: sobre la demo, SafePay
+   sale a 0,705 por haber usado 7zip, que usa todo el mundo. */
+.am-explicacion {
+  font-size: 11.5px; color: var(--text); line-height: 1.45;
+  background: var(--bg-panel-alt); border-left: 2px solid var(--warn, #c98a2b);
+  padding: 7px 9px; margin: 0 0 10px; border-radius: 0 3px 3px 0;
+}
+.am-candidato { margin-bottom: 8px; }
+.am-candidato .am-cab strong { font-size: 12px; }
+.am-confianza { margin-left: auto; font-size: 10.5px; color: var(--text-faint); }
+.am-solape { margin-top: 4px; display: flex; gap: 5px; flex-wrap: wrap; }
+/* Una herramienta de uso generalizado no distingue a nadie, y tiene que verse
+   que no lo hace: si no, un solape de 7zip se lee igual que uno de una
+   herramienta propia del grupo. */
+.am-generalizada {
+  opacity: 0.5; text-decoration: line-through;
+  text-decoration-color: var(--text-faint); cursor: help;
+}
+.am-nada { font-size: 10.5px; color: var(--text-faint); font-style: italic; }
+.am-caveat {
+  font-size: 10.5px; color: var(--text-faint); line-height: 1.5;
+  margin: 10px 0 0; padding-top: 9px; border-top: 1px solid var(--border);
+}
+.am-limpio { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+.am-pie { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }

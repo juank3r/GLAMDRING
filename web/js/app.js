@@ -10,6 +10,7 @@ import * as api from './api.js';
 import * as ont from './ontology.js';
 import graph3d from './render/graph3d.js';
 import { legendFor, nodeColor } from './render/colors.js';
+import * as amenaza from './ui/amenaza.js';
 import * as filters from './ui/filters.js';
 import * as timeline from './ui/timeline.js';
 import * as inspector from './ui/inspector.js';
@@ -176,6 +177,11 @@ async function reload({ fit = true, keepTimeline = false } = {}) {
 
     el('empty-state').style.display = state.hasData ? 'none' : 'flex';
     if (fit) setTimeout(() => graph3d.zoomToFit(), 450);
+
+    // La valoracion de amenaza, en el inspector mientras no haya nada
+    // seleccionado. No se espera a que termine: es informacion util pero no
+    // bloquea nada, y el grafo tiene que aparecer ya.
+    if (state.hasData) amenaza.refrescar();
   } catch (error) {
     toast(`Error al cargar el grafo: ${error.message}`, 'error', 7000);
   } finally {
