@@ -26,6 +26,9 @@ _TERMINAL_ERROR_STATES = {"ERROR", "CANCELED"}
 # Content-Range: items 0-49/1000
 _RANGO = re.compile(r"items\s+\d+\s*-\s*\d+\s*/\s*(\d+)", re.IGNORECASE)
 
+# Las clausulas temporales de AQL, como PALABRAS completas.
+_CLAUSULA_TEMPORAL = re.compile(r"\b(last|start|stop)\b", re.IGNORECASE)
+
 
 class QRadarConnector(HttpConnector):
     name = "qradar"
@@ -210,8 +213,12 @@ def _apply_window(aql: str, time_from: Optional[datetime], time_to: Optional[dat
     Se respeta lo que escriba el analista: si ya puso ``LAST 2 HOURS`` o un
     ``START/STOP``, sobrescribirlo seria desconcertante.
     """
-    lowered = aql.lower()
-    if " last " in lowered or " start " in lowered or "stop " in lowered:
+    # Se buscan PALABRAS, no subcadenas. Antes esto era `"stop " in lowered`,
+    # sin espacio delante, y casaba dentro de otra palabra: una AQL con
+    # `nonstop`, `laststop` o un valor como 'backstop ' hacia que la ventana NO
+    # se aplicara. El analista acota a 24 horas, QRadar busca sobre toda la
+    # retencion y devuelve otra cosa, sin decirlo.
+    if _CLAUSULA_TEMPORAL.search(aql):
         return aql
     if not (time_from and time_to):
         return aql

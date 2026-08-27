@@ -530,3 +530,52 @@ def test_describe_all_publica_si_hay_cursor():
     for ficha in get_connector("files").describe(), get_connector("splunk").describe():
         assert "supportsCursor" in ficha
     reset_cache()
+
+
+# ------------------------------------------- la ventana temporal de QRadar
+
+
+def test_una_aql_con_stop_dentro_de_otra_palabra_conserva_la_ventana():
+    """`"stop " in lowered` casaba DENTRO de otra palabra.
+
+    Sin limites de palabra, una AQL con `nonstop`, `laststop` o un valor como
+    'backstop ' hacia que la ventana temporal NO se aplicara. El analista acota a
+    24 horas, QRadar busca sobre toda la retencion y devuelve otra cosa, sin
+    decirlo: no hay error, hay mas resultados de los que se pidieron.
+    """
+    from datetime import datetime, timezone
+
+    from glamdring.connectors.qradar import _apply_window
+
+    desde = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    hasta = datetime(2026, 1, 2, tzinfo=timezone.utc)
+
+    enganosas = [
+        "SELECT sourceip, nonstop FROM events",
+        "SELECT laststop FROM events",
+        "SELECT * FROM events WHERE username='backstop '",
+        "SELECT startup_time FROM events",
+    ]
+    for aql in enganosas:
+        resultado = _apply_window(aql, desde, hasta)
+        assert resultado != aql, f"la ventana se perdio con: {aql}"
+        assert "START" in resultado and "STOP" in resultado
+
+
+def test_se_respeta_la_ventana_que_escribio_el_analista():
+    """La contraprueba: si ya puso una clausula temporal, no se le pisa.
+
+    Sin esto, el arreglo anterior se podria haber hecho quitando la comprobacion
+    entera, y entonces GLAMDRING sobrescribiria el LAST 2 HOURS del analista.
+    """
+    from datetime import datetime, timezone
+
+    from glamdring.connectors.qradar import _apply_window
+
+    desde = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    hasta = datetime(2026, 1, 2, tzinfo=timezone.utc)
+
+    for aql in ("SELECT * FROM events LAST 2 HOURS",
+                "SELECT * FROM events START 1700000000000 STOP 1700003600000",
+                "select * from events last 24 hours"):
+        assert _apply_window(aql, desde, hasta) == aql, f"se piso la clausula de: {aql}"

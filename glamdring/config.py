@@ -25,6 +25,41 @@ WEB_DIR = BASE_DIR / "web"
 SAMPLES_DIR = BASE_DIR / "samples"
 
 
+def _valor_de(bruto: str) -> str:
+    """El valor de una linea del .env, sin el comentario que venga detras.
+
+    UN COMENTARIO EN LINEA APAGABA LA VERIFICACION DE TLS. Antes esto era
+    `bruto.strip().strip('"').strip("'")` sin cortar en '#', asi que:
+
+        SPLUNK_VERIFY_TLS=1       # comentario   ->  "1 # comentario"
+
+    y `_env_bool` no reconoce esa cadena, con lo que cae al valor por defecto
+    del parametro. En los limites numericos eso degrada de forma benigna, pero
+    en el TLS es FAIL-OPEN: el token de servicio del SIEM se entrega en claro al
+    primer intermediario que haya por el camino, y el resultado de la consulta se
+    puede manipular sin que nada lo indique.
+
+    Y el agravante: el propio .env.example enseñaba ese estilo en cuatro lineas,
+    asi que no era un uso raro sino el que documentabamos nosotros.
+
+    Un '#' con comillas alrededor SI es parte del valor: una contrasena puede
+    llevarlo, y cortar ahi seria romper credenciales validas.
+    """
+    texto = bruto.strip()
+    if texto[:1] in ("\"", "'"):
+        comilla = texto[0]
+        cierre = texto.find(comilla, 1)
+        if cierre > 0:
+            return texto[1:cierre]
+        return texto[1:]
+    # Sin comillas: el comentario empieza en el primer '#' precedido de espacio,
+    # o al principio. Un '#' pegado a un caracter es parte del valor.
+    for i, caracter in enumerate(texto):
+        if caracter == "#" and (i == 0 or texto[i - 1].isspace()):
+            return texto[:i].strip()
+    return texto
+
+
 def load_dotenv(path: Optional[Path] = None) -> Dict[str, str]:
     """Lee ``.env`` y devuelve lo que hay dentro. NO toca os.environ.
 
@@ -46,7 +81,7 @@ def load_dotenv(path: Optional[Path] = None) -> Dict[str, str]:
             continue
         key, _, value = line.partition("=")
         key = key.strip()
-        value = value.strip().strip('"').strip("'")
+        value = _valor_de(value)
         loaded[key] = value
     return loaded
 

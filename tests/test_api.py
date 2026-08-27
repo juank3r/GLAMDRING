@@ -304,3 +304,72 @@ def test_a_normal_upload_still_works(client):
                            files={"file": (muestra.name, contenido, "application/json")})
     assert response.status_code == 200
     assert response.json()["added"] > 0, "una muestra valida tiene que entrar entera"
+
+
+# --------------------------------------- el .env y el comentario en linea
+
+
+def test_un_comentario_en_linea_no_apaga_la_verificacion_tls(tmp_path):
+    """ERA FAIL-OPEN, y el .env.example enseñaba a escribirlo asi.
+
+    El valor se recortaba con `.strip().strip('"').strip("'")` sin cortar en
+    '#', asi que `SPLUNK_VERIFY_TLS=1   # comentario` producia la cadena
+    "1 # comentario", que `_env_bool` no reconoce y cae al valor por defecto del
+    parametro.
+
+    En los limites numericos eso degrada de forma benigna. En el TLS significa
+    entregar el token de servicio del SIEM en claro al primer intermediario que
+    haya por el camino, y poder manipular el resultado de la consulta sin que
+    nada lo indique.
+    """
+    from glamdring.config import load_dotenv
+
+    fichero = tmp_path / ".env"
+    fichero.write_text(
+        "SPLUNK_VERIFY_TLS=1       # comentario al final\n"
+        "QRADAR_VERIFY_TLS=0 # otro comentario\n"
+        "GLAMDRING_MAX_RESULTS=50000   # eventos por consulta\n",
+        encoding="utf-8")
+
+    leido = load_dotenv(fichero)
+    assert leido["SPLUNK_VERIFY_TLS"] == "1"
+    assert leido["QRADAR_VERIFY_TLS"] == "0"
+    assert leido["GLAMDRING_MAX_RESULTS"] == "50000"
+
+
+def test_una_almohadilla_dentro_del_valor_se_conserva(tmp_path):
+    """La contraprueba: una contrasena puede llevar '#' y cortarla la rompe.
+
+    Se corta en '#' solo cuando viene precedido de espacio, o cuando el valor
+    esta entrecomillado se respeta lo que hay entre comillas.
+    """
+    from glamdring.config import load_dotenv
+
+    fichero = tmp_path / ".env"
+    fichero.write_text(
+        'SPLUNK_PASSWORD="mi#clave#secreta"\n'
+        "QRADAR_TOKEN=abc#def\n"
+        "SPLUNK_USERNAME='con#comillas'\n",
+        encoding="utf-8")
+
+    leido = load_dotenv(fichero)
+    assert leido["SPLUNK_PASSWORD"] == "mi#clave#secreta"
+    assert leido["QRADAR_TOKEN"] == "abc#def"
+    assert leido["SPLUNK_USERNAME"] == "con#comillas"
+
+
+def test_el_env_example_no_ensena_a_apagar_el_tls():
+    """El propio ejemplo usaba comentarios en linea en las lineas de limites.
+
+    Ahora que el parser los entiende ya no hace dano, pero la comprobacion se
+    queda: si alguien vuelve a romper el parser, este test dice DONDE se nota.
+    """
+    from glamdring.config import BASE_DIR, load_dotenv
+
+    ejemplo = BASE_DIR / ".env.example"
+    if not ejemplo.exists():
+        return
+    leido = load_dotenv(ejemplo)
+    for clave, valor in leido.items():
+        assert "#" not in valor or not valor.split("#")[0].endswith(" "), (
+            f"{clave} conserva un comentario dentro del valor: {valor!r}")
