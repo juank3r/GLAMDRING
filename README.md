@@ -29,6 +29,22 @@ Open <http://localhost:8000> and press **Demo**.
 
 ---
 
+## What it looks like
+
+The whole incident on one screen: entities as nodes, actions as directed edges, the
+timeline underneath. Filters on the left narrow by severity, role, entity, relation,
+source and MITRE tactic — and the counts update as you go.
+
+![The full view: a BlackBasta incident with 52 events and 50 entities](docs/capturas/01-vista-general.png)
+
+Click any node and the inspector gives you its risk, its time window, the MITRE tactics it
+took part in, which product saw it, and every relation it has. From there, the original
+SIEM log is one more click away — that is the rule the whole tool is built on.
+
+![The inspector on a user node: risk 79, five MITRE tactics, six relations](docs/capturas/02-inspector.png)
+
+---
+
 ## What it does
 
 ### Six sources, one vocabulary
@@ -102,6 +118,12 @@ revision `3d-force-graph` ships. At the foot, the three traps that raise no erro
 the most time.
 
 ![Visual architecture](docs/diagrams/03-arquitectura-visual.svg)
+
+Full-screen mode strips everything but the graph, for a wall display or a handover. The
+background switches between room, black and paper, and the incident selector keeps working
+so the unattended loop can move from one case to the next.
+
+![Full-screen mode showing a ScatteredSpider incident](docs/capturas/03-pantalla-completa.png)
 
 ### What the perimeter adds
 
@@ -179,6 +201,16 @@ What makes it possible:
 Measured over the sample set: 64 events from six products produce **58 nodes and 118 edges
 with zero orphans**, and `user:jlopez` is a single node with degree 27 seen by four
 products at once.
+
+---
+
+## Reporting
+
+Five formats, because the same incident goes to five different places: a self-contained
+HTML you can print to PDF, Markdown for Jira or the SOC wiki, full JSON, STIX-lite for a
+TIP, and a plain IOC list to paste into a firewall or EDR.
+
+![The report dialog, with the attack chain and the first lines of the timeline](docs/capturas/04-informe.png)
 
 ---
 
