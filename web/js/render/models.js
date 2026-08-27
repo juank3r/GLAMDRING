@@ -377,9 +377,64 @@ function endpoint(ctx) {
   return group;
 }
 
+/* Tunel: un cilindro abierto visto en escorzo, con dos aros que marcan la boca.
+ *
+ * Es la sesion del cliente SASE. La silueta tiene que leerse como "un conducto
+ * por el que pasa algo", no como un equipo mas: el tunel NO es una maquina, es
+ * el camino por el que sale a Internet una que esta fuera de la oficina. */
+function pipe(ctx) {
+  const group = new THREE.Group();
+  const cuerpo = mat(ctx.color, 0.18, 0.55);
+  const aro = mat(ctx.color, 0.34);
+  // Abierto por los dos extremos (openEnded), que es lo que lo distingue de una
+  // pila o un disco: se ve que algo lo atraviesa.
+  group.add(mesh(geo('pi.cuerpo', () => new THREE.CylinderGeometry(0.52, 0.52, 1.7, 16, 1, true)),
+                 cuerpo, 0, 0, 0));
+  const boca = geo('pi.boca', () => new THREE.TorusGeometry(0.52, 0.075, 8, 18));
+  const arriba = mesh(boca, aro, 0, 0.85, 0);
+  arriba.rotation.x = Math.PI / 2;
+  group.add(arriba);
+  const abajo = mesh(boca, aro, 0, -0.85, 0);
+  abajo.rotation.x = Math.PI / 2;
+  group.add(abajo);
+  // El punto que viaja por dentro: sugiere trafico sin animar nada.
+  group.add(mesh(geo('pi.paquete', () => new THREE.SphereGeometry(0.2, 10, 8)),
+                 glow(ctx.screenColor), 0, 0.1, 0));
+  group.rotation.z = Math.PI / 2.6;
+  return group;
+}
+
+/* Grupo: un escudo.
+ *
+ * Un grupo de seguridad concede privilegios, y por eso la figura es la de algo
+ * que protege o habilita, no la de un contenedor. En el grafo aparece cuando
+ * alguien ENTRA en el grupo, que en Domain Admins es escalada de privilegios. */
+function shield(ctx) {
+  const group = new THREE.Group();
+  const perfil = new THREE.Shape();
+  perfil.moveTo(0, 1);
+  perfil.lineTo(0.72, 0.55);
+  perfil.lineTo(0.72, -0.25);
+  perfil.quadraticCurveTo(0.72, -0.8, 0, -1.05);
+  perfil.quadraticCurveTo(-0.72, -0.8, -0.72, -0.25);
+  perfil.lineTo(-0.72, 0.55);
+  perfil.closePath();
+  group.add(mesh(geo('sh.cuerpo', () => new THREE.ExtrudeGeometry(perfil, {
+    depth: 0.2, bevelEnabled: true, bevelSize: 0.045, bevelThickness: 0.045, bevelSegments: 2,
+  })), mat(ctx.color, 0.24), 0, 0, -0.1));
+  // Las tres figuras de dentro: el grupo son personas, no una cosa.
+  const cabeza = geo('sh.cabeza', () => new THREE.SphereGeometry(0.15, 10, 8));
+  const cuerpo = glow(ctx.screenColor);
+  group.add(mesh(cabeza, cuerpo, 0, 0.2, 0.16));
+  group.add(mesh(cabeza, cuerpo, -0.3, -0.02, 0.16));
+  group.add(mesh(cabeza, cuerpo, 0.3, -0.02, 0.16));
+  return group;
+}
+
 const BUILDERS = {
   workstation, server, router, firewall, person, attacker, gear,
   document, alert, globe, envelope, cloud, key, hashcube, endpoint,
+  pipe, shield,
 };
 
 /* Geometrías simples para la calidad baja: cuando hay miles de nodos, la

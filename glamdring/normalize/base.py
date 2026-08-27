@@ -96,6 +96,23 @@ _TIME_FORMATS = (
 )
 
 
+# Que formato funciono para cada FORMA de fecha. La forma es el texto con los
+# digitos sustituidos por '9' y las letras por 'A', asi que dos fechas con la
+# misma forma se parsean con el mismo formato: es exacto, no una heuristica.
+#
+# Acotado porque es un cache de proceso: las formas de fecha distintas que puede
+# haber son unas pocas decenas, y un tope evita que un fichero con basura lo
+# haga crecer sin limite.
+_FORMATO_POR_FORMA: Dict[str, str] = {}
+_MAX_FORMAS = 64
+
+
+def _forma_de(text: str) -> str:
+    """'Aug 19 2026 09:16:02' -> 'AAA 99 9999 99:99:99'."""
+    return "".join("9" if c.isdigit() else ("A" if c.isalpha() else c)
+                   for c in text[:40])
+
+
 def parse_time(value: Any, default: Optional[datetime] = None) -> datetime:
     """Convierte a datetime UTC lo que sea que traiga el SIEM.
 
@@ -129,14 +146,28 @@ def parse_time(value: Any, default: Optional[datetime] = None) -> datetime:
     except ValueError:
         pass
 
-    for fmt in _TIME_FORMATS:
+    # Se prueba PRIMERO el formato que funciono para una fecha con esta misma
+    # forma. Sin esto, una fecha cuyo formato esta al final de la lista paga un
+    # strptime fallido por cada formato anterior, y cada fallo cuesta igual que
+    # un acierto: strptime compila y cachea por formato, y el cache de Python
+    # guarda muy pocos, asi que ir rotando entre varios lo vacia constantemente.
+    #
+    # Medido sobre las muestras, era la cuarta parte del tiempo de normalizar.
+    forma = _forma_de(text)
+    recordado = _FORMATO_POR_FORMA.get(forma)
+    orden = _TIME_FORMATS if recordado is None else (
+        (recordado,) + tuple(f for f in _TIME_FORMATS if f != recordado))
+
+    for fmt in orden:
         try:
             parsed = datetime.strptime(text, fmt)
-            if parsed.year == 1900:  # syslog RFC3164 no lleva ano
-                parsed = parsed.replace(year=datetime.now(timezone.utc).year)
-            return parsed.astimezone(timezone.utc) if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
         except ValueError:
             continue
+        if recordado != fmt and len(_FORMATO_POR_FORMA) < _MAX_FORMAS:
+            _FORMATO_POR_FORMA[forma] = fmt
+        if parsed.year == 1900:  # syslog RFC3164 no lleva ano
+            parsed = parsed.replace(year=datetime.now(timezone.utc).year)
+        return parsed.astimezone(timezone.utc) if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
 
     return default or datetime.now(timezone.utc)
 

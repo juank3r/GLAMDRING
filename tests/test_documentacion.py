@@ -158,3 +158,53 @@ def test_todo_diagrama_esta_enlazado_desde_el_readme():
     huerfanos = [svg.name for svg in sorted((DOCS / "diagrams").glob("*.svg"))
                  if svg.name not in texto]
     assert not huerfanos, f"diagramas sin enlazar desde el README: {huerfanos}"
+
+
+# ----------------------------------------------- la ontologia y las figuras 3D
+
+def _registro_de_models_js(nombre: str) -> set:
+    """Los nombres declarados en un objeto de models.js."""
+    from glamdring.config import WEB_DIR
+
+    fuente = (WEB_DIR / "js" / "render" / "models.js").read_text(encoding="utf-8")
+    bloque = re.search(r"const " + nombre + r" = {(.*?)^};", fuente, re.S | re.M)
+    assert bloque, f"no encuentro el registro {nombre} en models.js"
+    cuerpo = bloque.group(1)
+    # Tanto 'pipe,' como 'sphere: () =>' cuentan como declarado.
+    con_valor = set(re.findall(r"^\s*(\w+)\s*:", cuerpo, re.M))
+    sueltos = {trozo.strip() for linea in cuerpo.splitlines()
+               for trozo in linea.split(",")
+               if trozo.strip() and re.fullmatch(r"\w+", trozo.strip())}
+    return con_valor | sueltos
+
+
+def test_todo_modelo_de_la_ontologia_existe_en_el_frontend():
+    """Un tipo de nodo cuyo modelo no existe se dibuja como uno generico.
+
+    Y eso es peor que un fallo visible. 'tunnel' y 'group' se anadieron
+    declarando los modelos 'pipe' y 'shield', que no existian, asi que salian con
+    la figura de 'endpoint'. En un grafo 3D la silueta se lee desde el otro
+    extremo de la escena y el texto no: un tunel con forma de equipo es una
+    afirmacion falsa dicha en el idioma que mas rapido se lee.
+
+    No lanza ningun error porque el respaldo es silencioso
+    (BUILDERS[spec.model] || BUILDERS.endpoint). Por eso hace falta el test.
+    """
+    from glamdring.graph import ontology
+
+    disponibles = _registro_de_models_js("BUILDERS")
+    declarados = {e["model"] for e in ontology.ENTITIES.values() if e.get("model")}
+    faltan = declarados - disponibles
+    assert not faltan, (
+        f"la ontologia declara modelos que models.js no sabe dibujar: {sorted(faltan)}. "
+        "Se dibujarian como 'endpoint' sin avisar.")
+
+
+def test_toda_forma_simple_de_la_ontologia_existe():
+    """Con miles de nodos se usa la geometria simple, y ahi pasa lo mismo."""
+    from glamdring.graph import ontology
+
+    disponibles = _registro_de_models_js("SIMPLE")
+    declaradas = {e["shape"] for e in ontology.ENTITIES.values() if e.get("shape")}
+    faltan = declaradas - disponibles
+    assert not faltan, f"formas simples que la ontologia declara y no existen: {sorted(faltan)}"
