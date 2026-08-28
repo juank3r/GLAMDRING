@@ -304,6 +304,14 @@ class NormalizedEvent(BaseModel):
     severity: int = Field(default=1, ge=0, le=5)
     status: Status = "unknown"
     message: str = ""
+    # CUANTAS VECES PASO ESTO DE VERDAD.
+    #
+    # Casi siempre 1, pero hay SIEM que entregan eventos ya agrupados: QRadar
+    # manda un 'Multiple Login Failures' con eventcount=14, o sea catorce
+    # intentos fallidos en una sola fila. Contarlo como uno convierte una fuerza
+    # bruta en un despiste, y el numero que el analista lee en la arista -"400
+    # logons"- deja de ser el numero real.
+    occurrences: int = Field(default=1, ge=1)
 
     actor: Optional[ActorRef] = None
     src: Optional[HostRef] = None

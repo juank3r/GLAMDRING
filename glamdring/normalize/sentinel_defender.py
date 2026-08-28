@@ -58,6 +58,16 @@ def matches(record: Dict[str, Any]) -> bool:
     table = str(record.get("Type") or record.get("TableName") or "")
     if table in _TABLES:
         return True
+    # Sin 'Type' se deduce por la forma. Antes esto solo miraba _MS_MARKERS, y
+    # las filas de EmailEvents no llevan ninguno de esos campos: ni DeviceName,
+    # ni InitiatingProcessFileName, ni DeviceId. Asi que un correo de phishing
+    # exportado sin la columna Type se caia al normalizador generico y perdia
+    # remitente, destinatario y veredicto de entrega, que es TODO lo que tiene.
+    #
+    # La rama de EmailEvents de _guess_table era codigo muerto por esto mismo:
+    # existia y nunca se llegaba a ella.
+    if _guess_table(record):
+        return True
     return sum(1 for marker in _MS_MARKERS if marker in record) >= 2
 
 
@@ -429,6 +439,30 @@ _ACCIONES_DEVICE_EVENTS = {
 }
 
 
+def _dominio_de_campos_extra(record: Dict[str, Any]) -> Optional[str]:
+    """El nombre consultado, de dentro del JSON de AdditionalFields.
+
+    Defender no tiene columna para esto: lo mete en un JSON serializado dentro
+    de una cadena, con la clave cambiando segun la version del esquema.
+    """
+    bruto = first(record, "AdditionalFields")
+    if not bruto:
+        return None
+    datos = bruto
+    if isinstance(bruto, str):
+        try:
+            datos = json.loads(bruto)
+        except (ValueError, TypeError):
+            return None
+    if not isinstance(datos, dict):
+        return None
+    for clave in ("query", "DnsQueryString", "QueryName", "name", "domain", "url"):
+        valor = datos.get(clave)
+        if valor:
+            return canon_domain(str(valor))
+    return None
+
+
 def _device_events(record: Dict[str, Any]) -> NormalizedEvent:
     """La tabla cajon de sastre. Lo que paso lo dice ActionType, no la tabla."""
     accion = str(first(record, "ActionType") or "").strip().lower()
@@ -443,7 +477,12 @@ def _device_events(record: Dict[str, Any]) -> NormalizedEvent:
         event.actor = ActorRef(user=str(usuario))
 
     if clase == CLASS_DNS:
-        event.domain = canon_domain(first(record, "RemoteUrl", "AdditionalFields"))
+        # Defender mete el nombre consultado en AdditionalFields, que es un JSON
+        # EN UNA CADENA: {"query":"cdn-update-svc.com", ...}. Pasarselo tal cual
+        # a canon_domain devolvia None, asi que la unica tabla para la que sirve
+        # la rama de DNS se quedaba sin dominio, o sea sin nodo.
+        event.domain = (canon_domain(first(record, "RemoteUrl", "DnsQueryName"))
+                        or _dominio_de_campos_extra(record))
     elif actividad == "malware_detect":
         nombre = first(record, "FileName")
         if nombre:

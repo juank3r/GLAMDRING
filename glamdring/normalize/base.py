@@ -340,16 +340,38 @@ def basename(path: Optional[str]) -> Optional[str]:
     return text.rsplit("\\", 1)[-1] or None
 
 
+_VACIOS = (None, "", "-", "N/A", "n/a", "null", "NULL", "(null)")
+
+
 def first(record: Dict[str, Any], *keys: str) -> Optional[Any]:
     """Primer valor no vacio entre varias claves candidatas.
 
     Los SIEM llaman al mismo campo de diez maneras; esto evita diez ifs.
+
+    LOS CAMPOS MULTIVALOR SE APLANAN. Splunk devuelve una LISTA cuando un campo
+    aparece varias veces en el mismo evento, y pasa constantemente: un 4624 trae
+    dos `Account_Name`, el de la maquina y el del usuario de verdad.
+
+    Antes se devolvia la lista tal cual y acababa en el grafo convertida a texto:
+    salia un nodo de usuario literalmente llamado ``['-', 'SVC_BACKUP']``. Eso no
+    es un usuario, no se puede pinchar, no correlaciona con nada y ensucia el
+    grafo con una entidad que no existe.
+
+    Se devuelve el primer elemento util de la lista, no el primero a secas: el
+    guion es justo el valor que Windows pone en el hueco que no aplica, y
+    quedarse con el seria tirar el bueno.
     """
     for key in keys:
-        if key in record:
-            value = record[key]
-            if value not in (None, "", "-", "N/A"):
-                return value
+        if key not in record:
+            continue
+        value = record[key]
+        if isinstance(value, (list, tuple)):
+            for item in value:
+                if item not in _VACIOS:
+                    return item
+            continue
+        if value not in _VACIOS:
+            return value
     return None
 
 

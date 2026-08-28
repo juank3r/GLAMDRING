@@ -498,6 +498,19 @@ def _file_activity(collector: _Collector, event: NormalizedEvent) -> None:
 
     collector.link(file_key, hash_key, "has_hash")
 
+    # EL USUARIO NO PUEDE QUEDARSE COLGADO. Cuando el evento trae proceso, el
+    # verbo va del proceso al fichero y `quien` era el proceso, asi que el nodo
+    # de usuario se creaba y no se enlazaba con nada: se perdia QUIEN estaba
+    # detras de la escritura, que en un incidente es la mitad de la pregunta.
+    #
+    # Se ata al proceso y no al fichero: el usuario ejecuto el proceso y el
+    # proceso toco el fichero. Decir que el usuario escribio el fichero teniendo
+    # un proceso de por medio seria inferir un paso que el evento no da.
+    if user_key and process_key:
+        collector.link(user_key, process_key, "executed")
+    elif user_key:
+        collector.link(user_key, host_key, "authenticated")
+
     # SIEMPRE la maquina donde esta el fichero. Antes el host se creaba y no se
     # enlazaba nunca: un volcador de credenciales con cuarentena FALLIDA en el
     # controlador de dominio dejaba host:srv-dc01 con grado 0, y quien pinchaba

@@ -94,7 +94,9 @@ def build_graph(events: Iterable[NormalizedEvent],
                 agg = _NodeAgg(spec.key, spec.type, spec.label)
                 nodes[spec.key] = agg
             _touch(agg, moment)
-            agg.event_count += 1
+            # Lo que el evento representa, no siempre uno: un SIEM puede
+            # entregar catorce intentos fallidos en una sola fila.
+            agg.event_count += event.occurrences
             agg.max_severity = max(agg.max_severity, event.severity)
             agg.sources.add(event.source)
             agg.tactics.update(event.tactics)
@@ -119,7 +121,7 @@ def build_graph(events: Iterable[NormalizedEvent],
                 link = _LinkAgg(key)
                 links[key] = link
             _touch(link, moment)
-            link.count += 1
+            link.count += event.occurrences
             link.severity = max(link.severity, event.severity)
             link.sources.add(event.source)
             if len(link.event_uids) < MAX_UIDS_PER_LINK:

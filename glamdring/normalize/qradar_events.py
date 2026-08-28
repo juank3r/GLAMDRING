@@ -227,6 +227,13 @@ def normalize(record: Dict[str, Any]) -> Optional[NormalizedEvent]:
         event.raw = dict(record)
         event.raw["_payload_decoded"] = payload[:2000]
 
+    # QRADAR AGRUPA. Un 'Multiple Login Failures for Single Username' llega con
+    # eventcount=14: catorce intentos en una sola fila. Se tiraba, asi que en el
+    # grafo esa arista contaba 1 y una fuerza bruta parecia un despiste.
+    agrupados = to_int(first(data, "eventcount", "event_count"))
+    if agrupados and agrupados > 1:
+        event.occurrences = agrupados
+
     # Los bytes que se movieron. Se tiraban, y son el dato que separa una
     # exfiltracion de abrir una pagina: 'Large Outbound Transfer' con 734 MB
     # salientes quedaba byte a byte identico a una navegacion normal.
@@ -335,13 +342,28 @@ def _offense(record: Dict[str, Any], data: Dict[str, Any]) -> NormalizedEvent:
         message=str(first(data, "description", "offense_source") or "Ofensa QRadar")[:400],
         raw=record,
     )
-    offense_source = first(data, "offense_source")
-    if offense_source:
-        text = str(offense_source)
-        if is_ip(text):
-            event.src = HostRef(ip=text)
+    # EL offense_type DICE QUE ES EL offense_source, y hay que leerlo.
+    #
+    # Antes se leia offense_type solo para decidir que esto era una ofensa, y
+    # despues el valor se interpretaba a ojo: si parecia una IP iba a `src` y si
+    # no, a `device`. Con una ofensa agrupada por usuario -que es de las mas
+    # comunes- eso convertia 'jlopez' en un HOST INVENTADO llamado jlopez, y el
+    # grafo enseñaba una maquina que no existe en ninguna parte.
+    origen = first(data, "offense_source")
+    tipo = str(first(data, "offense_type", "offense_type_name") or "").strip().lower()
+    if origen:
+        texto = str(origen)
+        if "username" in tipo or "user" == tipo:
+            event.actor = ActorRef(user=texto)
+        elif "hostname" in tipo or "host" in tipo:
+            event.device = HostRef(hostname=canon_host(texto))
+        elif is_ip(texto):
+            # Sin tipo utilizable, la forma del valor es la unica pista honesta.
+            event.src = HostRef(ip=texto)
+        elif "@" in texto:
+            event.actor = ActorRef(user=texto)
         else:
-            event.device = HostRef(hostname=canon_host(text))
+            event.device = HostRef(hostname=canon_host(texto))
     # Las categorias de una ofensa son texto de la taxonomia de QRadar
     # ("Malware Detected", "Suspicious Activity"), NO identificadores de ATT&CK.
     # Pasarlas por techniques() producia Technique(id='MALWARE DETECTED'), que
