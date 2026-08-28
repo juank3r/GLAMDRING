@@ -369,4 +369,106 @@ def test_report_survives_without_the_catalog(client, monkeypatch, tmp_path):
         assert response.status_code == 200
         assert "Cronología" in response.text
     finally:
+        # PRIMERO se deshace el parche y DESPUES se recarga.
+        #
+        # Al reves -que es como estaba- el reload_catalog() del finally leia
+        # otra vez del tmp_path vacio, porque monkeypatch no deshace lo suyo
+        # hasta que la funcion ha terminado. El catalogo se quedaba VACIO para
+        # todos los tests posteriores del fichero, en silencio: los que no lo
+        # necesitaban pasaban igual, y los que si lo necesitaban no existian
+        # todavia. El primero que se escribio se puso rojo, y no por su culpa.
+        monkeypatch.undo()
         catalog_module.reload_catalog()
+
+
+# ------------------------------------------- herramientas de doble uso
+
+
+def test_anydesk_y_rclone_no_señalan_a_nadie():
+    """La ubicuidad se medía SOLO dentro del catálogo de ransomware.
+
+    De 305 herramientas, únicamente dos superaban el umbral (PsExec y Mimikatz).
+    AnyDesk la usan 8 de los 17 grupos, así que contaba como pista
+    discriminante — y está instalada en medio departamento de sistemas del
+    mundo. Igual con RClone, Advanced IP Scanner, WinSCP y OpenSSH.
+
+    Son DOS EJES distintos: cuántos grupos la usan dice si distingue a un grupo
+    de otro grupo; si la usa gente legítima dice si distingue un ataque de un
+    martes cualquiera. Solo se miraba el primero.
+    """
+    from glamdring.threat import catalog
+
+    kb = catalog()
+    for nombre in ("AnyDesk", "RClone", "Advanced IP Scanner", "WinSCP",
+                   "OpenSSH", "Nmap", "7zip"):
+        if nombre not in kb.tools:
+            continue
+        assert kb.is_dual_use(nombre), f"{nombre} deberia contar como de doble uso"
+        assert kb.discriminating_weight(nombre) < 0.5, (
+            f"{nombre} sigue pesando como una pista: "
+            f"{kb.discriminating_weight(nombre):.2f}")
+
+
+def test_lo_que_nadie_tiene_motivo_para_usar_sigue_pesando():
+    """LA CONTRAPRUEBA, y es la que impide que el arreglo sea 'no atribuir nunca'.
+
+    Cobalt Strike, Mimikatz, LaZagne y Bloodhound no los instala un departamento
+    de sistemas. Tienen que seguir pesando, porque son justo lo que separa un
+    incidente de una tarde de mantenimiento.
+    """
+    from glamdring.threat import catalog
+
+    kb = catalog()
+    for nombre in ("Cobalt Strike", "LaZagne", "Bloodhound", "Mimikatz"):
+        if nombre not in kb.tools:
+            continue
+        assert not kb.is_dual_use(nombre), f"{nombre} NO es de doble uso"
+        assert kb.discriminating_weight(nombre) > 1.0, (
+            f"{nombre} ha perdido peso: {kb.discriminating_weight(nombre):.2f}")
+
+
+def test_un_incidente_de_solo_herramientas_comunes_no_produce_discriminantes():
+    """Usar AnyDesk y RClone no es una pista sobre quién entró.
+
+    Antes producía candidatos con solape 'discriminante', cuando lo único que
+    demuestra es que la empresa tiene soporte remoto y hace copias.
+    """
+    from glamdring.threat import catalog
+    from glamdring.threat.attribution import assess
+    from glamdring.threat.detect import Findings, ToolSighting
+
+    kb = catalog()
+    comunes = [n for n in ("AnyDesk", "RClone", "Advanced IP Scanner",
+                           "WinSCP", "OpenSSH") if n in kb.tools]
+    assert comunes, "el catalogo tiene que traer alguna de estas"
+
+    hallazgos = Findings(tools=[
+        ToolSighting(tool=nombre, category="RMM", category_label="Acceso remoto",
+                     stage="access", groups=kb.tools[nombre].get("groups", []),
+                     where="process", evidence=f"{nombre.lower()}.exe",
+                     node_hint="wks-0421", event_uid=f"u{nombre}",
+                     time=datetime(2026, 8, 24, 9, 0, tzinfo=timezone.utc))
+        for nombre in comunes
+    ])
+    salida = assess(hallazgos)
+
+    assert salida["candidates"], "tiene que haber candidatos, solo que sin fuerza"
+    for candidato in salida["candidates"]:
+        assert not candidato["discriminating"], (
+            f"{candidato['group']} cree que estas herramientas lo señalan")
+        assert candidato["confidence"] == "no concluyente"
+
+
+def test_la_demo_no_atribuye_nada(client):
+    """De punta a punta: la demo solo usa Mimikatz y 7zip.
+
+    Antes SafePay salia a 0,705 por el 7zip, que lo usa un solo grupo del
+    catalogo y por eso pesaba 3,83. Ahora pesa 0,38 y no empuja a nadie.
+    """
+    client.post("/api/demo")
+    atribucion = client.get("/api/threat").json()["attribution"]
+
+    assert atribucion["confidence"] == "no concluyente"
+    assert "7zip" in atribucion["ubiquitousTools"]
+    for candidato in atribucion["candidates"]:
+        assert not candidato["discriminating"]

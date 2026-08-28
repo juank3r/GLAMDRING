@@ -19,6 +19,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
+from .dualuse import es_de_doble_uso
+
 DATA_DIR = Path(__file__).resolve().parent / "data"
 
 _lock = threading.RLock()
@@ -95,6 +97,16 @@ class Catalog:
             return None
         return self.note_index.get(filename.lower().strip())
 
+    def is_dual_use(self, tool_name: str) -> bool:
+        """True si la herramienta tambien la usa gente legitima.
+
+        Es un eje DISTINTO de cuantos grupos la usan. Una herramienta puede ser
+        rara entre los grupos de ransomware y aun asi estar en todos los
+        portatiles de la empresa: el catalogo, por construccion, solo mira
+        ransomware y no puede saberlo.
+        """
+        return es_de_doble_uso(tool_name, self.tools.get(tool_name, {}))
+
     def discriminating_weight(self, tool_name: str) -> float:
         """Cuanto distingue esta herramienta a un grupo de los demas.
 
@@ -110,7 +122,15 @@ class Catalog:
             return 1.0
         import math
 
-        return 1.0 + math.log(self.group_count / usada_por)
+        peso = 1.0 + math.log(self.group_count / usada_por)
+
+        # Las de doble uso pesan una decima parte. No cero: siguen siendo
+        # evidencia de que algo pasa, y si TODO el repertorio de un grupo
+        # aparece hay que poder verlo. Pero una sola no puede empujar a nadie al
+        # primer puesto, que es lo que hacia AnyDesk.
+        if self.is_dual_use(tool_name):
+            peso *= 0.1
+        return peso
 
     @property
     def available(self) -> bool:

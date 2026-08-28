@@ -164,9 +164,17 @@ def attribute(findings: Findings, kb: Optional[Catalog] = None,
         peso_perfil = sum(kb.discriminating_weight(t) for t in del_grupo) or 1.0
         score = peso_coincidente / math.sqrt(peso_perfil)
 
+        # DOS EJES, no uno. Que la usen pocos grupos de ransomware dice si
+        # distingue a un grupo DE OTRO GRUPO; que la use gente legitima dice si
+        # distingue un ataque DE UN MARTES CUALQUIERA.
+        #
+        # Solo se miraba el primero, y con eso AnyDesk (8 de 17 grupos) contaba
+        # como pista discriminante. Esta instalado en medio departamento de
+        # sistemas del mundo.
         discriminantes = [
             t for t in coincidentes
             if kb.tool_group_count.get(t, 0) <= umbral_ubicuidad
+            and not kb.is_dual_use(t)
         ]
 
         # La nota suma segun lo especifica que sea, no por el mero hecho de
@@ -201,7 +209,7 @@ def assess(findings: Findings, kb: Optional[Catalog] = None) -> Dict[str, Any]:
     umbral = kb.group_count * UBIQUITY_CUTOFF
     ubicuas = sorted(
         t for t in findings.tool_names()
-        if kb.tool_group_count.get(t, 0) > umbral
+        if kb.tool_group_count.get(t, 0) > umbral or kb.is_dual_use(t)
     )
     # Y las que no aparecen en ningun perfil conocido: pueden ser lo mas
     # interesante del incidente, porque nadie las ha documentado todavia.
