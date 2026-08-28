@@ -224,3 +224,108 @@ def test_dos_almacenes_distintos_no_se_pisan_en_la_cache(all_events):
     otra_vez = build_filtered(uno.events, version=uno.version, store_id=uno.store_id)
     assert len(otra_vez.nodes) == len(grafo_uno.nodes)
     cache_clear()
+
+
+# ------------------------------------------------ el orden del almacen
+
+
+def test_los_eventos_salen_ordenados_por_tiempo():
+    """LO PRIMERO, porque el arreglo de rendimiento toca justo esto.
+
+    Se ordena al leer en vez de al escribir, asi que si la bandera se gestiona
+    mal el almacen devuelve los eventos desordenados. Y eso no se ve: el grafo
+    se construye igual, la cronologia sale con los sucesos cambiados de sitio y
+    el relato cuenta el incidente al reves.
+    """
+    from datetime import datetime, timedelta, timezone
+
+    from glamdring.models import NormalizedEvent
+
+    base = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    almacen = EventStore()
+
+    # Se meten a proposito en desorden y en dos tandas.
+    almacen.add([NormalizedEvent(uid=f"a{i}", time=base + timedelta(minutes=i), message="x")
+                 for i in (5, 1, 9, 3)])
+    almacen.add([NormalizedEvent(uid=f"b{i}", time=base + timedelta(minutes=i), message="x")
+                 for i in (7, 0, 2)])
+
+    tiempos = [e.time for e in almacen.events]
+    assert tiempos == sorted(tiempos), "el almacen devuelve los eventos desordenados"
+    assert len(tiempos) == 7
+
+
+def test_leer_dos_veces_seguidas_da_lo_mismo():
+    """La bandera no puede quedarse en un estado raro entre lecturas."""
+    from datetime import datetime, timedelta, timezone
+
+    from glamdring.models import NormalizedEvent
+
+    base = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    almacen = EventStore()
+    almacen.add([NormalizedEvent(uid=f"c{i}", time=base + timedelta(minutes=i), message="x")
+                 for i in (4, 2, 8)])
+
+    primera = [e.uid for e in almacen.events]
+    segunda = [e.uid for e in almacen.events]
+    assert primera == segunda
+
+    almacen.add([NormalizedEvent(uid="c1", time=base, message="x")])
+    tercera = [e.time for e in almacen.events]
+    assert tercera == sorted(tercera), "anadir despues de leer rompe el orden"
+
+
+def test_anadir_no_paga_el_orden_de_todo_el_almacen():
+    """Antes `add()` reordenaba la lista ENTERA en cada llamada.
+
+    Medido, el coste de anadir UN evento segun lo que ya hubiera dentro:
+    50.000 -> 30 ms, 200.000 -> 99 ms, 400.000 -> 325 ms.
+
+    El receptor admite 120 envios por minuto y por fuente, y cada envio se
+    llevaba el RLock cientos de milisegundos con el almacen medio lleno: no solo
+    se ralentiza quien empuja, se para el analista que estaba mirando su grafo.
+
+    LO QUE SE COMPRUEBA ES QUE EL COSTE NO CRECE CON EL TAMANO, no un numero
+    concreto de milisegundos, que dependeria de la maquina. Medido en las dos
+    versiones para calibrar el umbral:
+
+                      con el arreglo   con el fallo
+        2.000 dentro       0,11 ms        0,15 ms
+       60.000 dentro       0,16 ms       22,61 ms
+      150.000 dentro       0,08 ms      130,82 ms
+
+    O sea: con el arreglo la razon entre 2.000 y 60.000 es ~1,5; con el fallo es
+    ~150. Un factor de 10 separa las dos situaciones con margen de sobra para
+    una maquina cargada.
+
+    El primer umbral que puse -50 ms absolutos- pasaba IGUAL con el fallo
+    puesto, porque ordenar 60.000 eventos casi ordenados no llega a esos 50 ms.
+    Un test de rendimiento que no se cae al meter el problema mide el reloj, no
+    el codigo.
+    """
+    import time
+    from datetime import datetime, timedelta, timezone
+
+    from glamdring.models import NormalizedEvent
+
+    base = datetime(2026, 1, 1, tzinfo=timezone.utc)
+
+    def coste_de_anadir_uno(cuantos: int) -> float:
+        almacen = EventStore()
+        almacen.add([NormalizedEvent(uid=f"x{i:07d}", time=base + timedelta(seconds=i % 9999),
+                                     message="x") for i in range(cuantos)])
+        _ = almacen.events                      # se paga el orden una vez
+        nuevo = NormalizedEvent(uid="nuevo", time=base, message="x")
+        arranque = time.perf_counter()
+        almacen.add([nuevo])
+        return time.perf_counter() - arranque
+
+    pequeno = coste_de_anadir_uno(2_000)
+    grande = coste_de_anadir_uno(60_000)
+
+    # El suelo de 2 ms evita que un `pequeno` diminuto haga saltar el test por
+    # ruido de medicion; con el fallo el valor real son 22 ms, muy por encima.
+    assert grande < max(pequeno * 10, 0.002), (
+        f"anadir un evento cuesta {grande * 1000:.2f} ms con 60.000 dentro "
+        f"frente a {pequeno * 1000:.2f} ms con 2.000: el coste sigue creciendo "
+        "con el tamano del almacen")
