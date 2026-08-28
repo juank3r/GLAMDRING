@@ -388,8 +388,46 @@ _EXITO = ("success", "allow", "allowed", "accept", "accepted", "permitted",
           "permit", "pass", "ok")
 
 
+# Lo minimo para que un registro produzca algo que se pueda mirar: una hora, o
+# una entidad con la que dibujar un nodo. No es una lista de campos obligatorios,
+# es la pregunta de si queda algo despues de normalizar.
+_SENALES_DE_TIEMPO = ("time", "timestamp", "@timestamp", "rt", "_time", "start",
+                      "datetime", "devTime", "eventtime", "starttime")
+_SENALES_DE_ENTIDAD = ("src_ip", "dest_ip", "sourceip", "destinationip", "url",
+                       "user", "username", "src_user", "duser", "usrName",
+                       "host", "hostname", "dvchost", "computer", "device",
+                       "process_name", "process", "image", "cmdline",
+                       "file_name", "filename", "file_path", "file_hash",
+                       "sha256", "md5", "domain", "dest_host", "query",
+                       "signature_id", "name", "message", "_raw", "act", "action")
+
+
 def matches(record: Dict[str, Any]) -> bool:
-    return isinstance(record, dict)  # el generico acepta cualquier cosa
+    """El generico recoge lo que nadie ha reclamado, PERO NO CUALQUIER COSA.
+
+    Antes esto era `isinstance(record, dict)`, y con eso `unmatched` no podia
+    subir nunca de cero: cualquier diccionario salia normalizado, aunque no
+    tuviera ni hora ni una sola entidad.
+
+    Reproducido: tres registros basura -{"zzz": "nada de nada"}, {"": ""} y
+    {"a": 1, "b": 2}- salian como tres 'Detection Finding' con la HORA ACTUAL,
+    no la del evento, y con unmatched = 0. La unica metrica de cobertura que
+    existe estaba estructuralmente rota: nunca iba a decir que hace falta un
+    normalizador nuevo, que es justo para lo que sirve.
+
+    Un evento sin hora y sin entidad no es un evento pobre: es un registro que
+    no sabemos leer. Contarlo como normalizado es esconder el problema; decir
+    que no se supo es lo que permite arreglarlo.
+    """
+    if not isinstance(record, dict):
+        return False
+    if record.get("__format__"):
+        # Viene de nuestro propio parser de texto (CEF, LEEF, syslog): eso ya es
+        # una forma reconocida y se acepta aunque venga pobre.
+        return True
+    tiene_tiempo = any(k in record for k in _SENALES_DE_TIEMPO)
+    tiene_entidad = any(k in record for k in _SENALES_DE_ENTIDAD)
+    return tiene_tiempo or tiene_entidad
 
 
 def _es_deteccion(record: Dict[str, Any], blob: str) -> bool:

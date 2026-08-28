@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 
 from glamdring.config import SAMPLES_DIR
 from glamdring.main import app
+from glamdring.normalize import normalize_all
 from glamdring.store import STORE
 
 
@@ -373,3 +374,56 @@ def test_el_env_example_no_ensena_a_apagar_el_tls():
     for clave, valor in leido.items():
         assert "#" not in valor or not valor.split("#")[0].endswith(" "), (
             f"{clave} conserva un comentario dentro del valor: {valor!r}")
+
+
+# ------------------------------------------------ la cobertura de la ingesta
+
+
+def test_un_registro_que_no_se_sabe_leer_cuenta_como_no_normalizado():
+    """`unmatched` no podia subir NUNCA de cero.
+
+    El generico era `isinstance(record, dict)`, asi que cualquier diccionario
+    salia normalizado aunque no tuviera ni hora ni una sola entidad.
+
+    Reproducido antes del arreglo: {"zzz": "nada de nada"}, {"": ""} y
+    {"a": 1, "b": 2} salian como tres 'Detection Finding' con la HORA ACTUAL, no
+    la del evento, y con unmatched = 0.
+
+    Es la unica metrica de cobertura que existe, y estaba estructuralmente rota:
+    nunca iba a decir que hace falta un normalizador nuevo, que es justo para lo
+    que sirve. Un evento sin hora y sin entidad no es un evento pobre: es un
+    registro que no sabemos leer, y contarlo como normalizado esconde el
+    problema en vez de enseñarlo.
+    """
+    basura = [{"zzz": "nada de nada"}, {"": ""}, {"a": 1, "b": 2}]
+    assert normalize_all(basura) == [], "la basura no puede salir normalizada"
+
+
+def test_lo_pobre_pero_legible_sigue_entrando():
+    """LA CONTRAPRUEBA, y es la que importa.
+
+    El generico es la red de seguridad: sin el, un fabricante sin normalizador
+    propio deja de entrar del todo. Cerrarlo de mas seria cambiar un problema
+    silencioso por otro peor.
+
+    Basta con una hora O una entidad: no se exige un registro completo.
+    """
+    pobres = [
+        {"_time": "2026-08-19T09:00:00Z", "src_ip": "10.4.2.11"},
+        {"user": "jlopez", "action": "allow"},
+        {"__format__": "syslog", "_raw": "algo", "message": "algo"},
+        {"signature_id": "1001", "name": "Algo detectado"},
+    ]
+    assert len(normalize_all(pobres)) == len(pobres), (
+        "el generico se ha cerrado de mas y ya no recoge lo que nadie reclama")
+
+
+def test_la_ingesta_publica_cuantos_no_supo_leer(client):
+    """De nada sirve contarlo si no llega a quien lo mira."""
+    basura = json.dumps([{"zzz": "nada"}, {"a": 1}])
+    respuesta = client.post("/api/ingest", files={"file": ("basura.json", basura)})
+    assert respuesta.status_code == 200
+    cuerpo = respuesta.json()
+    assert cuerpo["read"] == 2
+    assert cuerpo["normalized"] == 0
+    assert cuerpo["unmatched"] == 2
