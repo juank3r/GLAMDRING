@@ -65,16 +65,41 @@ Comprobacion util mientras se trabaja: cada linea de `samples/perimeter.cef` (so
   `matches()` reclama no tienen handler.
 - **Tests linea a linea** sobre las cuatro muestras.
 
-## Fases 3 y 4, sin empezar
+## Lo unico que queda sin empezar
 
-- **Netskope y Zscaler**. El terreno ya esta comprobado contra la documentacion
-  de los fabricantes, en [PROXIES-SASE.md](PROXIES-SASE.md). Lo importante: el
-  receptor que se hizo en la fase 1 vale tal cual, porque Cloud NSS admite
-  cabeceras HTTP a medida. Queda por comprobar la API de ZPA (ambitos y
-  paginacion), y esta marcado como pendiente ahi.
-- **Varios incidentes a la vez y fusion de dos que resultan ser el mismo.**
-- **Autenticacion**, que no estaba en el plan y hace falta antes de que esto
-  toque un SIEM de produccion. Hoy quien alcance el puerto, entra.
+**Varios incidentes a la vez, y fusionar dos que resultan ser el mismo.**
+
+El mapa esta hecho, y la mejor noticia es que la frontera de "un solo incidente"
+es exactamente `glamdring/api/`, siete ficheros: nadie fuera de ahi importa
+`STORE`, toda la capa de dominio recibe ya sus datos por parametro. El motor de
+fusion tampoco hay que escribirlo -`_apply_alias` en `build.py:303`, y
+`merge_events` en `build.py:384`, que esta escrita y hoy no la llama nadie-.
+
+Lo que si es codigo nuevo: DETECTAR que dos incidentes son el mismo, la
+TRAZABILIDAD del alias (hoy `_apply_alias` hace `nodes.pop()` y el nodo fundido
+desaparece sin dejar constancia) y el DESHACER.
+
+Y tres obstaculos que conviene tener delante antes de empezar, porque los tres
+producen un grafo verosimil y equivocado, que es la peor clase de fallo que
+puede tener esta herramienta:
+
+1. **La deduplicacion por uid no sirve para fusionar.** `make_uid` es
+   `sha256(source|json(raw))`, asi que dos exportaciones del mismo hecho dan uids
+   distintos. Comprobado: el mismo evento como Splunk y como Sentinel da
+   `5b84e48f...` y `8d60e61d...`. Fusionar dos casos solapados duplicaria los
+   recuentos de las aristas, y ese numero es el que el analista lee como
+   "400 logons".
+2. **`assign_levels` y `enrich` propagan por vecindad.** Si los dos incidentes
+   quedan unidos por un solo nodo compartido, la kill-chain de uno contamina las
+   capas del otro y el grafo cuenta una historia que no ocurrio.
+3. **`eventUids` esta truncado a 200** (`build.py:23`). Al fusionar se
+   descartarian en silencio los del incidente perdedor, y con ellos la promesa de
+   que todo nodo se puede contrastar con el log original.
+
+Aparte, queda comprobar la API de ZPA (ambitos y paginacion), marcado como
+pendiente en [PROXIES-SASE.md](PROXIES-SASE.md). Netskope y Zscaler ya estan: el
+receptor de la fase 1 valia tal cual porque Cloud NSS admite cabeceras HTTP a
+medida.
 
 ## Lo que quedo hecho
 
