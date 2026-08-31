@@ -9,7 +9,7 @@
 **Reads Splunk, Sentinel/Defender, QRadar, CEF/LEEF/syslog, Netskope and Zscaler, and turns
 them into a navigable 3D incident graph.** Entities as nodes, actions as directed edges,
 time as an axis. The SIEM stays the source of truth: every node and every edge opens the
-literal log that produced it. Runs locally, one process, no authentication.
+literal log that produced it. Runs locally, one process, no authentication by default.
 
 > Documentation is in Spanish, under [`docs/`](docs/). This README is the English entry point.
 
@@ -254,12 +254,34 @@ is how it gets used most in practice, because the analyst rarely has the API tok
 
 ### Before you expose it
 
-**The API has no authentication.** Ten write routes, and only `POST /api/receive/{source}`
-is protected. Anyone who can reach the port can wipe the running investigation, run queries
-against your SIEM with the credentials in your `.env`, or download the report.
+**There is no authentication by default**, and every start-up says so on the console. On
+your own machine, bound to loopback, that is the right default: nothing to set up, nothing
+to type. On a network it is not, and the difference is one variable.
 
-Locally that does not matter. On a network it does. Run it on your own machine, or behind a
-proxy that authenticates.
+```
+GLAMDRING_API_KEY=$(python -c "import secrets; print(secrets.token_urlsafe(32))")
+```
+
+With it set, every `/api/*` route wants `X-Glamdring-Key` (or `Authorization: Bearer`).
+The frontend is still served without it: the page is code, not data. `POST
+/api/receive/{source}` keeps its own per-source key instead, so forwarders do not have to
+carry two.
+
+Without it, anyone who reaches the port can wipe the running investigation, query your SIEM
+with the credentials in your `.env`, or download the whole incident through `GET
+/api/export` — and that last one changes nothing on the server, so nobody finds out.
+
+What does *not* depend on that variable, because it protects the loopback case that no
+credential covers:
+
+- **Cross-site writes are rejected** on `Origin` and `Sec-Fetch-Site`. Before this, any
+  page open in another tab could `fetch('http://localhost:8000/api/reset', {method:
+  'POST'})` and empty your investigation. Neither multipart nor `text/plain` triggers a
+  browser preflight, so binding to loopback never protected you from it. Non-browser
+  clients — curl, a forwarder, a script — send neither header and still pass: cross-site
+  forgery is a browser problem, and a hostile script has no victim to impersonate.
+- **Request bodies are capped per route**, and rejected on `Content-Length` before a single
+  byte is read: 200 MB for the file drop, 25 MB for a `.glb`, 50 MB for everything else.
 
 ---
 

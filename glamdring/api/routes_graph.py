@@ -36,7 +36,10 @@ def get_graph(
     relations: Optional[str] = Query(default=None, description="tipos de relacion a conservar"),
     focus: Optional[str] = Query(default=None, description="id de nodo sobre el que pivotar"),
     hops: int = Query(default=1, ge=1, le=5),
-    max_nodes: int = Query(default=0, ge=0, alias="maxNodes"),
+    # le=100_000 porque sin tope superior esto aceptaba 2**63. No es un limite
+    # de gusto: `max_nodes` dimensiona el recorte del grafo, y 0 ya significa
+    # "sin recorte", asi que un numero enorme no pide nada que 0 no diera.
+    max_nodes: int = Query(default=0, ge=0, le=100_000, alias="maxNodes"),
 ) -> Dict[str, Any]:
     """Grafo de la investigacion con todos los filtros aplicados en servidor."""
     graph = build_filtered(

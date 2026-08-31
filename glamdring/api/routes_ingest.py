@@ -13,19 +13,28 @@ from ..config import SAMPLES_DIR, SETTINGS
 from ..connectors import ConnectorError, FileConnector, get_connector
 from ..graph.query import parse_moment
 from ..normalize import normalize_all
+from .lectura import leer_acotado
 from ..store import STORE
 
 router = APIRouter(prefix="/api", tags=["ingest"])
 
 MAX_UPLOAD_BYTES = 200 * 1024 * 1024
-TROZO_BYTES = 1024 * 1024        # cuanto se lee de golpe al comprobar el limite
 
 
 class QueryRequest(BaseModel):
     """Consulta en vivo contra un SIEM."""
 
     connector: str = Field(description="splunk | sentinel | qradar")
-    query: str
+    # max_length NO es cosmetico. Sin el, `query` acepta lo que quepa en el
+    # cuerpo: medido, 600 MB de pico con una cadena de 200 MB, y ni siquiera
+    # hace falta que el conector este configurado porque pydantic ya ha
+    # construido la cadena antes de que nadie mire nada. `limit` y `cursor` si
+    # lo tenian; este, que es el unico de longitud libre, no.
+    #
+    # 64 KB es holgado de sobra: una SPL o KQL escrita por una persona son
+    # cientos de bytes, y una generada con una lista larga de indicadores no
+    # pasa de unos pocos miles.
+    query: str = Field(min_length=1, max_length=64 * 1024)
     time_from: Optional[str] = Field(default=None, alias="from",
                                      description="ISO-8601 o relativo ('-24h')")
     time_to: Optional[str] = Field(default=None, alias="to")
@@ -59,34 +68,6 @@ def _ingest_records(records: List[Dict[str, Any]], origin: str) -> Dict[str, Any
     }
 
 
-async def _leer_acotado(file: UploadFile) -> bytes:
-    """Lee un fichero subido cortando EN CUANTO se pasa del limite.
-
-    Antes esto era ``payload = await file.read()`` y despues se miraba el
-    tamano. O sea: el limite se comprobaba cuando el fichero ya estaba entero en
-    memoria, que es justo cuando ya da igual. Subir diez gigas devolvia un 413
-    despues de habersela comido, y cualquiera con acceso a la ruta podia tumbar
-    el proceso sin necesidad de que el fichero fuera valido siquiera.
-
-    Leyendo a trozos se corta en el primero que se pasa: el pico de memoria
-    queda en el limite mas un trozo, y el 413 llega antes de que duela.
-    """
-    trozos: List[bytes] = []
-    leidos = 0
-    while True:
-        trozo = await file.read(TROZO_BYTES)
-        if not trozo:
-            break
-        leidos += len(trozo)
-        if leidos > MAX_UPLOAD_BYTES:
-            raise HTTPException(
-                status_code=413,
-                detail=f"Fichero demasiado grande: el limite son "
-                       f"{MAX_UPLOAD_BYTES // (1024 * 1024)} MB.")
-        trozos.append(trozo)
-    return b"".join(trozos)
-
-
 @router.post("/ingest")
 async def ingest(
     file: Optional[UploadFile] = File(default=None),
@@ -102,7 +83,7 @@ async def ingest(
     connector = FileConnector()
     try:
         if file is not None:
-            payload = await _leer_acotado(file)
+            payload = await leer_acotado(file, MAX_UPLOAD_BYTES)
             content = payload.decode("utf-8", errors="replace")
             records, fmt = connector.read_text(content, hint=format_hint or "")
             origin = f"upload:{file.filename}"

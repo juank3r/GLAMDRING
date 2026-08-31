@@ -7,6 +7,7 @@ from typing import Any, Dict
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
+from .lectura import leer_acotado
 from .. import appearance
 from ..graph import ontology
 
@@ -67,10 +68,10 @@ async def upload_model(name: str, file: UploadFile = File(...)) -> Dict[str, Any
     if not SAFE_NAME.match(name):
         raise HTTPException(status_code=400, detail="Nombre de figura no valido.")
 
-    payload = await file.read()
-    if len(payload) > MAX_MODEL_BYTES:
-        raise HTTPException(status_code=413,
-                            detail=f"El modelo supera los {MAX_MODEL_BYTES // 1048576} MB.")
+    # Acotado AL LEER, no despues: leer entero y medir luego comprueba el limite
+    # cuando la memoria ya esta gastada. Medido antes de esto: 200 MB contra un
+    # limite de 25 daban 600 MB de pico y un 413 que ya no evitaba nada.
+    payload = await leer_acotado(file, MAX_MODEL_BYTES)
     if not payload.startswith(GLB_MAGIC):
         raise HTTPException(
             status_code=400,

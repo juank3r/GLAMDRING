@@ -29,6 +29,7 @@ from .api import (
 from .appearance import MODELS_DIR, load as load_appearance
 from .config import SETTINGS, WEB_DIR
 from .connectors import ConnectorError, close_all
+from .security import montar_seguridad
 
 logging.basicConfig(
     level=logging.INFO,
@@ -52,6 +53,14 @@ async def lifespan(_app: FastAPI):
              ", ".join(configured) or "solo ficheros")
     log.info("Perfil visual: tema '%s', modo de color '%s'",
              profile["theme"]["preset"], profile["colorMode"])
+    if SETTINGS.api_key:
+        log.info("API protegida por clave (cabecera X-Glamdring-Key).")
+    else:
+        # No es un detalle de configuracion: es lo que decide si esto puede ver
+        # una red o no. Se dice en cada arranque, y con la frase completa.
+        log.warning("SIN AUTENTICACION: cualquiera que alcance el puerto puede "
+                    "leer y borrar la investigacion. Correcto en local; antes "
+                    "de exponerlo, pon GLAMDRING_API_KEY en el .env.")
     if not WEB_DIR.exists():
         log.warning("No existe %s: el frontend no se servira.", WEB_DIR)
     yield
@@ -71,6 +80,8 @@ app = FastAPI(
     ),
     version="0.1.0",
 )
+
+montar_seguridad(app, SETTINGS.api_key)
 
 app.include_router(meta_router)
 app.include_router(ingest_router)

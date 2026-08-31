@@ -108,15 +108,30 @@ def test_el_readme_menciona_todas_las_fuentes():
         assert fuente in texto, f"el README no menciona {fuente}"
 
 
-def test_el_readme_avisa_de_que_no_hay_autenticacion():
+def test_el_readme_dice_que_la_autenticacion_viene_apagada_y_como_encenderla():
     """Es lo único que puede hacer daño de verdad al desplegarlo.
 
-    Diez rutas que escriben y sólo el receptor protegido. Quien alcance el puerto
-    puede vaciar la investigación o consultar el SIEM con las credenciales del
-    .env. Mientras eso siga siendo cierto, tiene que estar en el README.
+    Antes este test buscaba la frase "no authentication" y ya está. Ahora la
+    autenticación existe pero viene APAGADA, así que decir sólo que no la hay
+    sería mentira y decir sólo que la hay sería peor: quien lea eso desplegará
+    creyendo que está protegido. Tienen que estar las dos mitades, y el nombre
+    de la variable, que es lo único accionable de todo el párrafo.
     """
     texto = _texto(README).lower()
-    assert "no authentication" in texto or "sin autenticación" in texto
+    assert "no authentication by default" in texto
+    assert "glamdring_api_key" in texto
+
+
+def test_el_readme_explica_lo_que_protege_sin_credencial():
+    """La comprobación de origen y los topes de cuerpo no dependen de la clave.
+
+    Son los que protegen el caso de HOY -la herramienta en el portátil, atada a
+    loopback- y quien lea el README pensando "esto es sólo para servidores" se
+    saltará justo la parte que le aplica.
+    """
+    texto = _texto(README).lower()
+    assert "sec-fetch-site" in texto
+    assert "content-length" in texto
 
 
 @pytest.mark.parametrize("documento", sorted(

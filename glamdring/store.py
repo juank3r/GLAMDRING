@@ -235,7 +235,12 @@ class EventStore:
                 self._ordenado = False
             self.last_ingest = datetime.now(timezone.utc)
             entry = {
-                "origin": origin,
+                # TACHADO. `origin` lleva el trozo de consulta que escribio el
+                # analista -"index=wineventlog host=DC01 user=..."- o el nombre
+                # del fichero que subio, y `/api/ingest-log` lo publica entero.
+                # El log crudo si se tachaba; esto no, y es lo que dice sobre
+                # que esta investigando el cliente y con que credenciales.
+                "origin": redact(origin)[:200],
                 "added": added,
                 "duplicates": duplicates,
                 "dropped": dropped,

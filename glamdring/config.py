@@ -234,6 +234,9 @@ class Settings:
     max_results: int = 50_000      # tope duro de eventos por consulta
     max_graph_nodes: int = 1_500   # por encima, el navegador sufre
     allow_file_paths: bool = False  # permitir ingesta desde rutas del servidor
+    # Clave para toda la API. Vacia = sin autenticacion, que es lo correcto en
+    # local y lo que hay que cambiar antes de que esto vea una red.
+    api_key: str = ""
 
     def public_status(self) -> Dict[str, Any]:
         """Lo que la API puede contar del estado sin filtrar credenciales."""
@@ -243,6 +246,8 @@ class Settings:
                          "workspace": _mask(self.sentinel.workspace_id)},
             "qradar": {"configured": self.qradar.configured, "url": _host_of(self.qradar.url)},
             "files": {"configured": True},
+            # Si la API pide clave. NUNCA cual: solo si la hay.
+            "auth": {"configured": bool(self.api_key)},
             "netskope": {"configured": self.netskope.configured,
                          "url": _host_of(self.netskope.url)},
             "zscaler_zpa": {"configured": self.zscaler_zpa.configured,
@@ -309,6 +314,7 @@ def load_settings() -> Settings:
         max_results=_env_int("GLAMDRING_MAX_RESULTS", 50_000),
         max_graph_nodes=_env_int("GLAMDRING_MAX_GRAPH_NODES", 1_500),
         allow_file_paths=_env_bool("GLAMDRING_ALLOW_FILE_PATHS", False),
+        api_key=_env("GLAMDRING_API_KEY"),
     )
 
 

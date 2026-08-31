@@ -272,7 +272,7 @@ def test_frontend_is_served(client):
 # ------------------------------------------------------- limite de subida
 
 
-def test_an_oversized_upload_is_rejected(client):
+def test_an_oversized_upload_is_rejected(client, monkeypatch):
     """413 al pasarse del limite, y sin habersela comido antes.
 
     El fallo que cubre esto es de ORDEN, no de logica: antes se leia el fichero
@@ -280,9 +280,15 @@ def test_an_oversized_upload_is_rejected(client):
     limite se comprobaba cuando el fichero ya estaba en memoria, que es justo
     cuando ya da igual: subir diez gigas devolvia un 413 despues de habersela
     comido. Ahora se lee a trozos y se corta en el primero que se pasa.
+
+    Y se prueba con un limite pequeno y un fichero pequeno A PROPOSITO. La
+    version anterior de este test reservaba los 200 MB del limite real en
+    memoria para demostrar algo que se ve igual de bien con cuatro kilobytes:
+    tardaba, y cargaba la maquina de quien solo queria pasar la suite.
     """
-    from glamdring.api.routes_ingest import MAX_UPLOAD_BYTES
-    gordo = b'[{"a":1}]' + b" " * (MAX_UPLOAD_BYTES + 2048)
+    import glamdring.api.routes_ingest as rutas
+    monkeypatch.setattr(rutas, "MAX_UPLOAD_BYTES", 1024)
+    gordo = b'[{"a":1}]' + b" " * 4096
     response = client.post("/api/ingest",
                            files={"file": ("gordo.json", gordo, "application/json")})
     assert response.status_code == 413
