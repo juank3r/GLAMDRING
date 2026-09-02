@@ -42,6 +42,7 @@ const SHORTCUTS = [
   ['p', 'pantalla completa: solo el grafo'],
   ['clic derecho', 'menú contextual'],
   ['arrastrar nodo', 'fijarlo en su sitio'],
+  ['x', 'soltar todos los nodos fijados'],
   ['espacio', 'reproducir / pausar la cronología'],
   ['f', 'encuadrar todo el grafo'],
   ['1 · 2 · 3', 'explorar · kill-chain · cronología'],
@@ -150,6 +151,7 @@ export function init(handlers) {
       case 'Escape': closeMenu(); toggleHelp(false); actions.escape?.(); break;
       case '?': toggleHelp(); break;
       case 'f': case 'F': actions.fit?.(); break;
+      case 'x': case 'X': actions.soltarFijados?.(); break;
       case ' ': event.preventDefault(); actions.togglePlay?.(); break;
       case '1': actions.setView?.('explore'); break;
       case '2': actions.setView?.('killchain'); break;

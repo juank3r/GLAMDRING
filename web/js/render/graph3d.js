@@ -43,6 +43,8 @@ let graph = null;
 let data = { nodes: [], links: [], meta: {} };
 let adjacency = {};
 let view = 'explore';
+/* Encuadrar al parar la simulación, una sola vez y solo si se ha pedido. */
+let ajustePendiente = false;
 let colorMode = 'type';
 let timeCursor = null;
 let heavy = false;
@@ -453,20 +455,47 @@ function applyBloom() {
 
 /* -------------------------------------------------------------- posiciones */
 
+/* Suelta lo que hubiera pinchado antes de recolocar.
+ *
+ * ESTO FALTABA, Y ERA LA FUENTE PRINCIPAL DEL DESORDEN ACUMULADO. Con
+ * `fixOnDrag` activo -que lo está por defecto-, arrastrar un nodo le fija
+ * `fx`, `fy` y `fz`. Pero `applyLayout()` solo limpiaba `fx`. O sea que cada
+ * nodo que el analista hubiera movido alguna vez se quedaba clavado en Y y en Z
+ * PARA SIEMPRE, en las tres vistas, y sin ninguna forma de soltarlo:
+ * `releaseFixed()` existía, estaba exportada, y no la llamaba nadie.
+ *
+ * El efecto es acumulativo y silencioso: cuanto más se usa la herramienta, más
+ * nodos anclados en posiciones que ya no significan nada, y más caótico se ve
+ * el grafo. Y como el desorden crecía poco a poco, no parecía un fallo sino la
+ * herramienta siendo así.
+ *
+ * Al cambiar de disposición manda la disposición: si alguien pide la
+ * kill-chain, quiere las capas de la kill-chain, no los restos de dónde dejó
+ * los nodos hace media hora. Dentro de una misma vista el pinchazo sí se
+ * conserva, porque ahí sí es una decisión deliberada y reciente.
+ */
+function soltarTodo() {
+  data.nodes.forEach((node) => {
+    node.fx = undefined;
+    node.fy = undefined;
+    node.fz = undefined;
+  });
+}
+
 function applyLayout() {
   clearExtras();
   addGrid();
+  soltarTodo();
 
   const dagMode = opt('physics', 'dagMode', '');
   if (dagMode && view === 'killchain') {
-    // Camino alternativo: se deja conducir a la librería y se sueltan las
-    // posiciones fijas para que no peleen entre sí.
-    data.nodes.forEach((node) => { node.fx = undefined; });
+    // Camino alternativo: se deja conducir a la librería. Las posiciones fijas
+    // ya están sueltas y no pelean con ella.
     graph.dagMode(dagMode).dagLevelDistance(opt('physics', 'dagLevelDistance', 130));
   } else {
     graph.dagMode(null);
     if (view === 'explore') {
-      data.nodes.forEach((node) => { node.fx = undefined; });
+      // Nada que fijar: soltarTodo() ya ha dejado los tres ejes libres.
     } else if (view === 'killchain') {
       const spacing = opt('physics', 'layerSpacing', 130);
       const maxLevel = data.nodes.reduce((max, node) => Math.max(max, node.__gdLevel), 0);
@@ -482,6 +511,27 @@ function applyLayout() {
     }
   }
   graph.d3ReheatSimulation();
+}
+
+/* Vistas cuyo eje X SIGNIFICA algo y por tanto hay que mirar de frente. */
+const VISTAS_CON_EJE = new Set(['killchain', 'timeline3d']);
+
+/* Deja el eje X leyéndose de izquierda a derecha.
+ *
+ * Sin esto, la promesa de la kill-chain -"la historia se lee de izquierda a
+ * derecha"- se rompe en cuanto el analista gira la escena, que con controles de
+ * órbita es lo primero que hace todo el mundo. El eje sigue estando bien puesto,
+ * pero apunta hacia la cámara o en diagonal, y el resultado es que pulsar el
+ * botón de vista parece no hacer nada.
+ *
+ * Se conserva la DISTANCIA a la que estaba y se cambia solo la dirección:
+ * acercarse o alejarse de golpe desorienta más que el propio giro.
+ */
+function orientarParaLeer(ms) {
+  if (!graph || !VISTAS_CON_EJE.has(view)) return;
+  const actual = graph.cameraPosition() || {};
+  const distancia = Math.hypot(actual.x || 0, actual.y || 0, actual.z || 0) || 900;
+  graph.cameraPosition({ x: 0, y: 0, z: distancia }, { x: 0, y: 0, z: 0 }, ms);
 }
 
 /* -------------------------------------------------------------- accesores */
@@ -528,6 +578,14 @@ function wireAccessors() {
     .enablePointerInteraction(opt('render', 'enablePointerInteraction', true))
     .showNavInfo(opt('render', 'showNavInfo', false))
     .onDagError(() => false)         // un ciclo no puede tumbar la vista
+    .onEngineStop(() => {
+      // Encuadrar SOLO cuando la simulación ha parado, y solo si se ha pedido.
+      // Sin la bandera esto dispararía en cada recalentamiento y le movería la
+      // cámara al analista mientras trabaja, que es peor que no encuadrar.
+      if (!ajustePendiente) return;
+      ajustePendiente = false;
+      graph.zoomToFit(600, 90);
+    })
     .onNodeHover(onNodeHover)
     .onLinkHover(onLinkHover)
     .onNodeClick((node, event) => handlers.onNodeClick?.(node, event))
@@ -894,6 +952,25 @@ export function applyProfile(next) {
 export function setView(name) {
   view = name;
   applyLayout();
+  const ms = opt('camera', 'transitionMs', 900);
+  orientarParaLeer(ms);
+
+  // DOS ENCUADRES, y no es un descuido.
+  //
+  // El bueno solo se puede calcular cuando la simulación para: hasta entonces Y
+  // y Z siguen moviéndose, y encuadrar antes mide posiciones a medio asentar.
+  // Eso era lo que hacía el `setTimeout` de 700 ms que había en `app.js`, puesto
+  // a ojo contra unos `cooldownTicks: 320` que tardan bastante más.
+  //
+  // Pero esperar SOLO a que pare deja el botón sin respuesta visible varios
+  // segundos, y un control que no contesta parece roto. Así que:
+  //
+  //   1. en cuanto la cámara acaba de girar, un encuadre aproximado. En las
+  //      vistas con eje el X ya está fijo, así que acierta casi del todo;
+  //   2. al parar la simulación, el definitivo. Como el primero ya dejó la
+  //      escena casi encuadrada, este es una corrección pequeña y no da tirón.
+  setTimeout(() => { if (graph) graph.zoomToFit(400, 90); }, ms);
+  ajustePendiente = true;
 }
 
 export const getView = () => view;

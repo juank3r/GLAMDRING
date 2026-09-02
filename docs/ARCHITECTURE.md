@@ -298,10 +298,43 @@ Las tres se manifiestan **sin lanzar ningún error**, que es lo que las hace car
 Un solo `ForceGraph3D` sirve las tres. No se recrea el grafo al cambiar de vista:
 solo cambia cómo se fijan las posiciones.
 
-- **explore** — simulación libre, `fx` sin fijar.
+- **explore** — simulación libre, sin ninguna posición fijada.
 - **killchain** — `node.fx = level × 130`. Se fija solo X; la simulación resuelve
   Y/Z. El eje X cuenta la historia y no puede fallar por ciclos.
 - **timeline3d** — `node.fx` proporcional a `firstSeen`.
+
+Tres cosas que van con ellas y que antes faltaban:
+
+**`soltarTodo()` antes de recolocar.** Con `fixOnDrag` activo, arrastrar un nodo
+le fija `fx`, `fy` y `fz`. `applyLayout()` limpiaba solo `fx`, así que cada nodo
+que alguien hubiera movido quedaba clavado en Y y en Z **para siempre, en las
+tres vistas**, y `releaseFixed()` —que existía y estaba exportada— no la llamaba
+nadie. El desorden crecía con el uso y no parecía un fallo sino la herramienta
+siendo así. Al cambiar de disposición manda la disposición; dentro de una misma
+vista el pinchazo se conserva, porque ahí es deliberado. La tecla `x` suelta
+todo sin cambiar de vista.
+
+**`orientarParaLeer()` en `killchain` y `timeline3d`.** El eje X solo se lee de
+izquierda a derecha si se mira de frente, y con `controlType: 'orbit'` lo
+primero que hace cualquiera es girar la escena. Sin esto, la disposición seguía
+bien calculada pero el botón parecía no hacer nada. Se conserva la distancia y
+se cambia solo la dirección: acercarse de golpe desorienta más que el giro. En
+`explore` no se toca la cámara, porque no hay eje que enderezar.
+
+**Dos encuadres, no uno.** El bueno solo se puede calcular cuando la simulación
+para —hasta entonces Y y Z siguen moviéndose—, y con `cooldownTicks: 320` eso
+tarda varios segundos. Esperar solo a `onEngineStop` dejaba el botón sin
+respuesta visible todo ese rato. Así que hay un encuadre aproximado al acabar el
+giro de cámara y el definitivo al parar, protegido por una bandera para que no
+salte en cada recalentamiento y le mueva la cámara al analista mientras trabaja.
+
+**La vista se recuerda.** `profile.view` se validaba en el backend y nadie lo
+leía en el frontend, y no había `localStorage` en todo `web/js`: cada recarga
+devolvía a `explore`. Ahora el perfil pone el defecto y la elección del analista
+manda sobre él, guardada en su navegador. No se aplica dentro de `applyProfile()`
+aunque sea el sitio obvio: esa función se llama también en cada previsualización
+del panel de administrador, y abrirlo devolvería el grafo a `explore` a media
+investigación.
 
 ### El replay
 

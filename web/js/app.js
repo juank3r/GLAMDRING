@@ -462,12 +462,52 @@ function wireTopbar() {
   });
 }
 
+/* La vista elegida, recordada en este navegador.
+ *
+ * `profile.view` existe, se valida en el backend y NADIE lo leia en el
+ * frontend: faltaba el `if` analogo al de `colorMode` en applyProfile(). Y
+ * tampoco habia localStorage en todo web/js. El resultado era que cada recarga
+ * volvia a `explore`, que es justo la unica vista sin ningun eje con
+ * significado, sin importar lo que el analista hubiera elegido.
+ *
+ * Dos niveles, y el orden importa:
+ *   perfil del servidor  el DEFECTO, lo que pone quien instala
+ *   localStorage         lo que ha elegido ESTE analista, y manda sobre lo otro
+ *
+ * Guardarlo en el perfil del servidor seria un PUT por cada clic, y ademas le
+ * cambiaria la vista de arranque a todo el que use la instalacion.
+ */
+const CLAVE_VISTA = 'glamdring.view';
+const VISTAS = ['explore', 'killchain', 'timeline3d'];
+
+function vistaRecordada() {
+  try {
+    const guardada = localStorage.getItem(CLAVE_VISTA);
+    return VISTAS.includes(guardada) ? guardada : null;
+  } catch (error) {
+    // Ventana privada, o almacenamiento bloqueado por politica de empresa. No
+    // es un fallo: es que no hay memoria. Se sigue con el defecto del perfil.
+    return null;
+  }
+}
+
+function recordarVista(name) {
+  try {
+    localStorage.setItem(CLAVE_VISTA, name);
+  } catch (error) {
+    /* lo mismo: sin memoria se sigue igual, solo que no sobrevive a la recarga */
+  }
+}
+
 function setView(name) {
   document.querySelectorAll('.view-btn').forEach((button) => {
     button.classList.toggle('is-active', button.getAttribute('data-view') === name);
   });
   graph3d.setView(name);
-  setTimeout(() => graph3d.zoomToFit(), 700);
+  recordarVista(name);
+  // El encuadre ya NO se pide aqui con un temporizador a ojo. `graph3d` lo hace
+  // cuando la simulacion para de verdad: con `cooldownTicks` por delante
+  // reacomodando Y y Z, encuadrar a los 700 ms medía posiciones a medio asentar.
 }
 
 function wireDragAndDrop() {
@@ -579,6 +619,14 @@ function contextActions() {
     toggleAuto: () => auto.arrancar(state.graph),
     toggleCine: () => cine.alternar(),
     fit: () => graph3d.zoomToFit(),
+    // Arrastrar un nodo lo fija (esta en la ayuda), pero hasta ahora no habia
+    // NINGUNA forma de soltarlo: `releaseFixed()` estaba exportada y no la
+    // llamaba nadie. Un pinchazo del que no se puede salir no es una funcion,
+    // es una trampa.
+    soltarFijados: () => {
+      graph3d.releaseFixed();
+      toast('Nodos sueltos: vuelven a colocarse solos.', null, 2600);
+    },
     togglePlay: () => (timeline.isPlaying() ? timeline.pause() : timeline.play()),
     setView,
     cycleColorMode: () => {
@@ -799,6 +847,14 @@ async function boot() {
   el('color-mode').innerHTML = ont.colorModes()
     .map((mode) => `<option value="${esc(mode.id)}">${esc(mode.label)}</option>`).join('');
   el('color-mode').value = state.colorMode;
+
+  // La vista, UNA SOLA VEZ y aqui, no dentro de applyProfile().
+  //
+  // applyProfile() se llama tambien cada vez que el panel de administrador
+  // previsualiza un cambio. Si la vista se aplicara ahi, abrir el panel a media
+  // investigacion le devolveria el grafo a `explore` sin que nadie lo pidiera.
+  const vistaInicial = vistaRecordada() || (state.profile && state.profile.view);
+  if (vistaInicial && vistaInicial !== graph3d.getView()) setView(vistaInicial);
 
   try {
     const info = await api.health();
